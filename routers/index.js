@@ -19,4 +19,7 @@ module.exports = exports = (app) => {
 
     app.get('/users', Users.Home)
     app.get('/users/dataTable', Users.dataTable)
+    app.get('/users/createForm/:type', Users.createForm)
+    app.post('/users/save', Users.saveUser)
+    app.post('/users/update', Users.updateUser)
 }

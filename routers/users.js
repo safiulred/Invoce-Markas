@@ -1,5 +1,6 @@
 const ModelUser = require('../models/users')
 
+const {encryptPwd} = require('../libs/generate')
 const moment = require('moment')
 moment.locale('ID')
 module.exports.Home = async (req, res, next) => {
@@ -86,7 +87,53 @@ module.exports.dataTable = async (req, res, next) => {
         });
     }
 }
-module.exports.saveUser = async (req, res, next) => {}
-module.exports.viewUser = async (req, res, next) => {}
-module.exports.upadateUser = async (req, res, next) => {}
+
+module.exports.createForm = async (req, res, next) => {
+    const type = req.params.type;
+    const userLogin = req.user;
+    let query = req.query;
+
+    let user = await ModelUser.findOne({_id : query.id});
+
+    return res.render('pages/manage/formUser',{
+        type : type,
+        user : user,
+    });
+}
+
+module.exports.saveUser = async (req, res, next) => {
+    const body = req.body
+    console.log('[BODY] ', body);
+
+    let password = encryptPwd(body.password);
+    let dataInsert = {
+        nama : body.nama.toLowerCase(),
+        username : body.username,
+        password : password,
+        active : body.status,
+        created_at : moment().utc().toDate()
+    }
+    console.log('[INSERT] ', dataInsert)
+}
+
+module.exports.updateUser = async (req, res, next) => {
+    const body = req.body
+    console.log('[BODY] ', body);
+
+    let dataUpdate = {
+        nama : body.nama.toLowerCase(),
+        active : body.status,
+        updated_at : moment().utc().toDate(),
+    }
+
+    console.log('[DATA UPDATE] ', dataUpdate);
+    ModelUser.updateOne({_id : body.id}, {
+        $set : dataUpdate,
+    }).then((result) => {
+        return res.json({status : 200, message : 'Successfull Update User'})
+    }).catch((err) => {
+        return res.json({ status : 402, message : 'Internal Server Error'});
+    })
+}
+
 module.exports.Delete = async (req, res, next) => {}
