@@ -25,13 +25,6 @@ div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data
 					div.col-lg-7
 						input.form-control#password(type="password" value = type=="edit"? "****" : "" readonly = type=="edit"? true : false)
 				div.form-group
-					label(for = "inputGroup").control-label.col-lg-3 Group
-					div.col-lg-7
-						select.form-control#roleGroup(required)
-							option(value="") Pili Group
-							each gr in groups
-								option(value=gr._id selected= type=='add' ? false : gr._id==user.role_group.toString() ? true : false) #{gr.nama}
-				div.form-group
 					label.control-label.col-lg-3 Status
 					div.col-lg-7
 						select.form-control#statusUser
@@ -89,7 +82,7 @@ script.
 
 	function saveData(data, action, selector) {
 		$.ajax({
-			url : action == 'edit' ? '/manage/users/update' : '/manage/users/save',
+			url : action == 'edit' ? '/users/update' : '/users/save',
 			method: 'POST',
 			header: {
 				'Content-Type' : 'application/json'
