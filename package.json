@@ -1,0 +1,29 @@
+{
+  "name": "invoice-markas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.0",
+    "connect-redis": "^5.0.0",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^16.0.1",
+    "express": "^4.17.1",
+    "express-session": "^1.17.3",
+    "express-unless": "^0.5.0",
+    "express-useragent": "^1.0.15",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.3",
+    "mongoose": "^5.10.14",
+    "path": "^0.12.7",
+    "pug": "^3.0.2",
+    "redis": "^3.0.2"
+  }
+}

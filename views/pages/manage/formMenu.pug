@@ -1,0 +1,144 @@
+div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
+	header(role = 'heading')
+		div.jarviswidget-ctrls
+			a(class = 'button-icon jarviswidget-toggle-btn' href = 'javascript:void(0);' rel = 'tooltip' data-placement = 'bottom' data-original-title = 'Tutup' onclick="return closeForm(this);")#btnCloseForm
+				i.fa.fa-times
+		span.widget-icon
+			i.fa.fa-pencil
+		h2 Tambah / Edit Menu
+	div
+		div.jarviswidget-editbox
+		div(class='widget-body no-padding')
+			form.form-horizontal
+				div.form-group
+					label.control-label.col-lg-3 Menu Title
+					div.col-lg-7
+						input.form-control#menuTitle(type = "text" value = type=="edit"? menu.menu_title : "")
+				div.form-group
+					label.control-label.col-lg-3 Menu Uri
+					div.col-lg-7
+						input.form-control#menuUri(type = "text" value = type=="edit"? menu.menu_uri : "")
+				div.form-group
+					label.control-label.col-lg-3 Menu Parent ID
+					div.col-lg-7
+						select.form-control#menuParentID!=element
+				div.form-group
+					label.control-label.col-lg-3 Icon Menu
+					div.col-lg-7
+						div.input-group
+							input#menuIcon(data-placement="bottomRight" class="form-control icp icp-auto" type="text" value= type=="edit"?menu.icon:"fa-archive" )
+							span(class="input-group-addon")
+				div.form-group
+					label.control-label.col-lg-3 Order Poin
+					div.col-lg-7
+						input.form-control#orderPoin(type = "number" value = type=="edit"? menu.order_point : "")
+				div.form-group
+					label.control-label.col-lg-3 Status
+					div.col-lg-7
+						select.form-control#statusMenu
+							option(value="true" selected= type ==='add' ? false : menu.active===true ? true : false) Aktif
+							option(value="false" selected= type ==='add' ? false : menu.active===false ? true : false) Tidak Aktif
+				div.form-group
+					input#fId(type="hidden", name="_id" value = type=="edit"?menu._id:"").form-control
+				div.form-group
+					div.col-lg-7.col-lg-offset-3
+						button#submit(type="submit" class="btn btn-sm btn-primary")
+							i.icon-save
+							span  Simpan
+						button#batal(type="button" onclick="return closeForm(this);" style="margin-left : 10px;" class="btn btn-outline-danger btn-sm")
+							span Batal
+
+script.
+	pageSetUp();
+
+	$(function (){
+		$('#menuTitle').focus();
+
+		$('.icp-auto').iconpicker({
+			hideOnSelect: true
+		});
+
+		$("#formEditable form").submit(function() {
+			let selector = $('#submit');
+			selector.attr('disabled', true);
+
+			var menuTitle = $('#menuTitle').val();
+			var menuUri = $('#menuUri').val();
+			let menuParentID = $('#menuParentID').val();
+			var menuIcon = $('#menuIcon').val();
+			var orderPoin = $('#orderPoin').val();
+			var statusMenu = $('#statusMenu').val();
+
+			if (menuTitle == "" || menuUri == "" || menuParentID == "" || orderPoin == "") {
+				selector.attr('disabled', false);
+				$.smallBox({
+					title: 'Peringantan',
+					content : "<i class='fa fa-clock-o'></i> <i>Maaf, Data Masih Belum Lengkap</i>",
+					color : "#C46A69",
+					iconSmall : "fa fa-times fa-1x fadeInRight animated",
+					timeout : 1000
+				});
+			} else {
+				let dataToSend = {
+					id : $("#fId").val(),
+					menu_title : menuTitle,
+					menu_uri : menuUri,
+					menu_parent_id : menuParentID,
+					icon : menuIcon,
+					order_point : orderPoin,
+					status : statusMenu,
+				}
+
+				saveData(dataToSend, $('#formEditable').attr('data-action'), selector);
+			}
+
+			return false;
+		});
+
+	});
+
+	function saveData(data, action, selector) {
+		$.ajax({
+			url : action == 'edit' ? '/manage/menu/update' : '/manage/menu/save',
+			method: 'POST',
+			header: {
+				'Content-Type' : 'application/json'
+			},
+			data : data,
+			beforeSend: function() {
+				console.log('Loading...')
+			},
+			success: function(msg) {
+				selector.attr('disabled', false);
+				if (msg.status == 200) {
+					$.smallBox({
+						title: 'Success',
+						content : "<i class='fa fa-clock-o'></i> <i>Menu Process Successfull</i>",
+						color : "#659265",
+						iconSmall : "fa fa-check fa-1x fadeInRight animated",
+						timeout : 1000
+					});
+					$("#btnCloseForm").trigger("click");
+					window.location.reload();
+				} else {
+					$.smallBox({
+						title : "Peringatan",
+						content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+						color : "#C46A69",
+						iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+						timeout : 1000
+					});
+				}
+			},
+			error : function (xhr, ajaxOptions, thrownError) {
+				selector.attr('disabled', false);
+				$.smallBox({
+					title : "Peringatan",
+					content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+					color : "#C46A69",
+					iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+					timeout : 1000
+				});
+			},
+		});
+	}

@@ -1,0 +1,231 @@
+style.
+	input#centang {
+		margin-top : 7.4px;
+	}
+
+div.row
+	article.col-md-12#cardList
+		div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
+			header
+				span.widget-icon
+					i.fa.fa-list
+				h2 MENU MANAGE
+			div
+				div.jarviswidget-editbox
+				div(class='widget-body no-padding')
+					if (isRoot)
+						div.col-lg-12(style="padding:10px;background-color:#eee;")
+							button.btn.btn-default#add-menu(data-original-title="Tambah Menu" data-placement="bottom" rel="tooltip" onClick = "return addData();") 
+								i.fa.fa-plus.fa-1x
+								|	Tambah Menu
+
+					div.row
+					div.row
+						div.col-md-3
+							div#tempat-error
+							select(style = 'margin-bottom : 5px;margin-top:10px;').form-control#chooseGroup
+								option(value='') -- Pilih Group --
+								each g in groups
+									option(value=g._id)=g.nama
+
+					div.row
+						h4.text-center Menu Administrator 
+						fieldset(style='margin : 10px') 
+							div.tree!=admin_sidebar
+
+	article.col-md-5(style="display: none" data-action="edit")#formEditable
+
+script.
+	pageSetUp();
+
+	function closeForm(element) {
+		$("#formEditable").slideUp(200, function() {
+			$('#reset').click()
+			$("#cardList").removeClass("col-md-7").addClass("col-md-12")
+		});
+	}
+
+	function addData () {
+		$("#cardList").removeClass("col-md-12").addClass("col-md-7")
+		$("#formEditable").attr("data-action", "add").fadeIn(200)
+		$("#formEditable").load('/manage/menu/createForm/add');
+	}
+
+	function EditMenu (id) {
+		$("#cardList").removeClass("col-md-12").addClass("col-md-7")
+		$("#formEditable").attr("data-action", "edit").fadeIn(200)
+		$("#formEditable").load(`/manage/menu/createForm/edit?id=${id}`);
+	}
+
+	function HapusMenu (selector, id) {
+		var c = confirm('Are you sure want to delete this data ?')
+		if (c) {
+			$.ajax({
+				url: '/manage/menu/remove',
+				method: 'POST',
+				header: {
+					'Content-Type' : 'application/json'
+				},
+				data: {
+					id : id
+				},
+				success : function (msg) {
+					if (msg.status == 200) {
+						$.smallBox({
+							title: 'Success',
+							content : "<i class='fa fa-clock-o'></i> <i> Menu Remove Successfull </i>",
+							color : "#659265",
+							iconSmall : "fa fa-check fa-1x fadeInRight animated",
+							timeout : 1000
+						});
+						$(selector).closest('li').remove();
+					} else {
+						$.smallBox({
+							title : "Peringatan",
+							content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+							color : "#C46A69",
+							iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+							timeout : 1000
+						});
+					}
+				},
+				error : function (xhr, ajaxOptions, thrownError) {
+					$.smallBox({
+						title : "Peringatan",
+						content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+						color : "#C46A69",
+						iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+						timeout : 1000
+					});
+				},
+			})
+		}
+	}
+
+	$(function (){
+
+		$('#chooseGroup').change(function (e) {
+			e.preventDefault();
+			$('#tempat-error').html('');
+			var id_group = $(this).val();
+			if (id_group == '') {
+				$('input[type="checkbox"]').prop('checked',false);
+			} else {
+				var data = $('div.tree ul > li');
+				$.ajax({
+					url : '/manage/menu/get-access',
+					method: 'POST',
+					header: {
+						'Content-Type' : 'application/json'
+					},
+					data : { id : id_group },
+					success : function (msg) {
+						if (msg.status == 200) {
+							var access = msg.data;
+							data.each(function (i){
+								var menu_id = $(this).find('label input[type="checkbox"]').attr('data-id');
+								if($.inArray(menu_id, access) != -1) {
+									$(this).find('input[type="checkbox"]').prop('checked',true);
+								} else {
+									$(this).find('input[type="checkbox"]').prop('checked',false);
+								}
+							});
+
+							$.smallBox({
+								title: 'Success',
+								content : "<i class='fa fa-clock-o'></i> <i>Get Access Menu Successfull</i>",
+								color : "#659265",
+								iconSmall : "fa fa-check fa-1x fadeInRight animated",
+								timeout : 1000
+							});
+						} else {
+							$('input[type="checkbox"]').prop('checked',false);
+							$.smallBox({
+								title : "Peringatan",
+								content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+								color : "#C46A69",
+								iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+								timeout : 1000
+							});
+						}
+					},
+					error : function (xhr, ajaxOptions, thrownError) {
+						$('input[type="checkbox"]').prop('checked',false);
+						$.smallBox({
+							title : "Peringatan",
+							content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+							color : "#C46A69",
+							iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+							timeout : 1000
+						});
+					},
+				});
+			}
+		});
+
+		$('input#centang').change(function (e){
+			e.preventDefault();
+			//- var isine  = $(this).val();
+			var selector = $(this);
+			var id_group = $('#chooseGroup').val();
+			var id_menu = $(this).attr('data-id');
+			var perintah = $(this).is(":checked")?"add":"remove";
+
+			if (id_group == '') {
+				$.smallBox({
+					title : "Peringatan",
+					content : `<i class='fa fa-clock-o'></i> group belum di pilih<i></i>`,
+					color : "#C46A69",
+					iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+					timeout : 1000
+				});
+				selector.attr('checked',false);
+			} else {
+				var dataToSend = {
+					perintah : perintah,
+					id_group : id_group,
+					id_menu : id_menu,
+				};
+
+				$.ajax({
+					url : '/manage/menu/set-access',
+					method: 'POST',
+					header: {
+						'Content-Type' : 'application/json'
+					},
+					data : dataToSend,
+					success : function (msg) {
+						if (msg.status == 200) {
+							selector.attr('checked', true);
+							$.smallBox({
+								title: 'Success',
+								content : "<i class='fa fa-clock-o'></i> <i>Menu Set Access Successfull</i>",
+								color : "#659265",
+								iconSmall : "fa fa-check fa-1x fadeInRight animated",
+								timeout : 1000
+							});
+						} else {
+							selector.attr('checked',false);
+							$.smallBox({
+								title : "Peringatan",
+								content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+								color : "#C46A69",
+								iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+								timeout : 1000
+							});
+						}
+					},
+					error : function (xhr, ajaxOptions, thrownError) {
+						selector.attr('checked',false);
+						$.smallBox({
+							title : "Peringatan",
+							content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+							color : "#C46A69",
+							iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+							timeout : 1000
+						});
+					},
+				})
+			}
+		});
+	});

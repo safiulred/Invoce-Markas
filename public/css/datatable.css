@@ -1,0 +1,11 @@
+.dataTable tbody  tr > td {
+	vertical-align: middle !important;
+}
+
+.dataTable tbody > tr {
+	cursor: pointer !important;
+}
+
+.selected {
+  background-color: #58ACFA !important;
+}

@@ -1,0 +1,138 @@
+include ../../partials/component.pug
+
+div.row
+	article.col-md-12#cardList
+		div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
+			header
+				span.widget-icon
+					i.fa.fa-user
+				h2 MASTER PELANGGAN
+
+			div
+				div(class = "jarviswidget-editbox")
+				div(class = "widget-body no-padding")
+					div.col-lg-12(style="padding:10px;background-color:#eee;")
+						- var data = []
+						if (isRoot) 
+							- data = [{onClick : 'return addData();' , title : 'Tambah Pelanggan' , kelas : 'fa-plus'},{ID : 'clear' , title : 'Reset & Refresh' , kelas : 'fa-refresh', onClick : "return refreshData();"}]
+						else 
+							- data = [{ID : 'clear' , title : 'Reset & Refresh' , kelas : 'fa-refresh', onClick : "return refreshData();"}]
+						+component(data)
+					table(id = "customerTable" class = "table table-striped table-bordered table-hover" width = "100%")
+						thead
+							tr
+								th Action
+								th Nama
+								th Email
+								th Telp
+								th Status
+								th(data-hide = 'phone,tablet') Created_at
+
+	article.col-md-5(style="display: none;" data-action="edit")#formEditable
+
+script.
+	pageSetUp();
+	var tableCustomer;
+
+	function closeForm(selector) {
+		$(selector).slideUp(200, function() {
+			$('#reset').click()
+			$("#cardList").removeClass("col-md-7").addClass("col-md-12");
+			refreshData();
+		});
+	}
+
+	function addData () {
+		$("#formResetable").fadeOut();
+		$("#cardList").removeClass("col-md-12").addClass("col-md-7");
+		$("#formEditable").attr("data-action", "add").fadeIn(200);
+		$("#formEditable").load('/master/customer/createForm/add');
+		refreshData();
+	}
+
+	function getData (id) {
+		$("#formResetable").fadeOut();
+		$("#cardList").removeClass("col-md-12").addClass("col-md-7")
+		$("#formEditable").attr("data-action", "edit").fadeIn(200)
+		$("#formEditable").load(`/master/customer/createForm/edit?id=${id}`);
+		refreshData();
+	}
+
+	function removeData (id) {
+		var c = confirm('Are you sure want to delete this data ?')
+		if (c) {
+			$.ajax({
+				url: '/master/customer/remove',
+				method: 'POST',
+				header: {
+					'Content-Type' : 'application/json'
+				},
+				data: {
+					id : id
+				},
+				success : function (msg) {
+					refreshData();
+					if (msg.status == 200) {
+						$.smallBox({
+							title: 'Success',
+							content : "<i class='fa fa-clock-o'></i> <i> Pelanggan Remove Successfull </i>",
+							color : "#659265",
+							iconSmall : "fa fa-check fa-1x fadeInRight animated",
+							timeout : 1000
+						});
+					} else {
+						$.smallBox({
+							title : "Peringatan",
+							content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+							color : "#C46A69",
+							iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+							timeout : 1000
+						});
+					}
+				},
+				error : function (xhr, ajaxOptions, thrownError) {
+					$.smallBox({
+						title : "Peringatan",
+						content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+						color : "#C46A69",
+						iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+						timeout : 1000
+					});
+				},
+			})
+		}
+	}
+
+	function refreshData () {
+		tableCustomer.ajax.reload(null, false);
+	}
+
+	$(function (){
+		tableCustomer = dataTable('#customerTable',{
+			searching : true,
+			url : '/master/customer/dataTable',
+			columns : [
+				{
+					"data" : "action",
+				},{
+					"data" : "nama"
+				},{
+					"data" : "email"
+				},{
+					"data" : "telp"
+				},{
+					"data" : "status"
+				},{
+					"data" : "created_at"
+				}
+			],
+			columnDefs: [
+				{ width: "10%", targets: 0 },
+				{ width: "20%", targets: 1 },
+				{ width: "10%", targets: 2 },
+				{ width: "10%", targets: 3 },
+				{ width: "10%", targets: 4 },
+				{ width: "15%", targets: 5 }
+			],
+		});
+	});

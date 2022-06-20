@@ -1,0 +1,4 @@
+mixin component(data)
+	- for (i = 0 ; i < data.length; i++)
+		button.btn.btn-default.pull-left(id=data[i].ID data-item = data[i].item data-url=data[i].url data-original-title=data[i].title onClick = data[i].onClick data-placement="bottom" rel="tooltip" style = "margin-right : 10px;") 
+			i.fa.fa-1x(class=data[i].kelas)

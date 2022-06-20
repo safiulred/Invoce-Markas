@@ -1,0 +1,285 @@
+include ../../partials/component.pug
+
+div.row
+	article.col-md-12#cardList
+		div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
+			header
+				span.widget-icon
+					i.fa.fa-user
+				h2 USER MANAGE
+
+			div
+				div(class = "jarviswidget-editbox")
+				div(class = "widget-body no-padding")
+					div.col-lg-12(style="padding:10px;background-color:#eee;")
+						- var data = [{onClick : 'return addData();' , title : 'Tambah User Baru' , kelas : 'fa-plus'},{ID : 'clear' , title : 'Reset & Refresh' , kelas : 'fa-refresh', onClick : "return refreshData();"}]
+						+component(data)
+					table(id = "userTable" class = "table table-striped table-bordered table-hover" width = "100%")
+						thead
+							tr
+								th Action
+								th Nama
+								th Username
+								th Status
+								th(data-hide = 'phone,tablet') Created_at
+								th(data-hide = 'phone,tablet') Updated at
+						tbody
+	article.col-md-5(style="display: none;" data-action="edit")#formEditable
+	article.col-md-5(style="display: none;" data-action="edit")#formResetable
+		div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
+			header(role = 'heading')
+				div.jarviswidget-ctrls
+					a(class = 'button-icon jarviswidget-toggle-btn' href = 'javascript:void(0);' rel = 'tooltip' data-placement = 'bottom' data-original-title = 'Tutup' onclick="return closeForm('#formResetable');")#btnCloseForm
+						i.fa.fa-times
+				span.widget-icon
+					i.fa.fa-pencil
+				h2 Reset Password
+			div
+				div.jarviswidget-editbox
+				div(class='widget-body no-padding')
+					form.form-horizontal
+						div.form-group
+							input#userId(type="hidden", name="_id").form-control
+						div.form-group
+							label(for = "inputPassword").control-label.col-lg-3 Password
+							div.col-lg-7
+								input.form-control#pwdReset(type="password")
+						div.form-group
+							div.col-lg-7.col-lg-offset-3
+								button#submitReset(type="submit" class="btn btn-sm btn-primary")
+									i.icon-save
+									span  Simpan
+								button#batal(type="button" onclick="return closeForm('#formResetable');" style="margin-left : 10px;" class="btn btn-outline-danger btn-sm")
+									span Batal
+
+
+script.
+	pageSetUp();
+	var tableUser;
+
+	function closeForm(selector) {
+		$(selector).slideUp(200, function() {
+			$('#reset').click()
+			$("#cardList").removeClass("col-md-7").addClass("col-md-12");
+			refreshData();
+		});
+	}
+
+	function addData () {
+		$("#formResetable").fadeOut();
+		$("#cardList").removeClass("col-md-12").addClass("col-md-7");
+		$("#formEditable").attr("data-action", "add").fadeIn(200);
+		$("#formEditable").load('/manage/users/createForm/add');
+		refreshData();
+	}
+
+	function getData (id) {
+		$("#formResetable").fadeOut();
+		$("#cardList").removeClass("col-md-12").addClass("col-md-7")
+		$("#formEditable").attr("data-action", "edit").fadeIn(200)
+		$("#formEditable").load(`/manage/users/createForm/edit?id=${id}`);
+		refreshData();
+	}
+
+	function resetPwd(id) {
+		$("#formEditable").fadeOut();
+		$("#cardList").removeClass("col-md-12").addClass("col-md-7");
+		$("#formResetable").attr("data-action", "add").fadeIn(200);
+		$("#formResetable").fadeIn(200);
+		$('#userId').val(id)
+		refreshData();
+	}
+
+	function ubahStatus(id, status) {
+		let dataToSend = {
+			id : id,
+			status : status
+		};
+
+		var c = confirm('Are you sure want to change this status ?')
+		if (c) {
+			$.ajax({
+				url: '/manage/users/changeStatus',
+				method: 'POST',
+				header: {
+					'Content-Type' : 'application/json'
+				},
+				data : dataToSend,
+				success : function (data) {
+					refreshData();
+					if (data.status == 200) {
+						$.smallBox({
+							title: 'Success',
+							content : "<i class='fa fa-clock-o'></i> <i> Ubah Status Successfull </i>",
+							color : "#659265",
+							iconSmall : "fa fa-check fa-1x fadeInRight animated",
+							timeout : 1000
+						});
+					} else {
+						$.smallBox({
+							title : "Peringatan",
+							content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+							color : "#C46A69",
+							iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+							timeout : 1000
+						});
+					}
+				},
+				error : function (xhr, ajaxOptions, thrownError) {
+					$.smallBox({
+						title : "Peringatan",
+						content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+						color : "#C46A69",
+						iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+						timeout : 1000
+					});
+				},
+			})
+		}
+	}
+
+	function removeData (id) {
+		var c = confirm('Are you sure want to delete this data ?')
+		if (c) {
+			$.ajax({
+				url: '/manage/users/remove',
+				method: 'POST',
+				header: {
+					'Content-Type' : 'application/json'
+				},
+				data: {
+					id : id
+				},
+				success : function (msg) {
+					refreshData();
+					if (msg.status == 200) {
+						$.smallBox({
+							title: 'Success',
+							content : "<i class='fa fa-clock-o'></i> <i> User Remove Successfull </i>",
+							color : "#659265",
+							iconSmall : "fa fa-check fa-1x fadeInRight animated",
+							timeout : 1000
+						});
+					} else {
+						$.smallBox({
+							title : "Peringatan",
+							content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+							color : "#C46A69",
+							iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+							timeout : 1000
+						});
+					}
+				},
+				error : function (xhr, ajaxOptions, thrownError) {
+					$.smallBox({
+						title : "Peringatan",
+						content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+						color : "#C46A69",
+						iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+						timeout : 1000
+					});
+				},
+			})
+		}
+	}
+
+	function refreshData () {
+		tableUser.ajax.reload(null, false);
+	}
+
+	$(function (){
+		tableUser = dataTable('#userTable',{
+			url : '/users/dataTable',
+			columns : [
+				{
+					"data" : "action",
+				},{
+					"data" : "nama"
+				},{
+					"data" : "username"
+				},{
+					"data" : "status"
+				},{
+					"data" : "created_at"
+				},{
+					"data" : "updated_at"
+				}
+			],
+			columnDefs: [
+				{ width: "10%", targets: 0 },
+				{ width: "20%", targets: 1 },
+				{ width: "10%", targets: 2 },
+				{ width: "10%", targets: 3 },
+				{ width: "15%", targets: 4 },
+				{ width: "15%", targets: 5 },
+			],
+		});
+
+		$("#formResetable form").submit(function() {
+			var pwdReset = $('#pwdReset').val();
+			var selector = $('#submitReset');
+			selector.attr('disabled', true);
+
+			if (pwdReset == "") {
+				selector.attr('disabled', false);
+				$.smallBox({
+					title: 'Peringantan',
+					content : "<i class='fa fa-clock-o'></i> <i>Maaf, Data Masih Belum Lengkap</i>",
+					color : "#C46A69",
+					iconSmall : "fa fa-times fa-1x fadeInRight animated",
+					timeout : 1000
+				});
+			} else {
+				var dataToSend = {
+					id : $('#userId').val(),
+					password : pwdReset,
+				};
+
+				$.ajax({
+					url : '/manage/users/resetPwd',
+					method: 'POST',
+					header: {
+						'Content-Type' : 'application/json'
+					},
+					data : dataToSend,
+					beforeSend: function() {
+						console.log('Loading...');
+					},
+					success: function(msg) {
+						selector.attr('disabled', false);
+						refreshData();
+						if (msg.status == 200) {
+							$.smallBox({
+								title: 'Success',
+								content : "<i class='fa fa-clock-o'></i> <i>Reset Password Successfull</i>",
+								color : "#659265",
+								iconSmall : "fa fa-check fa-1x fadeInRight animated",
+								timeout : 1000
+							});
+							closeForm('#formResetable');
+						} else {
+							$.smallBox({
+								title : "Peringatan",
+								content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+								color : "#C46A69",
+								iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+								timeout : 1000
+							});
+						}
+					},
+					error : function (xhr, ajaxOptions, thrownError) {
+						selector.attr('disabled', false);
+						refreshData();
+						$.smallBox({
+							title : "Peringatan",
+							content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+							color : "#C46A69",
+							iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+							timeout : 1000
+						});
+					},
+				});
+			}
+			return false;
+		});
+	});

@@ -1,0 +1,66 @@
+html
+	head
+		meta(name = "viewport" content = "width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no")
+		title #{title}
+		link(rel="stylesheet" type="text/css" media="screen" href="/css/bootstrap.min.css")
+		link(rel = "stylesheet" href = "/css/login.css")
+		link(rel="stylesheet" type="text/css" media="screen" href="/css/font-awesome.min.css")
+
+	body
+		div.login-page
+			div.form(style = "border-bottom : 2.4px solid #e74c3c")
+				//- img(src="/img/logo.png" width="100%")
+				//- br
+				//- br
+				div#tempat-pesan
+				form.login-form(data-text = text)
+					input#username(type = "text" placeholder = "Username")
+					input#password(type = "password" placeholder = "Password")
+					button.btn.btn-primary#login Login
+
+		script(src = "/js/libs/jquery-2.1.1.min.js")
+		script.
+			$(function () {
+				$('#login').click(function (e){
+					e.preventDefault();
+					$('#tempat-pesan').html("");
+					var selector = $(this);
+					selector.attr('disabled', true);
+
+					var username = $('#username').val();
+					var password = $('#password').val();
+					
+					if (username == "" || password == "" ) {
+						selector.attr('disabled', false).text('Login');
+						$('#tempat-pesan').html("<p data-alert class='alert alert-warning'><i class='fa fa-minus-circle'></i> Data Masih Kosong !!! </p>");
+					} else {
+						var data = {
+							username : username,
+							password : password,
+						}
+						$.ajax({
+							url : '/login',
+							type : 'POST',
+							dataType : 'json',
+							data : data,
+							beforeSend: function() {
+								console.log('Loading...');
+								selector.text('Loading....');
+							},
+							success : function (msg) {
+								if (msg.status == 200) {
+									$('input').val('');
+									window.location.href = '/main';
+								} else {
+									$('#tempat-pesan').html("<p data-alert class='alert alert-warning'><i class='fa fa-minus-circle'></i> "+msg.message+"</p>");
+									selector.attr('disabled', false).text('Login');
+								}
+							},
+							error : function (xhr, ajaxOptions, thrownError) {
+								selector.attr('disabled', false).text('Login');
+								$('#tempat-pesan').html("<p data-alert class='alert alert-warning'><i class='fa fa-minus-circle'></i>Internal Server Error</p>");
+							},
+						});
+					}
+				});
+			});

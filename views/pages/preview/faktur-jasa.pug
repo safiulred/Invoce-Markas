@@ -1,0 +1,85 @@
+style.
+	* {
+		box-sizing: border-box;
+	}
+	body {
+		background-color: #fff;
+	}
+	table {
+		border-collapse: collapse;
+	}
+	table > thead > tr > th {
+		background-color : #bdc3c7 !important;
+	}
+	table > thead > tr > td, table > tbody > tr > td, table > tfoot > tr > td {
+		padding : 8px;
+	}
+	/* Create two equal columns that floats next to each other */
+	.column {
+		float: left;
+		width: 50%;
+		padding: 10px;
+	}
+	/* Clear floats after the columns */
+	.row:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+
+div.row
+	div.column(style = 'width:65%')
+		br
+		h1(style = "font-size : 25px; line-height : 0px;") #{general&&general.toko?general.toko:''}
+		p 
+			span #{general&&general.alamat?general.alamat:''}
+			br
+			span Email : #{general&&general.email?general.email:''}
+			br
+			span Phone : #{general&&general.telp?general.telp:''}
+	div.column(style = 'width:35%')
+		br
+		span #{tgl_order}
+		p
+			span Kepada Yth :
+			br
+			span #{dataTrx.customer&&dataTrx.customer.nama?dataTrx.customer.nama : ''}
+			br
+			span #{dataTrx.customer&&dataTrx.customer.alamat?dataTrx.customer.alamat : ''}
+div.row
+	div.column(style = 'width:100%')
+		strong NO. FAKTUR : #{no_faktur}
+		table(style="width : 100% !important;font-size : 14px;" border = '1').table
+			thead
+				tr
+					td(align = 'center')
+						b BANYAK
+					td(align = 'center')
+						b NAMA BARANG
+					td(align = 'right') 
+						b JASA SATUAN
+					td(align = 'right') 
+						b JUMLAH
+			tbody
+				tr
+					td(align = 'center') #{dataTrx&&dataTrx.qty?dataTrx.qty:'-'}
+					td(align = 'center') "Jasa cutting"
+					td(align = 'right')  -
+					td(align = 'right')
+						b #{biayaJasa}
+			tfoot
+				tr
+					td(colspan = "3" align = 'right') 
+						b TOTAL
+					td(align = 'right') 
+						b #{biayaJasa}
+
+br
+table(style="width : 100% !important;font-size : 14px;").table
+	tbody
+		tr
+			th(align = 'center') Ttd Terima
+			th(align = 'center') Hormat Kami,
+		tr
+			td(align = 'center') (...................)
+			td(align = 'center') (...................)

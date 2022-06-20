@@ -1,0 +1,24 @@
+aside#left-panel
+	div(class = "login-info")
+		span
+
+			a(href = "#" id  = "show-shortcut" data-action = "toggleShortcut")
+				span MARKAS
+					i(class = "fa fa-angle-down")
+	//- NAVIGASI
+	nav 
+		ul
+			li
+				a(href="#/dashboard" )
+					i(class ='fa fa-lg fa-fw fa-home') 
+					span.menu-item-parent Dashboard
+			li
+				a(href="#/users" )
+					i(class ='fa fa-lg fa-fw fa-user') 
+					span.menu-item-parent User
+			li
+				a(href="#/customer" )
+					i(class ='fa fa-lg fa-fw fa-users') 
+					span.menu-item-parent Pelanggan
+		span(class="minifyme" data-action="minifyMenu")
+			i(class="fa fa-arrow-circle-left hit")

@@ -1,0 +1,134 @@
+include ../../../partials/component.pug
+style.
+	.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+		vertical-align : middle !important;
+		border-bottom-width : 1px;
+	}
+	
+	.bmd-modalButton {
+		display: block;
+		margin: 15px auto;
+		padding: 5px 15px;
+	}
+
+	.close-button {
+		overflow: hidden;
+	}
+
+	.bmd-modalContent {
+		box-shadow: none;
+		background-color: transparent;
+		border: 0;
+	}
+
+	.bmd-modalContent .close {
+		font-size: 30px;
+		line-height: 30px;
+		padding: 7px 4px 7px 13px;
+		text-shadow: none;
+		opacity: .7;
+		color:#fff;
+	}
+
+	.bmd-modalContent .close span {
+		display: block;
+	}
+
+	.bmd-modalContent .close:hover,
+	.bmd-modalContent .close:focus {
+		opacity: 1;
+		outline: none;
+	}
+
+	.bmd-modalContent iframe {
+		display: block;
+		margin: 0 auto;
+	}
+section#widget-grid
+	div.row
+		article.col-xs-12.col-sm-12.col-md-12.col-lg-12
+			div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false", data-widget-refresh='10', data-widget-deletebutton='false')
+				header
+					span.widget-icon
+						i.fa.fa-table
+					h2 TRANSAKSI PEMBELIAN
+				div
+					div.jarviswidget-editbox
+					
+					div(class='widget-body no-padding')
+						div.row
+						br
+						div.form-horizontal#cart
+							div.row
+								div.col-lg-6
+									div.form-group
+										label.control-label.col-lg-3 Supplier
+										div.col-lg-6
+											select.form-control#trxSupplier
+												option(value = '') Pilih Supplier
+												each s in suppliers
+													option(value = s._id data-kode = s._id )=s.nama
+											
+								div.col-lg-6
+									div.form-group
+										label.control-label.col-lg-3 Tanggal
+										div.col-lg-6
+											input#trxTanggal(type="text" class="form-control"  placeholder = "Tanggal" data-dateformat = "yy-mm-dd" value = tanggal)
+						div.row
+							div.col-md-12
+								button(class='btn btn-primary' style = 'margin:10px;' onClick = "return pencarianModal('700px');") TAMBAH BARANG
+
+						div.row
+							div.col-lg-12
+								table.table.table-bordered#cartTable
+									thead
+										tr
+											th(width = '25%') Nama
+											//- th(width = '20%') Tipe
+											th(width = '10%') Tebal
+											th(width = '15%') Harga
+											th(width = '15%') Jumlah
+											th(width = '22%') Sub Total
+											th
+									tbody
+									tfoot
+										tr
+											td(colspan=4 align="right")
+												span(style="text-align:right; font-weight : bold;") Total
+											td(colspan=2)
+												strong(data-harga='0')#totalPrice 0
+
+								//- div.col-md-7
+								div.col-md-12
+									button(class='btn btn-danger pull-right' style = 'margin-right : 10px' onClick = "clearTrx()") CLEAR
+									button#cetakStruk(class='btn btn-primary pull-left' style = 'margin-right : 10px' disabled = "disabled") Cetak Struk
+									button#checkOut(class='btn btn-success pull-right' style = "margin-right : 10px;" onClick="paidNow(this)") ORDER
+									br
+									br
+									br
+
+//- Layout Cetak
+div.modal.fade#tempalteStrukJP
+	div.modal-dialog
+		div.modal-content.bmd-modalContent
+			div.modal-body
+				div.kotak(style="width:100%;height:520px;position: absolute;")
+					div.close-button
+						button(type="button" class="close" data-dismiss="modal" aria-label="Close")
+							span(aria-hidden="true") &times;
+					iframe#viewStruk(style='border:0;', width = '100%' height = '550px;' frameborder='0')
+
+script(type ='text/javascript' src = '/js/pembelian.js')
+script.
+	pageSetUp();
+	var no = 0;
+	var items = [];
+
+	$(function (){
+		//- loadTable();
+		$('#trxNama').focus();
+
+		$("#trxTanggal").datepicker({
+			dateFormat: "yy-mm-dd"
+		});
+	});

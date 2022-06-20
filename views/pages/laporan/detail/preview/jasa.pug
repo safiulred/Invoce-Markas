@@ -1,0 +1,77 @@
+div
+	div(style="padding: 10px; display: flex; flex-wrap: wrap; margin-right: -15px; margin-left: -15px;")
+		div(style = "width : 50%;")
+			h5 #{title}
+			br
+			hr(style="border-color: rgb(0, 0, 0); margin: -16px 0px 10px;")
+			table#tableHeader(style="width: 100%; border-spacing: 5px;")
+				tbody
+					tr
+						td(width = "30%") TANGGAL AWAL
+						td(width = '1%') : 
+						td #{tgl_awal}
+					tr
+						td TANGGAL AKHIR
+						td(width = '10%') :
+						td #{tgl_akhir}
+
+	.row
+		div(class="col-lg-12 col-md-12 col-xs-12 col-sm-12")
+			table(id = "tableContent" class="table table-scroll" style="width: 100%; border-spacing: 5px;")
+				thead
+					tr
+						td(width="10%" style="border-bottom: 2px solid rgb(0, 0, 0);") 
+							b NO. ORDER
+						td(style="border-bottom: 2px solid rgb(0, 0, 0);") 
+							b TGL ORDER
+						td(style="border-bottom: 2px solid rgb(0, 0, 0);") 
+							b TGL PENGERJAAN
+						td(style="border-bottom: 2px solid rgb(0, 0, 0);") 
+							b TGL JADI
+						td(style="border-bottom: 2px solid rgb(0, 0, 0);") 
+							b PEMESAN
+						td(style="border-bottom: 2px solid rgb(0, 0, 0);" align = 'center') 
+							b JML ORDER
+						td(style="border-bottom: 2px solid rgb(0, 0, 0);" align = 'center') 
+							b JML JASA
+						td(style="border-bottom: 2px solid rgb(0, 0, 0);" align = 'center') 
+							b JML PLAT
+						td(style="border-bottom: 2px solid rgb(0, 0, 0);" align = 'right') 
+							b BIASA JASA
+						td(style="border-bottom: 2px solid rgb(0, 0, 0);") 
+							b STATUS
+				tbody
+					each d in data
+						tr
+							td(align = 'center') 
+								b #{d.no_order}
+							td #{d.tgl_order}
+							td #{d.tgl_pengerjaan}
+							td #{d.tgl_jadi}
+							td #{d.customer}
+							td(align = 'center') 
+								span(class = 'badge bg-color-greenLight') #{d.total_order}
+							td(align = 'center') 
+								span(class = 'badge bg-color-greenLight') #{d.qty}
+							td(align = 'center') 
+								span(class = 'badge bg-color-greenLight') #{d.qty}
+							td(align = 'right') 
+								b #{d.biaya_jasa}
+							td 
+								center
+									small(class = d.status==0?'':d.status==1?'badge bg-color-orange':d.status==2?'badge bg-color-blueLight':d.status==3?'badge bg-color-greenLight':'badge bg-color-red') #{d.labelStatus}
+				tfoot
+					tr
+					tr
+						td(align = 'right' colspan = "5") 
+							b TOTAL
+						td(align = 'center')
+							b #{totalOrder}
+						td(align = 'center')
+							b #{totalQty}
+						td(align = 'center')
+							b #{totalQty}
+						td(align = 'right')
+							b #{totalBiaya}
+						td
+

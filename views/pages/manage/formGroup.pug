@@ -1,0 +1,135 @@
+div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
+	header(role = 'heading')
+		div.jarviswidget-ctrls
+			a(class = 'button-icon jarviswidget-toggle-btn' href = 'javascript:void(0);' rel = 'tooltip' data-placement = 'bottom' data-original-title = 'Tutup' onclick="return closeForm(this);")#btnCloseForm
+				i.fa.fa-times
+		span.widget-icon
+			i.fa.fa-pencil
+		h2 Tambah / Edit Group
+	div
+		div.jarviswidget-editbox
+		div(class='widget-body no-padding')
+			form.form-horizontal
+				div.form-group
+					input#fId(type="hidden", name="_id" value = type=="edit"?group._id:"").form-control
+				div.form-group
+					label(for = "inputName").control-label.col-lg-3 Nama Group
+					div.col-lg-7
+						input.form-control#namaGroup(type="text" placeholder="Enter Nama Group" value = type=="edit"? group.nama : "")
+				div.form-group
+					label(for = "inputUrut").control-label.col-lg-3 No. Urut
+					div.col-lg-7
+						input.form-control#noUrut(type="number" placeholder="Enter No Urut" value = type=="edit"? group.no_urut : "")
+				div.form-group
+					label.control-label.col-lg-3 Status
+					div.col-lg-7
+						select.form-control#statusGroup
+							option(value="true" selected= type ==='add' ? false : group.active===true ? true : false) Aktif
+							option(value="false" selected= type ==='add' ? false : group.active===false ? true : false) Tidak Aktif
+				div.form-group
+					label.control-label.col-lg-3 isRegister
+					div.col-lg-7
+						select.form-control#isRegister
+							option(value="true" selected= type ==='add' ? false : group.isRegister===true ? true : false) Aktif
+							option(value="false" selected= type ==='add' ? false : group.isRegister===false ? true : false) Tidak Aktif
+				div.form-group
+					label.control-label.col-lg-3 isRoot
+					div.col-lg-7
+						select.form-control#isRoot
+							option(value="true" selected= type ==='add' ? false : group.isRoot===true ? true : false) Aktif
+							option(value="false" selected= type ==='add' ? false : group.isRoot===false ? true : false) Tidak Aktif
+				div.form-group
+					div.col-lg-7.col-lg-offset-3
+						button#submit(type="submit" class="btn btn-sm btn-primary")
+							i.icon-save
+							span  Simpan
+						button#batal(type="button" onclick="return closeForm(this);" style="margin-left : 10px;" class="btn btn-outline-danger btn-sm")
+							span Batal
+
+script.
+	pageSetUp();
+
+	$(function () {
+		$('#namaGroup').focus();
+
+		$("#formEditable form").submit(function() {
+			let selector = $('#submit');
+			selector.attr('disabled', true);
+			var namaGroup = $('#namaGroup').val();
+			var noUrut = $('#noUrut').val();
+			var statusGroup = $('#statusGroup').val();
+			let isRegister = $('#isRegister').val();
+			var isRoot = $('#isRoot').val();
+
+			if (namaGroup == "" || noUrut == "") {
+				selector.attr('disabled', false);
+				$.smallBox({
+					title: 'Peringantan',
+					content : "<i class='fa fa-clock-o'></i> <i>Maaf, Data Masih Belum Lengkap</i>",
+					color : "#C46A69",
+					iconSmall : "fa fa-times fa-1x fadeInRight animated",
+					timeout : 1000
+				});
+			} else {
+				let dataToSend = {
+					id : $("#fId").val(),
+					nama : namaGroup,
+					no_urut : noUrut,
+					status : statusGroup,
+					isRegister : isRegister,
+					isRoot : isRoot
+				}
+
+				saveData(dataToSend, $('#formEditable').attr('data-action'), selector);
+			}
+
+			return false;
+		});
+	});
+
+	function saveData(data, action, selector) {
+		$.ajax({
+			url : action == 'edit' ? '/manage/group/update' : '/manage/group/save',
+			method: 'POST',
+			header: {
+				'Content-Type' : 'application/json'
+			},
+			data : data,
+			beforeSend: function() {
+				console.log('Loading...')
+			},
+			success: function(msg) {
+				selector.attr('disabled', false);
+				refreshData();
+				if (msg.status == 200) {
+					$.smallBox({
+						title: 'Success',
+						content : "<i class='fa fa-clock-o'></i> <i>Group Process Successfull</i>",
+						color : "#659265",
+						iconSmall : "fa fa-check fa-1x fadeInRight animated",
+						timeout : 1000
+					});
+					$("#btnCloseForm").trigger("click");
+				} else {
+					$.smallBox({
+						title : "Peringatan",
+						content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+						color : "#C46A69",
+						iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+						timeout : 1000
+					});
+				}
+			},
+			error : function (xhr, ajaxOptions, thrownError) {
+				selector.attr('disabled', false);
+				refreshData();
+				$.smallBox({
+					title : "Peringatan",
+					content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+					color : "#C46A69",
+					iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+					timeout : 1000
+				});
+			},
+		});
+	}

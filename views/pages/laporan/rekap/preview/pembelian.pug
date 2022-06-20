@@ -1,0 +1,45 @@
+div
+	div(style="padding: 10px; display: flex; flex-wrap: wrap; margin-right: -15px; margin-left: -15px;")
+		div(style = "width : 50%;")
+			h5 #{title}
+			br
+			hr(style="border-color: rgb(0, 0, 0); margin: -16px 0px 10px;")
+			table#tableHeader(style="width: 100%; border-spacing: 5px;")
+				tbody
+					tr
+						td(width = "30%") TANGGAL AWAL
+						td(width = '1%') : 
+						td #{tgl_awal}
+					tr
+						td TANGGAL AKHIR
+						td(width = '10%') :
+						td #{tgl_akhir}
+
+	.row
+		div(class="col-lg-12 col-md-12 col-xs-12 col-sm-12")
+			table(id = "tableContent" class="table table-scroll" style="width: 100%; border-spacing: 5px;")
+				thead
+					tr
+						td(width="10%" style="border-bottom: 2px solid rgb(0, 0, 0);") NO
+						td(width="10%" style="border-bottom: 2px solid rgb(0, 0, 0);") 
+							b TANGGAL
+						td(style="border-bottom: 2px solid rgb(0, 0, 0);" align = 'center') 
+							b JML
+						td(style="border-bottom: 2px solid rgb(0, 0, 0);" align = 'right') 
+							b HARGA
+				tbody
+					each d in data
+						tr
+							td #{d.no}
+							td #{d.tanggal}
+							td(align = 'center') #{d.qty}
+							td(align = 'right') #{d.total_harga}
+				tfoot
+					tr
+					tr
+						td(align = 'right' colspan = "2") 
+							b TOTAL
+						td(align = 'center')
+							b #{total_qty}
+						td(align = 'right')
+							b #{grand_total}

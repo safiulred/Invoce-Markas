@@ -1,0 +1,130 @@
+div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
+	header(role = 'heading')
+		div.jarviswidget-ctrls
+			a(class = 'button-icon jarviswidget-toggle-btn' href = 'javascript:void(0);' rel = 'tooltip' data-placement = 'bottom' data-original-title = 'Tutup' onclick="return closeForm('#formEditable');")#btnCloseForm
+				i.fa.fa-times
+		span.widget-icon
+			i.fa.fa-pencil
+		h2 Tambah / Edit Supplier
+	div
+		div.jarviswidget-editbox
+		div(class='widget-body no-padding')
+			form.form-horizontal
+				div.form-group
+					input#fId(type="hidden", name="_id" value = type=="edit"?supplier._id:"").form-control
+				div.form-group
+					label(for = "namaSupplier").control-label.col-lg-3 Nama
+					div.col-lg-7
+						input.form-control#namaSupplier(type="text" value = type=="edit"? supplier.nama : "")
+				div.form-group
+					label(for = "emailSupplier").control-label.col-lg-3 Email
+					div.col-lg-7
+						input.form-control#emailSupplier(value = type=="edit"? supplier.email : "")
+				div.form-group
+					label(for = "telpSupplier").control-label.col-lg-3 Telp
+					div.col-lg-7
+						input.form-control#telpSupplier(value = type=="edit"? supplier.telp : "")
+				div.form-group
+					label(for = "alamatSupplier").control-label.col-lg-3 Alamat
+					div.col-lg-7
+						textarea.form-control#alamatSupplier(rows = "4" cols = "4")=type=='edit'? supplier.alamat : ''
+				div.form-group
+					label.control-label.col-lg-3 Status
+					div.col-lg-7
+						select.form-control#statusSupplier
+							option(value="true" selected= type ==='add' ? false : supplier.active===true ? true : false) Aktif
+							option(value="false" selected= type ==='add' ? false : supplier.active===false ? true : false) Tidak Aktif
+				div.form-group
+					div.col-lg-7.col-lg-offset-3
+						button#submitSupplier(type="submit" class="btn btn-sm btn-primary")
+							i.icon-save
+							span  Simpan
+						button#batal(type="button" onclick="return closeForm('#formEditable');" style="margin-left : 10px;" class="btn btn-outline-danger btn-sm")
+							span Batal
+
+script.
+	pageSetUp();
+	$(function (){
+		$('#namaSupplier').focus();
+
+		$("#formEditable form").submit(function() {
+			let selector = $('#submitSupplier');
+			selector.attr('disabled', true);
+			var nama = $('#namaSupplier').val();
+			var email = $('#emailSupplier').val();
+			let telp = $('#telpSupplier').val();
+			var alamat = $('#alamatSupplier').val();
+			var status = $('#statusSupplier').val();
+
+			if (nama == "" || email == "" || telp == "" || alamat == "") {
+				selector.attr('disabled', false);
+				$.smallBox({
+					title: 'Peringantan',
+					content : "<i class='fa fa-clock-o'></i> <i>Maaf, Data Masih Belum Lengkap</i>",
+					color : "#C46A69",
+					iconSmall : "fa fa-times fa-1x fadeInRight animated",
+					timeout : 1000
+				});
+			} else {
+				let dataToSend = {
+					id : $("#fId").val(),
+					nama : nama,
+					email : email,
+					telp : telp,
+					alamat : alamat,
+					status : status,
+				}
+
+				saveData(dataToSend, $('#formEditable').attr('data-action'), selector);
+			}
+
+			return false;
+		});
+	});
+
+	function saveData(data, action, selector) {
+		$.ajax({
+			url : action == 'edit' ? '/master/supplier/update' : '/master/supplier/save',
+			method: 'POST',
+			header: {
+				'Content-Type' : 'application/json'
+			},
+			data : data,
+			beforeSend: function() {
+				console.log('Loading...')
+			},
+			success: function(msg) {
+				selector.attr('disabled', false);
+				refreshData();
+				if (msg.status == 200) {
+					$.smallBox({
+						title: 'Success',
+						content : "<i class='fa fa-clock-o'></i> <i>Supplier Process Successfull</i>",
+						color : "#659265",
+						iconSmall : "fa fa-check fa-1x fadeInRight animated",
+						timeout : 1000
+					});
+					$("#btnCloseForm").trigger("click");
+				} else {
+					$.smallBox({
+						title : "Peringatan",
+						content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+						color : "#C46A69",
+						iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+						timeout : 1000
+					});
+				}
+			},
+			error : function (xhr, ajaxOptions, thrownError) {
+				selector.attr('disabled', false);
+				refreshData();
+				$.smallBox({
+					title : "Peringatan",
+					content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+					color : "#C46A69",
+					iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+					timeout : 1000
+				});
+			},
+		});
+	}

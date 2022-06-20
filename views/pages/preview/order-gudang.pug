@@ -1,0 +1,57 @@
+style.
+	table > thead > tr > th {
+		background-color : #bdc3c7 !important;
+	}
+div.row
+	div.col-lg-5
+		center
+			div(style = "line-height : 20px; margin-top : 10px;")
+				h2(style = "font-size : 25px;") #{general&&general.toko?general.toko:''}
+				p 
+					span #{general&&general.alamat?general.alamat:''}
+					br
+					span 
+						i.fa.fa-phone &nbsp;
+						| #{general&&general.telp?general.telp:''} &nbsp; &nbsp;
+						i.fa.fa-envelope &nbsp;
+						| #{general&&general.email?general.email:''}
+
+		hr(style = "border : 0.5px dashed #000;")
+		center
+			h3(style = 'text-decoration:underline;') ORDER BARANG
+		span Perihal : Pembelian Barang
+		br
+		span Bersama ini kami sampaikan pembelian barang
+		span(style = 'float : right;') Tgl : #{tanggal}
+		br
+		hr(style = "border : 0.5px dashed #000;")
+		table(style="width : 100% !important;font-size : 14px;").table
+			thead
+				tr
+					th NO
+					th Nama Barang
+					th Jumlah
+			tbody
+				if (dataTrx.detail_trx.length>0)
+					each t, idx in dataTrx.detail_trx
+						tr
+							td(align = 'center') #{idx+1}
+							td(align = 'center') #{t.barang&&t.barang.nama?t.barang.nama:'-'}
+							td(align = 'center') #{t&&t.qty?t.qty:'-'}
+			tfoot
+				tr
+					th(colspan = "2" align = 'right') TOTAL
+					th #{dataTrx.total_qty}
+		hr(style = "border : 0.5px dashed #000;")
+		table(style="width : 100% !important;font-size : 14px;").table
+			thead
+				tr
+					th(align = 'center') Gudang
+					th(align = 'center') Driver
+					th(align = 'center') Admin
+				tr
+					td(align = 'center') (...................)
+					td(align = 'center') (...................)
+					td(align = 'center') (...................)
+
+

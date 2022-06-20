@@ -1,0 +1,153 @@
+div.row
+	article.col-md-12
+		div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
+			header
+				span.widget-icon
+					i.fa.fa-list
+				h2 LAPORAN PERSEDIAAN BARANG UTUH
+			div
+				div(class = "jarviswidget-editbox")
+				div(class = "widget-body no-padding")
+					div.col-lg-12(style="padding:10px;background-color:#eee;")
+						div(class = 'col-lg-2 col-sm-2 col-xs-2')
+							select.form-control#selectCategory
+								option(value = 'all') Pilih Kategori
+								each c in categories
+									option(value=c._id) #{c.nama}
+						div(class = 'col-lg-2 col-sm-2 col-xs-2')
+							select.form-control#selectSupplier
+								option(value = 'all') Pilih Supplier
+								each s in suppliers
+									option(value=s._id) #{s.nama}
+						button#searchLap(class = 'btn btn-default pull-left' data-original-title = 'Pencarian' data-placement="bottom" rel="tooltip")
+							i(class="fa fa-fw fa-search")
+						button(class = 'btn btn-default pull-left' data-original-title = 'Reset & Refresh' data-placement="bottom" rel="tooltip" onclick = "return refreshData1();" style = 'margin-left : 10px;')
+							i(class="fa fa-fw fa-refresh")
+						button#printTable(class = 'btn btn-default pull-left' data-original-title = 'Cetak' data-placement="bottom" rel="tooltip" style = 'margin-left : 10px;')
+							i(class="fa fa-fw fa-print")
+						button#downloadFile(class = 'btn btn-default pull-left' data-original-title = 'Download' data-placement="bottom" rel="tooltip" style = 'margin-left : 10px;')
+							i(class="fa fa-fw fa-download")
+					table(id = "lapBarangUtuhTable" class = "table table-striped table-bordered table-hover" width = "100%")
+						thead
+							tr
+								td(align = 'center') #
+								th Barang
+								th Tebal
+								th Stok
+								th Harga
+								th(width = '14%' ata-hide = 'phone,tablet') Kategori
+								th(width = '14%' ata-hide = 'phone,tablet') Supplier
+
+	//- IFRAME CONTENT PRIVIEW
+	iframe(id = "ifmcontentstoprint" style="height: 0px; width: 0px; position: absolute;")
+script.
+	pageSetUp();
+	var tableLapBarangUtuh;
+
+	function refreshData1 () {
+		tableLapBarangUtuh.ajax.reload(null, false);
+	}
+
+	/*
+	PREVIEW STRUK
+	*/
+	function printPriview() {
+		console.log('PRINT PREVIEW')
+		let content = document.getElementById("content-cetak");
+		let pri = document.getElementById("ifmcontentstoprint").contentWindow;
+		pri.document.open();
+		pri.document.write(content.innerHTML);
+		pri.document.close();
+		pri.focus();
+		pri.print();
+		return false;
+	}
+
+	$(function (){
+		$('#downloadFile').click(function (e) {
+			e.preventDefault();
+			var category = $('#selectCategory').val();
+			var supplier = $('#selectSupplier').val();
+
+			let urlDownload = `/laporan/detail/persediaan-utuh/download?category=${category}&supplier=${supplier}`;
+			window.open(urlDownload, '_blank');
+		});
+
+		$('#printTable').click(function (e) {
+			e.preventDefault();
+			var category = $('#selectCategory').val();
+			var supplier = $('#selectSupplier').val();
+			
+			let urlPreview = `/laporan/detail/persediaan-utuh/preview?category=${category}&supplier=${supplier}`;
+			$("#modalBig #content-cetak").load(urlPreview);
+			$('#modalBig').modal('show');
+		});
+
+		tableLapBarangUtuh = dataTable('#lapBarangUtuhTable',{
+			searching : false,
+			url : `/laporan/detail/persediaan-utuh/dataTableDetail?category=all&supplier=all`,
+			columns : [
+				{
+					"data" : "no",
+				},{
+					"data" : "barang"
+				},{
+					"data" : "tebal"
+				},{
+					"data" : "stock"
+				},{
+					"data" : "harga"
+				},{
+					"data" : "category"
+				},{
+					"data" : "supplier"
+				}
+			],
+			columnDefs: [
+				{ width: "5%", targets: 0 },
+				{ width: "20%", targets: 1 },
+				{ width: "15%", targets: 2 },
+				{ width: "14%", targets: 3 },
+				{ width: "10%", targets: 4 },
+				{ width: "10%", targets: 5 }
+			],
+		});
+
+		$('#searchLap').click(function (e) {
+			e.preventDefault();
+			var category = $('#selectCategory').val();
+			var supplier = $('#selectSupplier').val();
+
+			tableLapBarangUtuh = dataTable('#lapBarangUtuhTable',{
+				searching : false,
+				url : `/laporan/detail/persediaan-utuh/dataTableDetail?category=${category}&supplier=${supplier}`,
+				columns : [
+					{
+						"data" : "no",
+					},{
+						"data" : "barang"
+					},{
+						"data" : "tebal"
+					},{
+						"data" : "stock"
+					},{
+						"data" : "harga"
+					},{
+						"data" : "category"
+					},{
+						"data" : "supplier"
+					}
+				],
+				columnDefs: [
+					{ width: "5%", targets: 0 },
+					{ width: "20%", targets: 1 },
+					{ width: "15%", targets: 2 },
+					{ width: "14%", targets: 3 },
+					{ width: "10%", targets: 4 },
+					{ width: "10%", targets: 5 }
+				],
+			});
+		})
+	});
+
+

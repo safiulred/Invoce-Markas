@@ -1,0 +1,300 @@
+include ../../partials/component.pug
+div.row
+	article.col-md-12#cardList
+		div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
+			header
+				span.widget-icon
+					i.fa.fa-user
+				h2 MASTER PERSEDIAAN BARANG UTUH
+
+			div
+				div(class = "jarviswidget-editbox")
+				div(class = "widget-body no-padding")
+					div.col-lg-12(style="padding:10px;background-color:#eee;")
+						- var data = [{ID : 'clear' , title : 'Reset & Refresh' , kelas : 'fa-refresh', onClick : "return refreshData();"}]
+						+component(data)
+					table(id = "gudangTable" class = "table table-striped table-bordered table-hover" width = "100%")
+						thead
+							tr
+								th Action
+								th Nama
+								th Stok
+								th Harga Beli
+								th Harga Jual
+								th(data-hide = 'phone,tablet') Kategori
+								th(data-hide = 'phone,tablet') Supplier
+								th(data-hide = 'phone,tablet') Created_at
+
+	article.col-md-4(style="display: none;" data-action="edit")#formEditStok
+		div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
+			header(role = 'heading')
+				div.jarviswidget-ctrls
+					a(class = 'button-icon jarviswidget-toggle-btn' href = 'javascript:void(0);' rel = 'tooltip' data-placement = 'bottom' data-original-title = 'Tutup' onclick="return closeForm('#formEditStok');")#btnCloseForm
+						i.fa.fa-times
+				span.widget-icon
+					i.fa.fa-pencil
+				h2
+			div
+				div.jarviswidget-editbox
+				div(class='widget-body no-padding')
+					form.form-horizontal
+						div.form-group
+							input#gudangID(type="hidden", name="_id").form-control
+						div.form-group
+							label.control-label.col-lg-3 Stok
+							div.col-lg-7
+								input.form-control#stokGudang(type = "number" value = "0" min = "0")
+						div.form-group
+							div.col-lg-7.col-lg-offset-3
+								button#submitStok(type="button" class="btn btn-sm btn-primary")
+									i.icon-save
+									span  Simpan
+								button#batal(type="button" onclick="return closeForm('#formEditStok');" style="margin-left : 10px;" class="btn btn-outline-danger btn-sm")
+									span Batal
+
+	article.col-md-4(style="display: none;" data-action="edit")#formSetHarga
+		div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
+			header(role = 'heading')
+				div.jarviswidget-ctrls
+					a(class = 'button-icon jarviswidget-toggle-btn' href = 'javascript:void(0);' rel = 'tooltip' data-placement = 'bottom' data-original-title = 'Tutup' onclick="return closeForm('#formSetHarga');")#btnCloseForm
+						i.fa.fa-times
+				span.widget-icon
+					i.fa.fa-pencil
+				h2
+			div
+				div.jarviswidget-editbox
+				div(class='widget-body no-padding')
+					form.form-horizontal
+						div.form-group
+							input#gudangID(type="hidden", name="_id").form-control
+						div.form-group
+							label(for = "inputSaldo").control-label.col-lg-3 Harga Jual
+							div.col-lg-7
+								input.form-control#hargaJual(type="number")
+						div.form-group
+							div.col-lg-7.col-lg-offset-3
+								button#submitHarga(type="submit" class="btn btn-sm btn-primary")
+									i.icon-save
+									span  Simpan
+								button#batal(type="button" onclick="return closeForm('#formSetHarga');" style="margin-left : 10px;" class="btn btn-outline-danger btn-sm")
+									span Batal
+
+script.
+	pageSetUp();
+	var tableGudang;
+
+	function closeForm(selector) {
+		$(selector).slideUp(200, function() {
+			$('#reset').click()
+			$("#cardList").removeClass("col-md-8").addClass("col-md-12");
+			refreshData();
+		});
+	}
+
+	function refreshData () {
+		tableGudang.ajax.reload(null, false);
+	}
+
+	function ubahStok(id, stockNow, status) {
+		$("#formSetHarga").hide();
+		$("#cardList").removeClass("col-md-12").addClass("col-md-8");
+		$('#formEditStok h2').text(`${status=='plus'? 'Tambah' : 'Kurangi'} Stok Plat`);
+		$("#formEditStok").fadeIn(200);
+		$('#formEditStok button#submitStok').attr('data-status', status);
+		$('#formEditStok button#submitStok').attr('data-stock', stockNow);
+		$('#formEditStok button#submitStok').attr('data-id', id);
+		$('#hargaJual').focus();
+		refreshData();
+	}
+
+	function setHargaJual (id) {
+		$("#formEditStok").hide();
+		$("#cardList").removeClass("col-md-12").addClass("col-md-8");
+		$('#formSetHarga h2').text(`Set Harga Jual`);
+		$("#formSetHarga").fadeIn(200);
+		$('#formSetHarga #gudangID').val(id)
+		$('#hargaJual').focus();
+		refreshData();
+	}
+
+	$(function (){
+		tableGudang = dataTable('#gudangTable',{
+			searching : false,
+			url : '/persediaan/barang-utuh/dataTable',
+			columns : [
+				{
+					"data" : "action",
+				},{
+					"data" : "nama"
+				},{
+					"data" : "stock"
+				},{
+					"data" : "harga_beli"
+				},{
+					"data" : "harga_jual"
+				},{
+					"data" : "category"
+				},{
+					"data" : "supplier"
+				},{
+					"data" : "created_at"
+				}
+			],
+			columnDefs: [
+				{ width: "5%", targets: 0 },
+				{ width: "20%", targets: 1 },
+				{ width: "5%", targets: 2 },
+				{ width: "10%", targets: 3 },
+				{ width: "10%", targets: 4 },
+				{ width: "20%", targets: 5 },
+				{ width: "20%", targets: 6 },
+				{ width: "20%", targets: 7 },
+			],
+		});
+
+		$('#submitHarga').click(function (e){
+			e.preventDefault();
+			var selector = $(this);
+			selector.attr('disabled', true);
+			var hargaJual = $('#hargaJual').val();
+			if (hargaJual == "" ) {
+				selector.attr('disabled', false);
+				$.smallBox({
+					title: 'Peringantan',
+					content : "<i class='fa fa-clock-o'></i> <i>Maaf, Data Masih Belum Lengkap</i>",
+					color : "#C46A69",
+					iconSmall : "fa fa-times fa-1x fadeInRight animated",
+					timeout : 1000
+				});
+			} else {
+				var dataToSend = {
+					id : $('#gudangID').val(),
+					harga_jual : hargaJual,
+				};
+
+				$.ajax({
+					url : '/persediaan/barang-utuh/setHargaJual',
+					method: 'POST',
+					header: {
+						'Content-Type' : 'application/json'
+					},
+					data : dataToSend,
+					beforeSend: function() {
+						console.log('Loading...');
+					},
+					success: function(msg) {
+						selector.attr('disabled', false);
+						refreshData();
+						if (msg.status == 200) {
+							$.smallBox({
+								title: 'Success',
+								content : "<i class='fa fa-clock-o'></i> <i>Set Harga Jual Sukses</i>",
+								color : "#659265",
+								iconSmall : "fa fa-check fa-1x fadeInRight animated",
+								timeout : 1000
+							});
+							closeForm('#formSetHarga');
+						} else {
+							$.smallBox({
+								title : "Peringatan",
+								content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+								color : "#C46A69",
+								iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+								timeout : 1000
+							});
+						}
+					},
+					error : function (xhr, ajaxOptions, thrownError) {
+						selector.attr('disabled', false);
+						refreshData();
+						$.smallBox({
+							title : "Peringatan",
+							content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+							color : "#C46A69",
+							iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+							timeout : 1000
+						});
+					},
+				});
+			}
+
+			return false;
+		});
+
+		$('#submitStok').click(function (e){
+			e.preventDefault();
+			var selector = $(this);
+			selector.attr('disabled', true);
+			var idGudang = selector.attr('data-id');
+			var stokGudang = $('#stokGudang').val();
+			var stockNow = selector.attr('data-stock');
+			var statusAction = selector.attr('data-status');
+
+			if (stokGudang == "") {
+				selector.attr('disabled', false);
+				$.smallBox({
+					title: 'Peringantan',
+					content : "<i class='fa fa-clock-o'></i> <i>Maaf, Data Masih Belum Lengkap</i>",
+					color : "#C46A69",
+					iconSmall : "fa fa-times fa-1x fadeInRight animated",
+					timeout : 1000
+				});
+			} else {
+				var dataToSend = {
+					id : idGudang,
+					stockNow : stockNow,
+					stock : stokGudang,
+					statusAction : statusAction,
+				};
+
+				console.log('[DATA TO SEND]', dataToSend);
+				$.ajax({
+					url : '/persediaan/barang-utuh/update-stock',
+					method: 'POST',
+					header: {
+						'Content-Type' : 'application/json'
+					},
+					data : dataToSend,
+					beforeSend: function() {
+						console.log('Loading...');
+					},
+					success: function(msg) {
+						selector.attr('disabled', false);
+						refreshData();
+						if (msg.status == 200) {
+							$.smallBox({
+								title: 'Success',
+								content : "<i class='fa fa-clock-o'></i> <i>Update Stok Plat Berhasil</i>",
+								color : "#659265",
+								iconSmall : "fa fa-check fa-1x fadeInRight animated",
+								timeout : 1000
+							});
+							closeForm('#formEditStok');
+							$('#stokGudang').val('0');
+						} else {
+							$.smallBox({
+								title : "Peringatan",
+								content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+								color : "#C46A69",
+								iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+								timeout : 1000
+							});
+						}
+					},
+					error : function (xhr, ajaxOptions, thrownError) {
+						selector.attr('disabled', false);
+						refreshData();
+						$.smallBox({
+							title : "Peringatan",
+							content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+							color : "#C46A69",
+							iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+							timeout : 1000
+						});
+					},
+				});
+			}
+
+			return false;
+		});
+	});

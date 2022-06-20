@@ -1,0 +1,143 @@
+style.
+	* {
+		box-sizing: border-box;
+	}
+	table > thead > tr > th {
+		background-color : #bdc3c7 !important;
+	}
+	/* Create two equal columns that floats next to each other */
+	.column {
+		float: left;
+		width: 50%;
+		padding: 10px;
+	}
+	/* Clear floats after the columns */
+	.row:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+	.checkbox {
+		position :relative;
+		display : block;
+		margin-top : 0;
+		margin-bottom : 0;
+		padding-top : 5px;
+		min-height : 25px;
+	}
+	label {
+		min-height:18px;
+		padding-left : 20px;
+		margin-bottom : 0;
+		font-weight : 400;
+		cursor : pointer;
+		display : inline-block;
+	}
+
+	.label-checkbox {
+		margin-left : 5px;
+	}
+
+	input[type=checkbox] {
+		vertical-align: middle;
+		margin-top : -1px;
+		line-height : normal;
+	}
+
+	img {
+		width: 100%; /* or any custom size */
+		height: 300px;
+		cursor : pointer;
+	}
+
+div.row
+	div.col-lg-5
+		center
+			div(style = "line-height : 20px; margin-top : 10px;")
+				h2(style = "font-size : 25px;") #{general&&general.toko?general.toko:''}
+				p 
+					span #{general&&general.alamat?general.alamat:''}
+					br
+					span 
+						i.fa.fa-phone &nbsp;
+						| #{general&&general.telp?general.telp:''} &nbsp; &nbsp;
+						i.fa.fa-envelope &nbsp;
+						| #{general&&general.email?general.email:''}
+		hr(style = "border : 0.5px dashed #000;")
+		div.row
+			div.column(style = 'width:60%')
+				h3(style = 'text-decoration:underline;') PREVIEW PERMINTAAN ORDER JASA
+				table(style="width : 100% !important;font-size : 14px;").table
+					tbody
+						tr 
+							td(width = '20%') Nama :
+							td #{dataTrx&&dataTrx.customer?dataTrx.customer.nama:''}
+							td(align = 'right') No. Order:
+							td(width = '20%') #{dataTrx&&dataTrx.no_order?dataTrx.no_order:''}
+						tr 
+							td(width = '20%') Alamat :
+							td #{dataTrx&&dataTrx.customer?dataTrx.customer.alamat:'-'}
+							td(align = 'right') Tgl Order :
+							td(width = '20%') #{tanggal}
+						tr 
+							td(width = '20%') No Telp :
+							td #{dataTrx&&dataTrx.customer?dataTrx.customer.telp:'-'}
+				hr(style = "border : 0.5px dashed #000;")
+				table(style="width : 100% !important;font-size : 14px;").table
+					tbody
+						tr
+							td(style = 'width : 9%;') Spesifikasi Pemesanan 
+							td(style = 'width : 1%;') :
+							td(style = 'width : 30%;') #{dataTrx&&dataTrx.spesifikasi_pemesanan?dataTrx.spesifikasi_pemesanan:'-'}
+						tr
+							td Jumlah Plat 
+							td :
+							td #{dataTrx&&dataTrx.qty?dataTrx.qty:'-'}
+						tr
+							td Tebal Plat
+							td :
+							td #{dataTrx&&dataTrx.tebal?dataTrx.tebal.toString():'-'}
+						tr
+							td Ukuran
+							td :
+							td #{dataTrx&&dataTrx.lebar} x #{dataTrx&&dataTrx.panjang}
+						tr
+							td Keterangan
+							td :
+							td #{dataTrx&&dataTrx.keterangan}
+						tr
+							td 
+								b Biaya Jasa
+							td :
+							td 
+								b #{biayaJasa}
+				hr(style = "border : 0.5px dashed #000;")
+				table(style="width : 100% !important;font-size : 14px;").table
+					tbody
+						tr
+							td(align = 'right' width = '5%') Jenis Plat
+							td(width = '25%')
+								div.checkbox
+									label
+										if (dataTrx&&dataTrx.sni)
+											input(type = 'checkbox' checked)
+										else 
+											input(type = 'checkbox')
+										span.label-checkbox SNI
+						tr
+							td(align = 'right' width = '5%')
+							td(width = '15%')
+								div.checkbox
+									label
+										if (dataTrx&&dataTrx.non_sni)
+											input(type = 'checkbox' checked)
+										else 
+											input(type = 'checkbox')
+										span.label-checkbox NON SNI
+				hr(style = "border : 0.5px dashed #000;")
+				
+
+			div.column(style = 'width:40%')
+				h3 Design Plat
+				div(style = 'width : 100p%;')
+					img(alt="Image Plat" width="500" height="300" src = `${dataTrx&&dataTrx.img_path?'/uploads/product/'+dataTrx.img_path:''}`)

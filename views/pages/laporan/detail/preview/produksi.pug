@@ -1,0 +1,52 @@
+div
+	div(style="padding: 10px; display: flex; flex-wrap: wrap; margin-right: -15px; margin-left: -15px;")
+		div(style = "width : 50%;")
+			h5 #{title}
+			br
+			hr(style="border-color: rgb(0, 0, 0); margin: -16px 0px 10px;")
+			table#tableHeader(style="width: 100%; border-spacing: 5px;")
+				tbody
+					tr
+						td(width = "30%") TANGGAL AWAL
+						td(width = '1%') : 
+						td #{tgl_awal}
+					tr
+						td TANGGAL AKHIR
+						td(width = '10%') :
+						td #{tgl_akhir}
+
+	.row
+		div(class="col-lg-12 col-md-12 col-xs-12 col-sm-12")
+			table(id = "tableContent" class="table table-scroll" style="width: 100%; border-spacing: 5px;")
+				thead
+					tr
+						th(width="10%" style="border-bottom: 2px solid rgb(0, 0, 0);") NO. ORDER
+						th(width="30%" style="border-bottom: 2px solid rgb(0, 0, 0);") TRANSAKSI
+						th(style="border-bottom: 2px solid rgb(0, 0, 0);") TGL ORDER
+						th(style="border-bottom: 2px solid rgb(0, 0, 0);") TGL PENGERJAAN
+						th(style="border-bottom: 2px solid rgb(0, 0, 0);") TGL JADI
+						th(style="border-bottom: 2px solid rgb(0, 0, 0);") PEMESAN
+						th(style="border-bottom: 2px solid rgb(0, 0, 0);") STATUS
+				tbody
+					each d in data
+						tr
+							td(align = 'center') 
+								b #{d.no_order}
+							td
+								small
+									b #{d.transaksi}
+									br
+									| Jml Order : #{d.jml_order}
+									br
+									| Qty : #{d.qty}
+									br
+									| Tebal : #{d.tebal}
+									br
+									| Ukuran : #{d.ukuran}
+							td #{d.tgl_order}
+							td #{d.tgl_pengerjaan}
+							td #{d.tgl_jadi}
+							td #{d.customer}
+							td 
+								center
+									small(class = d.status==0?'':d.status==1?'badge bg-color-orange':d.status==2?'badge bg-color-blueLight':d.status==3?'badge bg-color-greenLight':'badge bg-color-red') #{d.labelStatus}

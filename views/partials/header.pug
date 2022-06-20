@@ -1,0 +1,14 @@
+header(id = "header")
+	div#logo-group(style="padding: 5px;")
+		img(src="/img/logo1.png" width="100%")
+	
+	div.pull-right
+		div(id="hide-menu" class="btn-header pull-right")
+			span
+				a(href="javascript:void(0);" data-action="toggleMenu" title="Collapse Menu")
+					i(class="fa fa-reorder")
+
+	div(id = "logout" class = "btn-header transparent pull-right")
+		span
+			a(href = "/user/logout" title = "Sign Out" data-action = "userLogout" data-logout-msg = "You can improve your security further after logging out by closing this opened browser")
+				i(class="fa fa-sign-out")

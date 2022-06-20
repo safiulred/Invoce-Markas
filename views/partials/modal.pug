@@ -1,0 +1,46 @@
+div#componentModal1
+	div.col-lg-12.col-md-12.col-sm-12.col-xs-12
+		div.modal.fade#modal_All(data-backdrop="static")
+			div.modal-dialog.container
+				div.modal-content.modal-admin
+					div.modal-header
+						button.close(data-dismiss='modal',aria-label="Close")
+							span(aria-hidden="true") &times;
+						h2.modal-title
+							p(style="text-align : center")#judul
+					div.modal-body
+						div#kosong
+						div#AllModal
+							
+					div.modal-footer
+
+div#componentModal2
+	div.col-lg-12.col-md-12.col-sm-12.col-xs-12
+		div.modal.fade#modal_All2(data-backdrop="static")
+			div.modal-dialog.container
+				div.modal-content.modal-admin
+					div.modal-header
+						button.close(data-dismiss='modal',aria-label="Close")
+							span(aria-hidden="true") &times;
+						h2.modal-title
+							p(style="text-align : center")#judul
+					div.modal-body
+						div#kosong
+						div#AllModal
+							
+					div.modal-footer
+
+//- MODAL CETAK LARGE
+div#modalBig(class="modal fade" style="position: fixed;left: 0;right: 0;top: 0;bottom: 0;background-color: rgba(255, 255, 255, 0.75);z-index: 99999;" tabindex="-1" role="dialog" aria-labelledby="modal-group" aria-hidden="true")
+	div(class="modal-dialog modal-dialog-centered modal-xl" role="document" style = 'width : 90% !important;')
+		.modal-content
+			div(class="modal-header" style="background-color: rgb(236, 240, 241);")
+				.pull-left
+					button(onclick="printPriview();" style="margin-right: 10px;" class="btn btn-primary" type="button") PRINT PREVIEW
+				button.close(type="button" data-dismiss="modal")
+					span(aria-hidden="true") x
+			.modal-body
+				#content-cetak
+
+
+

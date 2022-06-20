@@ -1,0 +1,67 @@
+mixin rupiah(n)
+	- var hg = "Rp. "+ (n/1000).toFixed(3).replace(/(\d)(?=(\d{3})+\.)/g, "$1.");
+	td #{hg}
+
+div.container-fluid
+	div.row
+	div.div.form-horizontal
+		div.col-md-6
+			div.form-group
+				label.control-label.col-md-4.text-left ID Transaksi
+				div.col-md-6
+					label.control-label #{trx&&trx._id?trx._id.toString().toUpperCase():''}
+			div.form-group
+				label.control-label.col-md-4.text-left Pelanggan
+				div.col-md-6
+					label.control-label #{trx&&trx.customer&&trx.customer.nama?trx.customer.nama:''}
+		div.col-md-6
+			div.form-group
+				label.control-label.col-md-4.text-left Tanggal
+				div.col-md-6
+					label.control-label #{tanggal}
+	br
+	br
+	br
+	div.row
+		div.col-lg-12
+			div(style = "height : 300px;overflow:scroll;")
+				table.table.table-bordered#cartTable
+					thead
+						tr
+							th Nama Barang
+							th Jumlah
+							th Harga Jual
+							th Total
+					tbody
+						- var tot_jum = 0
+						- var tot_jual = 0
+						- var tot_harga = 0
+						each d in details
+							- tot_jum +=d.qty
+							- tot_jual += parseInt(d.harga_jual)
+							- tot_harga += parseInt(d.total_harga)
+							tr
+								td 
+									small
+										b KODE :#{d&&d.barang&&d.barang.kode?d.barang.kode:''}
+										br
+										b NAMA : #{d&&d.barang&&d.barang.nama?d.barang.nama:''}
+										br
+										b TEBAL : #{d&&d.tebal?d.tebal.toString():''}
+										if (d&&d.product == 2)
+											br
+											b UKURAN : #{d&&d.lebar?d.lebar:''} x #{d&&d.panjang?d.panjang:''}
+
+								td #{d.qty}
+								+rupiah(d.harga_jual)
+								+rupiah(d.total_harga)
+					tfoot
+						tr
+							th(align="right")
+								span(style="text-align:right; font-weight : bold;") Total
+							td 
+								b #{tot_jum}
+							td
+								b Rp. #{(tot_jual/1000).toFixed(3).replace(/(\d)(?=(\d{3})+\.)/g, "$1.")}
+							td
+								b Rp. #{(tot_harga/1000).toFixed(3).replace(/(\d)(?=(\d{3})+\.)/g, "$1.")}

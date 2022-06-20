@@ -1,0 +1,247 @@
+style.
+	.tt-query {
+		width : 100% !important;
+	}
+div.container-fluid#container
+	div.row
+		ul(class = 'nav nav-tabs')#widget-tab-1
+			li.active
+				a(data-toggle="tab" href = '#hr1' aria-expanded="false")
+					span(class = 'hidden-mobile hidden-tablet') Barang Utuh
+			li
+				a(data-toggle="tab" href = '#hr2' aria-expanded="false")
+					span(class = 'hidden-mobile hidden-tablet') Barang Pecahan
+
+		div(role = 'content')
+			div(class = 'tab-content')
+				br
+				div(class = 'tab-pane fade active in')#hr1
+					div.form-horizontal#formCariA
+						div.col-md-6
+							div.input-group
+								select.form-control#cmdKategoriA(onChange = "cariProductA(this, '"+number+"')")
+									option(value = "") pilih kategori
+									each list in categories
+										option(value=list._id)= list.nama
+								span.input-group-addon.btn.btn-xs.btn-success(onclick='cariProductA(this, "'+number+'")')
+									i.fa.fa-search
+					br
+					div.row
+						div.col-lg-12
+							br
+							div(style = "height : 300px;overflow:scroll;")
+								table.table.table-bordered
+									thead
+										tr
+											th No
+											th Nama
+											th Kategori
+											th
+									tbody#tbodyCariA
+										each p, index in products
+											tr(id = p._id)
+												td #{index+1}
+												td
+													small
+														b KODE : #{p.barang&&p.barang.kode?p.barang.kode:'-'}
+														br
+														b NAMA : #{p.barang&&p.barang.nama?p.barang.nama:'-'}
+														br
+														b TEBAL : #{p.tebal.toString()}
+														br
+														b STOK : #{p.stock}
+												td #{p.category&&p.category.nama?p.category.nama:''}
+												td
+													center
+														button(data-id = p._id class = "btn btn-xs btn-success" data-obj = JSON.stringify(p) onClick = 'checkBarang(this)')
+															i.fa.fa-check
+
+				div(class = 'tab-pane fade')#hr2
+					div.form-horizontal#formCariB
+						div.col-md-4
+							input.form-control#inputLebar(placeholder = 'Input Lebar')
+						div.col-md-4
+							input.form-control#inputPanjang(placeholder = 'Input Panjang')
+						div.col-md-4
+							div.input-group
+								select.form-control#cmdKategoriB(onChange = "cariProductB(this, '"+number+"')")
+									option(value = "") pilih kategori
+									each list in categories
+										option(value=list._id)= list.nama
+								span.input-group-addon.btn.btn-xs.btn-success(onclick='cariProductB(this, "'+number+'")')
+									i.fa.fa-search
+					br
+					.row
+						div.col-lg-12
+							br
+							div(style = "height : 300px;overflow:scroll;")
+								table.table.table-bordered
+									thead
+										tr
+											th No
+											th Nama
+											th Kategori
+											th
+									tbody#tbodyCariB
+										each pc, index in produkPecah
+											tr(id = pc._id)
+												td #{index+1}
+												td
+													small
+														b KODE : #{pc.barang&&pc.barang.kode?pc.barang.kode:'-'}
+														br
+														b NAMA : #{pc.barang&&pc.barang.nama?pc.barang.nama:'-'}
+														br
+														b TEBAL : #{pc.tebal.toString()}
+														br
+														b STOK : #{pc.stock}
+														br
+														b UKURAN : #{pc.lebar} x #{pc.panjang}
+												td #{pc.category&&pc.category.nama?pc.category.nama:''}
+												td
+													center
+														button(data-id = pc._id class = "btn btn-xs btn-success" data-obj = JSON.stringify(pc) onClick = 'checkBarang(this)')
+															i.fa.fa-check
+
+
+
+script.
+	pageSetUp();
+
+	function cariProductB(element, number) {
+		var id_category = $("#cmdKategoriB").val();
+		var inputLebar = $('#inputLebar').val();
+		var inputPanjang = $('#inputPanjang').val();
+		$.ajax({
+			url : '/transaksi/order/prosesCari2',
+			type : 'POST',
+			data : { id_category : id_category, lebar : inputLebar, panjang : inputPanjang },
+			dataType : 'json',
+			beforeSend : function() {
+				console.log("Sedang Mengirim Data");
+			},
+			success : function(msg) {
+				var selector = $("#tbodyCariB");
+				console.log(msg);
+				if (msg.status == 200 ) {
+					var datas = msg.data;
+					var elmt = "";
+					var i = 1;
+					datas.forEach(function (r){
+						elmt += `<tr data-id = '${r._id}'>`;
+
+						elmt += `<td>${i}</td>`;
+						elmt += `
+							<td>
+								<small>
+									<b>KODE : ${r.barang&&r.barang.kode?r.barang.kode:'-'}</b>
+									<br/>
+									<b>NAMA : ${r.barang&&r.barang.nama?r.barang.nama:'-'}</b>
+									<br/>
+									<b>TEBAL : ${r.tebal}</b>
+									<br/>
+									<b>STOK : ${r.stock}</b>
+									<br/>
+									<b>UKURAN : ${r.lebar}x${r.panjang}</b>
+								</small>
+							</td>
+						`;
+						elmt += `<td>${r.category&&r.category.nama?r.category.nama:'-'}</td>`;
+						elmt += `
+							<td>
+								<center>
+									<button data-id = '${r._id}' class = 'btn btn-xs btn-success' data-obj = '${JSON.stringify(r)}' onclick = 'checkBarang(this);'>
+										<i class = 'fa fa-check'></i>
+									</button>
+								</center>
+							</td>
+						`;
+
+						elmt += `</tr>`;
+					});
+
+					selector.html(elmt);
+				} else {
+					$.smallBox({
+						title : "Peringatan",
+						content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+						color : "#C46A69",
+						iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+						timeout : 1000
+					});
+				}
+			}
+		});
+	}
+
+	function cariProductA(element, number) {
+		var id_category = $("#cmdKategoriA").val();
+		$.ajax({
+			url : '/transaksi/order/prosesCari',
+			type : 'POST',
+			data : { id_gudang : '', id_category : id_category },
+			dataType : 'json',
+			beforeSend : function() {
+				console.log("Sedang Mengirim Data");
+			},
+			success : function(msg) {
+				var selector = $("#tbodyCariA");
+				console.log(msg);
+				if (msg.status == 200 ) {
+					var datas = msg.data;
+					var elmt = "";
+					var i = 1;
+					datas.forEach(function (r){
+						elmt += `<tr data-id = '${r._id}'>`;
+
+						elmt += `<td>${i}</td>`;
+						elmt += `
+							<td>
+								<small>
+									<b>KODE : ${r.barang&&r.barang.kode?r.barang.kode:'-'}</b>
+									<br/>
+									<b>NAMA : ${r.barang&&r.barang.nama?r.barang.nama:'-'}</b>
+									<br/>
+									<b>TEBAL : ${r.tebal}</b>
+									<br/>
+									<b>STOK : ${r.stock}</b>
+									<br/>
+								</small>
+							</td>
+						`;
+						elmt += `<td>${r.category&&r.category.nama?r.category.nama:'-'}</td>`;
+						elmt += `
+							<td>
+								<center>
+									<button data-id = '${r._id}' class = 'btn btn-xs btn-success' data-obj = '${JSON.stringify(r)}' onclick = 'checkBarang(this);'>
+										<i class = 'fa fa-check'></i>
+									</button>
+								</center>
+							</td>
+						`;
+
+						elmt += `</tr>`;
+					});
+
+					selector.html(elmt);
+				} else {
+					$.smallBox({
+						title : "Peringatan",
+						content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+						color : "#C46A69",
+						iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+						timeout : 1000
+					});
+				}
+			}
+		});
+	}
+
+	function checkBarang(selector) {
+		var params = $(selector).attr('data-obj');
+		params = params?JSON.parse(params):null;
+		console.log('[PARAMS] ', params);
+		$(".close").click();
+		chooseProduct(params);
+	}
+

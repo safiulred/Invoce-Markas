@@ -1,0 +1,133 @@
+div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
+	header(role = 'heading')
+		div.jarviswidget-ctrls
+			a(class = 'button-icon jarviswidget-toggle-btn' href = 'javascript:void(0);' rel = 'tooltip' data-placement = 'bottom' data-original-title = 'Tutup' onclick="return closeForm('#formEditable');")#btnCloseForm
+				i.fa.fa-times
+		span.widget-icon
+			i.fa.fa-pencil
+		h2 Tambah / Edit Barang
+	div
+		div.jarviswidget-editbox
+		div(class='widget-body no-padding')
+			form.form-horizontal#formBarang
+				div.form-group
+					input#fId(type="hidden", name="_id" value = type=="edit"?barang._id:"").form-control
+				div.form-group
+					label(for = "kodeBarang").control-label.col-lg-3 Kode Barang
+					div.col-lg-7
+						input.form-control#kodeBarang(type="text" value = type=="edit"? barang.kode : "")
+						small Format: [kode_label][nomor_barang][urutan]
+						small
+							ul
+								li [kode_label] - kode huruf 
+								li [nomor_barang] - sesuai dengan nomor yang diberikan owner
+								li [urutan] - nomor urutan barang
+						small Ex: LCT00001
+				div.form-group
+					label(for = "namaBarang").control-label.col-lg-3 Nama
+					div.col-lg-7
+						input.form-control#namaBarang(type="text" value = type=="edit"? barang.nama : "")
+				div.form-group
+					label.control-label.col-lg-3(for = 'categoryBarang') Kategori
+					div.col-lg-7
+						select.form-control#categoryBarang
+							option(value = "") Pilih Kagetori
+							each c in categories
+								option(value = c._id selected= type==='add'?false:c._id==barang.category.toString() ? true : false)  #{c.nama}
+				div.form-group
+					label.control-label.col-lg-3 Status
+					div.col-lg-7
+						select.form-control#statusBarang
+							option(value="true" selected= type ==='add' ? false : barang.active===true ? true : false) Aktif
+							option(value="false" selected= type ==='add' ? false : barang.active===false ? true : false) Tidak Aktif
+				div.form-group
+					div.col-lg-7.col-lg-offset-3
+						button#submitBarang(type="submit" class="btn btn-sm btn-primary")
+							i.icon-save
+							span  Simpan
+						button#batal(type="button" onclick="return closeForm('#formEditable');" style="margin-left : 10px;" class="btn btn-outline-danger btn-sm")
+							span Batal
+
+script.
+	$(function (){
+		$('#kodeBarang').focus();
+
+		$("#formEditable form#formBarang").submit(function() {
+			let selector = $('#submitBarang');
+			selector.attr('disabled', true);
+			var categoryBarang = $('#categoryBarang').val();
+			var kodeBarang = $('#kodeBarang').val();
+			var namaBarang = $('#namaBarang').val();
+			var statusBarang = $('#statusBarang').val();
+
+			if (kodeBarang == "" || namaBarang == "" || categoryBarang == "" || statusBarang == "") {
+				selector.attr('disabled', false);
+				$.smallBox({
+					title: 'Peringantan',
+					content : "<i class='fa fa-clock-o'></i> <i>Maaf, Data Masih Belum Lengkap</i>",
+					color : "#C46A69",
+					iconSmall : "fa fa-times fa-1x fadeInRight animated",
+					timeout : 1000
+				});
+			} else {
+				let dataToSend = {
+					id : $("#fId").val(),
+					kode : kodeBarang,
+					nama : namaBarang,
+					category : categoryBarang,
+					status : statusBarang,
+				}
+
+				saveData(dataToSend, $('#formEditable').attr('data-action'), selector);
+			}
+
+			return false;
+		});
+	});
+
+	function saveData(data, action, selector) {
+		$.ajax({
+			url : action == 'edit' ? '/master/barang/update' : '/master/barang/save',
+			method: 'POST',
+			header: {
+				'Content-Type' : 'application/json'
+			},
+			data : data,
+			beforeSend: function() {
+				console.log('Loading...')
+			},
+			success: function(msg) {
+				selector.attr('disabled', false);
+				refreshData();
+				if (msg.status == 200) {
+					$.smallBox({
+						title: 'Success',
+						content : "<i class='fa fa-clock-o'></i> <i>Barang Process Successfull</i>",
+						color : "#659265",
+						iconSmall : "fa fa-check fa-1x fadeInRight animated",
+						timeout : 1000
+					});
+					$("#btnCloseForm").trigger("click");
+				} else {
+					$.smallBox({
+						title : "Peringatan",
+						content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+						color : "#C46A69",
+						iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+						timeout : 1000
+					});
+				}
+			},
+			error : function (xhr, ajaxOptions, thrownError) {
+				selector.attr('disabled', false);
+				refreshData();
+				$.smallBox({
+					title : "Peringatan",
+					content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+					color : "#C46A69",
+					iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+					timeout : 1000
+				});
+			},
+		});
+	}

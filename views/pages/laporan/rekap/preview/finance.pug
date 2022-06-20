@@ -1,0 +1,55 @@
+div
+	div(style="padding: 10px; display: flex; flex-wrap: wrap; margin-right: -15px; margin-left: -15px;")
+		div(style = "width : 50%;")
+			h5 #{title}
+			br
+			hr(style="border-color: rgb(0, 0, 0); margin: -16px 0px 10px;")
+			table#tableHeader(style="width: 100%; border-spacing: 5px;")
+				tbody
+					tr
+						td(width = "30%") TANGGAL AWAL
+						td(width = '1%') : 
+						td #{tgl_awal}
+					tr
+						td TANGGAL AKHIR
+						td(width = '10%') :
+						td #{tgl_akhir}
+
+	.row
+		div(class="col-lg-12 col-md-12 col-xs-12 col-sm-12")
+			table(id = "tableContent" class="table table-scroll" style="width: 100%; border-spacing: 5px;")
+				thead
+					tr
+						td(width="10%" style="border-bottom: 2px solid rgb(0, 0, 0);") 
+							b NO
+						td(style="border-bottom: 2px solid rgb(0, 0, 0);") 
+							b TANGGAL
+						td(style="border-bottom: 2px solid rgb(0, 0, 0);" align = 'right') 
+							b TAGIHAN
+						td(style="border-bottom: 2px solid rgb(0, 0, 0);" align = 'right') 
+							b SISA BAYAR
+						td(style="border-bottom: 2px solid rgb(0, 0, 0);" align = 'right') 
+							b TOTAL BAYAR
+				tbody
+					each d in data
+						tr
+							td(align = 'center') 
+								b #{d.no}
+							td #{d.tanggal}
+							td(align = 'right')
+								b #{d.tagihan}
+							td(align = 'right') 
+								b #{d.sisa_bayar}
+							td(align = 'right') 
+								b #{d.total_bayar}
+				tfoot
+					tr
+					tr
+						td(align = 'right' colspan = "2") 
+							b TOTAL
+						td(align = 'right')
+							b #{totalTagihan}
+						td(align = 'right')
+							b #{totalSisa}
+						td(align = 'right')
+							b #{totalBayar}

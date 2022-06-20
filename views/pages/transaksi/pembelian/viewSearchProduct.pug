@@ -1,0 +1,123 @@
+style.
+	.tt-query {
+		width : 100% !important;
+	}
+div.container-fluid#container
+	div.row
+	div.form-horizontal#formCari
+		div#prosesCari
+		div.col-md-6
+			input#searchNama(type = 'text' placeholder="Nama Barang" class='form-control' required onkeyup='cari(event, this, "'+number+'")')
+			br
+			small(style='font-size:10px')
+				strong Tips
+				| Tekan Enter Untuk Pencarian
+		div.col-md-6
+			div.input-group
+				select.form-control#cmdKategori(onChange = "cariB('"+number+"')")
+					option(value = "") pilih kategori
+					each list in categories
+						option(value=list._id)= list.nama
+				span.input-group-addon.btn.btn-xs.btn-success(onclick='cariB("'+number+'")')
+					i.fa.fa-search
+
+	br
+	div.row
+		div.col-lg-12
+			br
+			div(style = "height : 300px;overflow:scroll;")
+				table.table.table-bordered
+					thead
+						tr
+							th No
+							th Kode Barang
+							th Nama
+							th Kategori
+							th
+					tbody#tbodyCari
+						each b, index in barang
+							tr(id = b._id)
+								td #{index+1}
+								td#kodeBarang #{b.kode}
+								td#namaBarang #{b.nama}
+								td#categoryBarang #{b.category&&b.category.nama?b.category.nama:''}
+								td
+									center
+										button(data-id = b._id class = "btn btn-xs btn-success" data-obj = JSON.stringify(b) onClick = 'checkBarang(this)')
+											i.fa.fa-check
+
+script.
+	pageSetUp();
+
+	$(function () {
+		$("#searchNama").typeahead({
+			prefetch : '/transaksi/pembelian/dataAutoKomplet'
+		});
+	});
+
+	function cari(e, elemet, number) {
+		cariProductP(elemet.value, number);
+	};
+
+	function cariB(number) {
+		cariProductP($("#searchNama").val(), number);
+	}
+
+	function cariProductP(key, number) {
+		var id_category = $("#cmdKategori").val();
+		$.ajax({
+			url : '/transaksi/pembelian/prosesCari',
+			type : 'POST',
+			data : { kode : key, id_category : id_category },
+			dataType : 'json',
+			beforeSend : function() {
+				console.log("Sedang Mengirim Data");
+			},
+			success : function(msg) {
+				var selector = $("#tbodyCari");
+				//- selector.html("");
+				if (msg.status == 200 ) {
+					var datas = msg.data;
+					var elmt = "";
+					var i = 1;
+					datas.forEach(function (r){
+						elmt += `<tr data-id = '${r._id}'>`;
+
+						elmt += `<td>${i}</td>`;
+						elmt += `<td id = 'kodeBarang'>${r.kode}</td>`;
+						elmt += `<td id = 'namaBarang'>${r.nama}</td>`;
+						elmt += `<td id = 'categoryBarang'>${r.category&&r.category.nama?r.category.nama:'-'}</td>`;
+						elmt += `
+							<td>
+								<center>
+									<button data-id = '${r._id}' class = 'btn btn-xs btn-success' data-obj = '${JSON.stringify(r)}' onclick = 'checkBarang(this);'>
+										<i class = 'fa fa-check'></i>
+									</button>
+								</center>
+							</td>
+						`;
+
+						elmt += `</tr>`;
+					});
+
+					selector.html(elmt);
+				} else {
+					$.smallBox({
+						title : "Peringatan",
+						content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+						color : "#C46A69",
+						iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+						timeout : 1000
+					});
+				}
+			}
+		});
+	}
+
+	function checkBarang(selector) {
+		var params = $(selector).attr('data-obj');
+		params = params?JSON.parse(params):null;
+		console.log('[PARAMS] ', params);
+		$(".close").click();
+		chooseProduct(params);
+	}

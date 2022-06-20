@@ -1,0 +1,28 @@
+doctype html
+html
+	head
+		title #{title}
+
+		//- include head.pug
+		include ./partials/head.pug
+
+	body(class="smart-style-3")
+		//- include header.pug
+		include ./partials/header.pug
+
+		//- include sidebar.pug
+		include ./partials/sidebar.pug
+
+		div#main(role = "main")
+			div(id = "ribbon")
+				ol(class="breadcrumb")
+
+			div#content
+
+			include ./partials/modal.pug
+
+		//- include footer
+		include ./partials/footer.pug
+
+		//- include script.js
+		include ./partials/script.pug

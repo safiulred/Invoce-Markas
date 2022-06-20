@@ -1,0 +1,226 @@
+div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
+	header(role = 'heading')
+		div.jarviswidget-ctrls
+			a(class = 'button-icon jarviswidget-toggle-btn' href = 'javascript:void(0);' rel = 'tooltip' data-placement = 'bottom' data-original-title = 'Tutup' onclick="return closeForm('#formEditable');")#btnCloseForm
+				i.fa.fa-times
+		span.widget-icon
+			i.fa.fa-pencil
+		h2 Form Faktur Pembayaran
+	div
+		div.jarviswidget-editbox
+		div(class='widget-body no-padding')
+			form.form-horizontal#formInvoice
+				div.form-group
+					input#fId(type="hidden", name="_id" value = id).form-control
+				div.form-group
+					label(for = "noOrder").control-label.col-lg-4 No. Order
+					div.col-lg-7
+						div.input-group
+							input.form-control#noOrder(type="text" value = type=="edit"?data.no_order:'' disabled = type=="edit"?true:false)
+							if (type == "add")
+								span.input-group-addon.btn.btn-xs(onClick = "return pencarianFaktur('700px');")
+									i.fa.fa-search
+				div.form-group
+					label(for = "noFaktur").control-label.col-lg-4 No. Faktur
+					div.col-lg-7
+						input.form-control#noFaktur(type="text" value = type=="edit"?data.no_faktur:'' disabled = type=="edit"?true:false)
+				div.form-group
+					label(for = "tagihanOrder").control-label.col-lg-4 Tagihan
+					div.col-lg-7
+						input.form-control#tagihanOrder(type="text" readony disabled value = type=="edit"? tagihan : "")
+				div.form-group
+					label(for = "uangBayar").control-label.col-lg-4 Uang Bayar
+					div.col-lg-7
+						input.form-control#uangBayar(type="number")
+				div.form-group
+					label(for = "tglBayar").control-label.col-lg-4 Tgl Bayar
+					div.col-lg-7
+						input.form-control.datepicker#tglBayar(type="text" data-dateformat = "yy-mm-dd" value = type=="edit"?tgl_bayar:'')
+				div.form-group
+					div.col-lg-4
+					div.col-lg-7.col-lg-offset-4
+						button#submitFaktur(type="button" class="btn btn-sm btn-primary")
+							i.icon-save
+							span  Submit
+						button#batal(type="button" onclick="return closeForm('#formEditable');" style="margin-left : 10px;" class="btn btn-danger btn-sm")
+							span Tutup
+
+script.
+	pageSetUp();
+
+	function pencarianFaktur(width) {
+		$('div#componentModal1 div#AllModal').html('');
+		$('div#componentModal1 .modal-admin').css('width', width);
+		$('div#componentModal1 .modal-dialog').css('width', width);
+		$('div#componentModal1 div#modal_All').modal('show');
+		$('div#componentModal1 div#modal_All div#kosong').html('');
+		$('div#componentModal1 div#modal_All h2.modal-title p ').text("Pencarian Faktur Pesanan");
+		$('div#componentModal1 div#AllModal').load(`/transaksi/faktur/viewSearch`);
+	}
+
+	function searchOrder(selector) {
+		var no_order = $('#noOrder').val();
+		//- var jenisTrx = $('#jenisTrx').val();
+		$('#submitFaktur').attr('disabled', true);
+		if (no_order== "") {
+			$('#submitFaktur').attr('disabled', false);
+			$.smallBox({
+				title: 'Peringantan',
+				content : "<i class='fa fa-clock-o'></i> <i>Maaf, No Order / Jenis Transaksi Masik Kosong</i>",
+				color : "#C46A69",
+				iconSmall : "fa fa-times fa-1x fadeInRight animated",
+				timeout : 1000
+			});
+		} else {
+			var params = {
+				no_order : no_order
+			}
+			console.log('[PARAMS] ', params);
+
+			$.ajax({
+				url : '/transaksi/faktur/search-order',
+				method: 'POST',
+				header: {
+					'Content-Type' : 'application/json'
+				},
+				data : params,
+				beforeSend: function() {
+					console.log('Loading...')
+				},
+				success : function (msg) {
+					$('#submitFaktur').attr('disabled', false);
+					console.log('[RESULT] ', msg);
+					if (msg.status == 200) {
+						$('#tagihanOrder').val(msg.tagihan);
+						$('form#formInvoice').attr('data-id' , msg.id_trx);
+						$('form#formInvoice').attr('data-type' , msg.type);
+					} else {
+						$('#tagihanOrder').val("");
+						$.smallBox({
+							title : "Peringatan",
+							content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+							color : "#C46A69",
+							iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+							timeout : 3000
+						});
+					}
+				},
+				error : function (xhr, ajaxOptions, thrownError) {
+					$('#submitFaktur').attr('disabled', false);
+					$('#tagihanOrder').val("");
+					$.smallBox({
+						title : "Peringatan",
+						content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+						color : "#C46A69",
+						iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+						timeout : 3000
+					});
+				},
+			});
+		}
+	}
+
+	$(function (){
+		$('#noOrder').focus();
+
+		$('.datepicker').datepicker({
+			defaultDate : new Date(),
+			dateFormat : 'yy-mm-dd'
+		});
+
+		$('#cetakFaktur').click(function(e) {
+			e.preventDefault();
+			$(this).attr('disabled', true);
+			var id = $(this).attr('data-id');
+			cetakStrukFaktur(id);
+			setTimeout(function (){
+				$(this).attr('disabled', false);
+			}, 1000);
+		});
+
+		$("#submitFaktur").click(function (e){
+			e.preventDefault();
+			e.preventDefault();
+			var selector = $(this);
+			var noOrder = $('#noOrder').val();
+			var noFaktur = $('#noFaktur').val();
+			var tagihan = $('#tagihanOrder').val();
+			var uangBayar = $('#uangBayar').val();
+			var tglBayar = $('#tglBayar').val();
+			var id_trx = $('form#formInvoice').attr('data-id');
+			var type_trx = $('form#formInvoice').attr('data-type');
+			selector.attr('disabled', true);
+
+			if (noOrder == "" || noFaktur == "" || uangBayar == "" || tglBayar == "") {
+				selector.attr('disabled', false);
+				$.smallBox({
+					title: 'Peringantan',
+					content : "<i class='fa fa-clock-o'></i> <i>Maaf, Data Masih Belum Lengkap</i>",
+					color : "#C46A69",
+					iconSmall : "fa fa-times fa-1x fadeInRight animated",
+					timeout : 1000
+				});
+			} else {
+				var dataToSend = {
+					id : $('#fId').val(),
+					type : type_trx,
+					no_order : noOrder,
+					no_faktur : noFaktur,
+					tagihan : tagihan,
+					uang_bayar : uangBayar,
+					tgl_bayar : tglBayar,
+					id_trx : id_trx,
+				}
+
+				console.log('[DATA SEND] ', dataToSend);
+				saveData(dataToSend, $('#formEditable').attr('data-action'), selector);
+			}
+		});
+	});
+
+	function saveData(data, action, selector) {
+		$.ajax({
+			url : action == 'edit' ? '/transaksi/faktur/update' : '/transaksi/faktur/save',
+			method: 'POST',
+			header: {
+				'Content-Type' : 'application/json'
+			},
+			data : data,
+			beforeSend: function() {
+				console.log('Loading...')
+			},
+			success: function(msg) {
+				selector.attr('disabled', false);
+				refreshData();
+				if (msg.status == 200) {
+					$.smallBox({
+						title: 'Success',
+						content : `<i class='fa fa-clock-o'></i> <i>${msg.message}</i>`,
+						color : "#659265",
+						iconSmall : "fa fa-check fa-1x fadeInRight animated",
+						timeout : 3000
+					});
+					$("#btnCloseForm").trigger("click");
+				} else {
+					$.smallBox({
+						title : "Peringatan",
+						content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+						color : "#C46A69",
+						iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+						timeout : 3000
+					});
+				}
+			},
+			error : function (xhr, ajaxOptions, thrownError) {
+				selector.attr('disabled', false);
+				refreshData();
+				$.smallBox({
+					title : "Peringatan",
+					content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+					color : "#C46A69",
+					iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+					timeout : 3000
+				});
+			},
+		});
+	}

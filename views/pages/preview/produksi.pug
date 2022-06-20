@@ -1,0 +1,107 @@
+style.
+	* {
+		box-sizing: border-box;
+	}
+	body {
+		background-color: #fff;
+	}
+	table > thead > tr > th {
+		background-color : #bdc3c7 !important;
+	}
+	/* Create two equal columns that floats next to each other */
+	.column {
+		float: left;
+		width: 50%;
+		padding: 10px;
+	}
+	/* Clear floats after the columns */
+	.row:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+	img {
+		width: 100%; /* or any custom size */
+		height: 230px;
+		cursor : pointer;
+	}
+
+div.row
+	div.col-lg-5
+		center
+			div(style = "line-height : 20px; margin-top : 10px;")
+				h2(style = "font-size : 25px;") #{general&&general.toko?general.toko:''}
+				p 
+					span #{general&&general.alamat?general.alamat:''}
+					br
+					span 
+						i.fa.fa-phone &nbsp;
+						| #{general&&general.telp?general.telp:''} &nbsp; &nbsp;
+						i.fa.fa-envelope &nbsp;
+						| #{general&&general.email?general.email:''}
+
+		hr(style = "border : 0.5px dashed #000;")
+		div.row
+			div.column(style = 'width:60%')
+				h3(style = 'text-decoration:underline;') TANDA TERIMA PRODUKSI BARANG
+				table(style="width : 100% !important;font-size : 14px;").table
+					tbody
+						tr 
+							td(width = '20%') Nama :
+							td #{dataTrx&&dataTrx.customer?dataTrx.customer.nama:''}
+							td(align = 'right') No. Order :
+							td(width = '20%') #{dataTrx&&dataTrx.no_order?dataTrx.no_order:''}
+						tr 
+							td(width = '20%') Alamat :
+							td #{dataTrx&&dataTrx.customer?dataTrx.customer.alamat:'-'}
+							td(align = 'right') Tgl Mulai Produksi :
+							td(width = '20%') #{tgl_pengerjaan}
+						tr 
+							td(width = '20%') No Telp :
+							td #{dataTrx&&dataTrx.customer?dataTrx.customer.telp:'-'}
+							td(align = 'right') Tgl Selesai Produksi :
+							td(width = '20%') #{tgl_jadi}
+				br
+				hr(style = "border : 0.5px dashed #000;")
+				table(style="width : 100% !important;font-size : 14px;").table
+					thead
+						tr
+							th Transaksi
+							th Tebal Plat
+							th Ukuran
+							th Jumlah
+							th Keterangan
+					tbody
+						if (dataTrx&&dataTrx.detail_trx.length>0)
+							each t, idx in dataTrx.detail_trx
+								tr
+									if (t.product==0)
+										td(align = 'center') JASA
+									else 
+										td(align = 'center') BARANG
+									td(align = 'center') #{t.tebal}
+									if (t.product!=0)
+										td(align = 'center') #{t.lebar?t.lebar:''} x #{t.panjang?t.panjang:''}
+									else 
+										td(align = 'center') -
+									td(align = 'center') #{t.qty}
+									td(align = 'center') #{t.keterangan?t.keterangan:'-'}
+				hr(style = "border : 0.5px dashed #000;")
+				br
+				table(style="width : 100% !important;font-size : 14px;").table
+					tbody
+						tr
+							th(align = 'center') Ttd Operator
+							th(align = 'center') Ttd Designer
+							th(align = 'center') Ttd Admin
+						tr
+							td(align = 'center') (...................)
+							td(align = 'center') (...................)
+							td(align = 'center') (...................)
+
+			div.column(style = 'width:40%')
+				center
+					h3 Design Plat
+				div(style = 'width : 100p%;')
+					img(alt="Image Plat" width="400" height="100" src = `${dataTrx&&dataTrx.img_path?'/uploads/product/'+dataTrx.img_path:''}`)
+
