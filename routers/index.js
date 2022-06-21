@@ -3,6 +3,7 @@ module.exports = exports = (app) => {
     const Auth = require('./auth')
     const Dashboard = require('./dashboard')
     const Users = require('./users')
+    const Customer = require('./customer')
 
     app.get('/', (req, res) => {
         return res.redirect('/main')
@@ -22,4 +23,8 @@ module.exports = exports = (app) => {
     app.get('/users/createForm/:type', Users.createForm)
     app.post('/users/save', Users.saveUser)
     app.post('/users/update', Users.updateUser)
+    app.post('/users/remove', Users.deleteUser)
+    app.post('/users/resetPwd', Users.resetPwd)
+
+    app.get('/customer', Customer.Home)
 }
