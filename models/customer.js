@@ -7,6 +7,7 @@ const CustomerModel = new Schema({
     email : String,
     alamat : String,
     tagihan : Number,
+    active : Boolean,
     billing_date : {
         type : Schema.Types.Date
     },

@@ -27,4 +27,9 @@ module.exports = exports = (app) => {
     app.post('/users/resetPwd', Users.resetPwd)
 
     app.get('/customer', Customer.Home)
+    app.get('/customer/dataTable', Customer.dataTable)
+    app.get('/customer/createForm/:type', Customer.createForm)
+    app.post('/customer/save', Customer.saveCustomer)
+    app.post('/customer/update', Customer.updateCustomer)
+    app.post('/customer/remove', Customer.removeCustomer)
 }

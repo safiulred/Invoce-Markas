@@ -12,7 +12,6 @@ module.exports.Home = async (req, res, next) => {
 
 module.exports.dataTable = async (req, res, next) => {
     const userLogin = req.user
-    console.log('[LIST USER]')
     try {
         const where = {}
         ModelUser.find(where)
