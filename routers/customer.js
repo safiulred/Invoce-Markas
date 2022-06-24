@@ -68,7 +68,7 @@ module.exports.dataTable = async (req, res, next) => {
 									<a onclick='return removeData("${r.id}");' href='javascript:void(0);' title='Delete'>Delete</a>
 								</li>
                                 <li>
-									<a onclick='return updateTag("${r.id}");' href='javascript:void(0);' title='Update Tagihan'>Update Tagihan</a>
+									<a onclick='return updateTag("${r.id}","${r.tagihan}");' href='javascript:void(0);' title='Update Tagihan'>Update Tagihan</a>
 								</li>
 							</ul>
 						</div>
@@ -154,7 +154,7 @@ module.exports.saveCustomer = async (req, res, next) => {
 
         delete dataInsert.tgl_pasang
         delete dataInsert.tgl_bayar
-        console.log('[INSERT] ', dataInsert)
+        // console.log('[INSERT] ', dataInsert)
         ModelCustomer.create(dataInsert)
             .then((result) => {
                 return res.json({status : 200, message : 'Successfull Save Customer'})
@@ -183,7 +183,7 @@ module.exports.updateCustomer = async (req, res, next) => {
         delete dataUpdate.id
         delete dataUpdate.tgl_pasang
         delete dataUpdate.tgl_bayar
-        console.log('[UPDATE] ', dataUpdate)
+        // console.log('[UPDATE] ', dataUpdate)
         ModelCustomer.updateOne({_id : id}, {
             $set : dataUpdate
         }).then((result) => {
@@ -211,6 +211,21 @@ module.exports.removeCustomer = async (req, res, next) => {
     }
 }
 
-module.exports.updateTag = async (req, res, next) => {}
+module.exports.updateTag = async (req, res, next) => {
+    const {id, tagihan} = req.body
+    try {
+        ModelCustomer.updateOne({_id : id},{
+            $set : {
+                tagihan : tagihan
+            }
+        }).then((result) => {
+            return res.json({status : 200, message : 'Successfull'})
+        }).catch((err) => {
+            return res.json({status : 402, message : err.message})
+        })
+    } catch (error) {
+        return res.json({status : 402, message : error.message})
+    }
+}
 
 module.exports.viewPrint = async (req, res, next) => {}

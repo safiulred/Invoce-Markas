@@ -32,4 +32,5 @@ module.exports = exports = (app) => {
     app.post('/customer/save', Customer.saveCustomer)
     app.post('/customer/update', Customer.updateCustomer)
     app.post('/customer/remove', Customer.removeCustomer)
+    app.post('/customer/update-tagihan', Customer.updateTag)
 }

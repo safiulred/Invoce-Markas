@@ -60,7 +60,7 @@ div.row
                                 input.form-control#newTag(type="text")
                         div.form-group
                             div.col-lg-7.col-lg-offset-3
-                                button#submitReset(type="submit" class="btn btn-sm btn-primary")
+                                button#submitTag(type="submit" class="btn btn-sm btn-primary")
                                     i.icon-save
                                     span  Simpan
                                 button#batal(type="button" onclick="return closeForm('#formEditTag');" style="margin-left : 10px;" class="btn btn-outline-danger btn-sm")
@@ -145,6 +145,15 @@ script.
         }
     }
 
+    function updateTag(id, tagihan) {
+        $("#formEditable").fadeOut();
+        $("#cardList").removeClass("col-md-12").addClass("col-md-7")
+        $('#formEditTag button#submitTag').attr('data-id', id)
+        $('#formEditTag input#newTag').val(tagihan)
+        $("#formEditTag").fadeIn(200)
+        $('#newTag').focus()
+    }
+
     $(function () {
         $('.datepicker').datepicker({
             defaultDate : new Date(),
@@ -212,5 +221,71 @@ script.
                     { width: "20%", targets: 5 },
                 ],
             });
+        })
+
+        $("#formEditTag form").submit(function() {
+            const selector = $(this)
+            const id = $('#formEditTag button#submitTag').attr('data-id')
+            const new_tagihan = $('#formEditTag input#newTag').val()
+
+            if (new_tagihan == "") {
+                $.smallBox({
+                    title: 'Peringantan',
+                    content : "<i class='fa fa-clock-o'></i> <i>Maaf, Data Masih Belum Lengkap</i>",
+                    color : "#C46A69",
+                    iconSmall : "fa fa-times fa-1x fadeInRight animated",
+                    timeout : 1000
+                });
+            } else {
+                $.ajax({
+                    url : '/customer/update-tagihan',
+                    method: 'POST',
+                    header: {
+                        'Content-Type' : 'application/json'
+                    },
+                    data : {
+                        id : id,
+                        tagihan : new_tagihan
+                    },
+                    beforeSend: function() {
+                        selector.attr('disabled', true);
+                        console.log('Loading...')
+                    },
+                    success : function (msg) {
+                        selector.attr('disabled', false);
+                        if (msg.status == 200) {
+                            $.smallBox({
+                                title: 'Success',
+                                content : "<i class='fa fa-clock-o'></i> <i>Successfull</i>",
+                                color : "#659265",
+                                iconSmall : "fa fa-check fa-1x fadeInRight animated",
+                                timeout : 1000
+                            });
+                            refreshData()
+                            closeForm('#formEditTag');
+                        } else {
+                            $.smallBox({
+                                title : "Peringatan",
+                                content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+                                color : "#C46A69",
+                                iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+                                timeout : 1000
+                            });
+                        }
+                    },
+                    error : function (xhr, ajaxOptions, thrownError) {
+                        selector.attr('disabled', false);
+                        $.smallBox({
+                            title : "Peringatan",
+                            content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+                            color : "#C46A69",
+                            iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+                            timeout : 1000
+                        });
+                    },
+                })
+            }
+
+            return false 
         })
     })
