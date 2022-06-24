@@ -4,7 +4,7 @@ const Session = require('../libs/session')
 const UserModel = require('../models/users')
 
 module.exports.viewAuth = async (req, res, next) => {
-    console.log(req.session)
+    // console.log(req.session)
     if (req.session.user) {
         return res.redirect('/main');
     }

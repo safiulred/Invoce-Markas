@@ -3,6 +3,7 @@ const ModelUser = require('../models/users')
 const {encryptPwd} = require('../libs/generate')
 const moment = require('moment')
 moment.locale('ID')
+
 module.exports.Home = async (req, res, next) => {
     return res.render('pages/manage/users',{
         title : 'User'
@@ -11,7 +12,6 @@ module.exports.Home = async (req, res, next) => {
 
 module.exports.dataTable = async (req, res, next) => {
     const userLogin = req.user
-    console.log('[LIST USER]')
     try {
         const where = {}
         ModelUser.find(where)
@@ -114,6 +114,13 @@ module.exports.saveUser = async (req, res, next) => {
         created_at : moment().utc().toDate()
     }
     console.log('[INSERT] ', dataInsert)
+    ModelUser.create(dataInsert)
+        .then((result) => {
+            return res.json({status : 200, message : 'Successfull Save User'})
+        })
+        .catch((err) => {
+            return res.status(402).json({status : 402, message : err.message})
+        })
 }
 
 module.exports.updateUser = async (req, res, next) => {
@@ -136,4 +143,24 @@ module.exports.updateUser = async (req, res, next) => {
     })
 }
 
-module.exports.Delete = async (req, res, next) => {}
+module.exports.deleteUser = async (req, res, next) => {
+    const {id} = req.body
+    ModelUser.deleteOne({_id : id}).then((result) => {
+        return res.json({status : 200, message : 'Successfull Delete User'})
+    }).catch((err) => {
+        return res.json({ status : 500, message : err.message});
+    })
+}
+
+module.exports.resetPwd = async (req, res, next) => {
+    const body = req.body
+    const password = encryptPwd(body.password)
+
+    ModelUser.updateOne({_id : body.id}, { $set : { password : password}})
+        .then((rows) => {
+            return res.json({status : 200, message : 'Successfull Reset Password'});
+        })
+        .catch((err) => {
+            return res.json({ status : 500, message : 'Internal Server Error'});
+        });
+}
