@@ -288,4 +288,12 @@ script.
 
             return false 
         })
+
+        $('#printTable').click(function (e){
+            e.preventDefault()
+
+            let urlPreview = `/customer/list-preview?tgl_awal=all&tgl_akhir=all&status=all`;
+            $("#modalBig #content-cetak").load(urlPreview);
+            $('#modalBig').modal('show');
+        })
     })

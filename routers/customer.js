@@ -3,6 +3,7 @@ const ModelCustomer = require('../models/customer')
 const {convertToNominal} = require('../libs/generate')
 const moment = require('moment')
 moment.locale('ID')
+
 module.exports.Home = async (req, res, next) => {
     const tgl_awal = moment().startOf("month").format("YYYY-MM-DD");
     const tgl_akhir = moment().endOf('month').format('YYYY-MM-DD');
@@ -11,6 +12,60 @@ module.exports.Home = async (req, res, next) => {
         tgl_awal : tgl_awal,
         tgl_akhir : tgl_akhir
     })
+}
+
+module.exports.viewPrint = async (req, res, next) => {
+    const query = req.query;
+    let {tgl_awal, tgl_akhir, status} = query;
+    let filterTanggal = {}
+    try {
+        if (tgl_awal == 'all') {
+			filterTanggal.tgl_awal = moment().startOf("month").toDate();
+		}
+
+        if (tgl_akhir == 'all') {
+			filterTanggal.tgl_akhir = moment().endOf("month").toDate();
+		}
+
+        if (tgl_awal != 'all' && tgl_akhir != 'all') {
+			filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
+			filterTanggal.tgl_akhir = moment(tgl_akhir, "YYYY-MM-DD").endOf("days").toDate()
+		}
+
+        let  where = {
+            billing_date : {
+                $gte: moment.utc(filterTanggal.tgl_awal).toDate(),
+                $lte: moment.utc(filterTanggal.tgl_akhir).toDate(),
+            }
+		}
+
+        if (status != 'all') {
+			where['active'] = Number(status)==0?true:false
+		}
+
+        ModelCustomer.find(where)
+            .sort({nama : 1})
+            .then((result) => {
+                const output = result.map((r) => {
+                    
+                    return {
+                        ...r._doc,
+                        billing_date : moment(r.billing_date).utc().add(7, 'hours').format('DD-MM-YYYY'),
+                        installation_date : moment(r.installation_date).utc().add(7, 'hours').format('DD-MM-YYYY'),
+                    }
+                })
+
+                console.log('[OUTPUT] ', output)
+                return res.render('pages/customer/preview',{
+                    data : output
+                })
+            })
+            .catch((err) => {
+                return res.json({status : 402, message : err.message})
+            })
+    } catch (error) {
+        return res.json({status : 402, message : error.message})
+    }
 }
 
 module.exports.dataTable = async (req, res, next) => {
@@ -227,5 +282,3 @@ module.exports.updateTag = async (req, res, next) => {
         return res.json({status : 402, message : error.message})
     }
 }
-
-module.exports.viewPrint = async (req, res, next) => {}
