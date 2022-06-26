@@ -1,9 +1,11 @@
 module.exports = exports = (app) => {
+    const {upload} = require('../libs/upload')
 
     const Auth = require('./auth')
     const Dashboard = require('./dashboard')
     const Users = require('./users')
     const Customer = require('./customer')
+    const Setting = require('./setting')
 
     app.get('/', (req, res) => {
         return res.redirect('/main')
@@ -33,4 +35,8 @@ module.exports = exports = (app) => {
     app.post('/customer/update', Customer.updateCustomer)
     app.post('/customer/remove', Customer.removeCustomer)
     app.post('/customer/update-tagihan', Customer.updateTag)
+    app.get('/customer/list-preview', Customer.viewPrint)
+
+    app.get('/setting-general', Setting.Home)
+    app.post('/setting-general/proses', upload.single('logo'), Setting.updateData)
 }

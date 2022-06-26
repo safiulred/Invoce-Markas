@@ -26,13 +26,14 @@ div.row
                                 i(class="fa fa-fw fa-plus")
                             button(class = 'btn btn-default pull-left' data-original-title = 'Reset & Refresh' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;' onclick = "return refreshData();")
                                 i(class="fa fa-fw fa-refresh")
-                            button#printTable(class = 'btn btn-default pull-left' data-original-title = 'Cetak' data-placement="bottom" rel="tooltip" style = 'margin-left : 10px;')
+                            button#printTable(class = 'btn btn-default pull-left' data-original-title = 'Cetak' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;')
                                 i(class="fa fa-fw fa-print")
                     table(id = "customerTable" class = "table table-striped table-bordered table-hover" width = "100%")
                         thead
                             tr
                                 th Action
                                 th Pelanggan
+                                th Perusahaan
                                 th Alamat
                                 th Tagihan
                                 th(data-hide = 'phone,tablet') Tanggal Tagihan
@@ -154,6 +155,29 @@ script.
         $('#newTag').focus()
     }
 
+    /*
+    PREVIEW STRUK
+    */
+    async function printPriview() {
+        console.log('PRINT PREVIEW')
+        let content = document.getElementById("content-cetak");
+        //- let pri = document.getElementById("ifmcontentstoprint").contentWindow;
+        //- pri.document.open();
+        //- pri.document.write(content.innerHTML);
+        //- await new Promise(r => setTimeout(r, 2000));
+        //- pri.document.close();
+        //- pri.focus();
+        //- pri.print();
+
+        //- / Create window object and print the data.
+        let  newWin = window.open('', '', '');
+        newWin.document.write(content.innerHTML);
+        await new Promise(r => setTimeout(r, 500));
+        newWin.print();
+        newWin.close();
+        return false;
+    }
+
     $(function () {
         $('.datepicker').datepicker({
             defaultDate : new Date(),
@@ -168,6 +192,8 @@ script.
                     "data" : "action",
                 },{
                     "data" : "customer"
+                },{
+                    "data" : "company_name"
                 },{
                     "data" : "alamat"
                 },{
@@ -185,6 +211,7 @@ script.
                 { width: "20%", targets: 3 },
                 { width: "20%", targets: 4 },
                 { width: "20%", targets: 5 },
+                { width: "20%", targets: 6 },
             ],
         });
 
@@ -203,6 +230,8 @@ script.
                     },{
                         "data" : "customer"
                     },{
+                        "data" : "company_name"
+                    },{
                         "data" : "alamat"
                     },{
                         "data" : "tagihan"
@@ -219,6 +248,7 @@ script.
                     { width: "20%", targets: 3 },
                     { width: "20%", targets: 4 },
                     { width: "20%", targets: 5 },
+                    { width: "20%", targets: 6 },
                 ],
             });
         })
@@ -287,5 +317,13 @@ script.
             }
 
             return false 
+        })
+
+        $('#printTable').click(function (e){
+            e.preventDefault()
+
+            let urlPreview = `/customer/list-preview?tgl_awal=all&tgl_akhir=all&status=all`;
+            $("#modalBig #content-cetak").load(urlPreview);
+            $('#modalBig').modal('show');
         })
     })

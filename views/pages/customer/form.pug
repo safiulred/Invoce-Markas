@@ -25,6 +25,10 @@ div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data
                     div.col-lg-7
                         input.form-control#telpCustomer(value = type=="edit"? customer.telp : "")
                 div.form-group
+                    label(for = "telpCustomer").control-label.col-lg-3 Nama Perusahaan
+                    div.col-lg-7
+                        input.form-control#companyName(value = type=="edit"? customer.company_name : "")
+                div.form-group
                     label(for = "alamatCustomer").control-label.col-lg-3 Alamat
                     div.col-lg-7
                         textarea.form-control#alamatCustomer(rows = "4" cols = "4")=type=='edit'? customer.alamat : ''
@@ -71,13 +75,14 @@ script.
             var nama = $('#namaCustomer').val();
             var email = $('#emailCustomer').val();
             let telp = $('#telpCustomer').val();
+            let companyName = $('#companyName').val();
             var alamat = $('#alamatCustomer').val();
             var status = $('#statusCustomer').val();
             var tagihan = $('#tagCustomer').val();
             var tglBayar = $('#tglBayar').val();
             var tglPasang = $('#tglPasang').val()
 
-            if (nama == "" || email == "" || telp == "" || alamat == "" || tagCustomer == "" || tglPasang == "" || tglBayar == "") {
+            if (nama == "" || email == "" || telp == "" || companyName == "" || alamat == "" || tagCustomer == "" || tglPasang == "" || tglBayar == "") {
                 selector.attr('disabled', false);
                 $.smallBox({
                     title: 'Peringantan',
@@ -93,6 +98,7 @@ script.
                     email : email,
                     telp : telp,
                     alamat : alamat,
+                    company_name : companyName,
                     status : status,
                     tagihan : tagihan,
                     tgl_pasang : tglPasang,
