@@ -6,6 +6,7 @@ const CustomerModel = new Schema({
     telp : String,
     email : String,
     alamat : String,
+    company_name : String,
     tagihan : Number,
     active : Boolean,
     billing_date : {

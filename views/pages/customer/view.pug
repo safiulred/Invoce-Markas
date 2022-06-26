@@ -26,7 +26,7 @@ div.row
                                 i(class="fa fa-fw fa-plus")
                             button(class = 'btn btn-default pull-left' data-original-title = 'Reset & Refresh' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;' onclick = "return refreshData();")
                                 i(class="fa fa-fw fa-refresh")
-                            button#printTable(class = 'btn btn-default pull-left' data-original-title = 'Cetak' data-placement="bottom" rel="tooltip" style = 'margin-left : 10px;')
+                            button#printTable(class = 'btn btn-default pull-left' data-original-title = 'Cetak' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;')
                                 i(class="fa fa-fw fa-print")
                     table(id = "customerTable" class = "table table-striped table-bordered table-hover" width = "100%")
                         thead
@@ -152,6 +152,29 @@ script.
         $('#formEditTag input#newTag').val(tagihan)
         $("#formEditTag").fadeIn(200)
         $('#newTag').focus()
+    }
+
+    /*
+    PREVIEW STRUK
+    */
+    async function printPriview() {
+        console.log('PRINT PREVIEW')
+        let content = document.getElementById("content-cetak");
+        //- let pri = document.getElementById("ifmcontentstoprint").contentWindow;
+        //- pri.document.open();
+        //- pri.document.write(content.innerHTML);
+        //- await new Promise(r => setTimeout(r, 2000));
+        //- pri.document.close();
+        //- pri.focus();
+        //- pri.print();
+
+        //- / Create window object and print the data.
+        let  newWin = window.open('', '', '');
+        newWin.document.write(content.innerHTML);
+        await new Promise(r => setTimeout(r, 500));
+        newWin.print();
+        newWin.close();
+        return false;
     }
 
     $(function () {

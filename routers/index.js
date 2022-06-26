@@ -38,4 +38,5 @@ module.exports = exports = (app) => {
     app.get('/customer/list-preview', Customer.viewPrint)
 
     app.get('/setting/general', Setting.Home)
+    app.post('/setting/update', upload.single('logo'), Setting.updateData)
 }

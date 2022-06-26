@@ -12,3 +12,16 @@ module.exports.Home = (req, res, next) => {
             return next(err)
         })
 }
+
+module.exports.updateData = (req, res, next) => {
+    const body = req.body
+    try {
+        const dataUpdate = {
+            ...body
+        }
+
+        console.log('[UPDATE SETTING] ', dataUpdate)
+    } catch (error) {
+        return res.json({status : 402, message : error.message})
+    }
+}
