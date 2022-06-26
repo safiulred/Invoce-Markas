@@ -37,6 +37,6 @@ module.exports = exports = (app) => {
     app.post('/customer/update-tagihan', Customer.updateTag)
     app.get('/customer/list-preview', Customer.viewPrint)
 
-    app.get('/setting/general', Setting.Home)
-    app.post('/setting/update', upload.single('logo'), Setting.updateData)
+    app.get('/setting-general', Setting.Home)
+    app.post('/setting-general/proses', upload.single('logo'), Setting.updateData)
 }

@@ -1,4 +1,5 @@
 const ModelCustomer = require('../models/customer')
+const ModelSetting = require('../models/setting')
 
 const {convertToNominal} = require('../libs/generate')
 const moment = require('moment')
@@ -45,19 +46,24 @@ module.exports.viewPrint = async (req, res, next) => {
 
         ModelCustomer.find(where)
             .sort({nama : 1})
-            .then((result) => {
+            .then(async (result) => {
                 const output = result.map((r) => {
-                    
+                    const billing_date =  moment(r.billing_date).utc().add(7, 'hours').format('DD MMMM YYYY')
+                    const periode = moment(billing_date, 'DD MMMM YYYY').format('DD MMMM')
                     return {
                         ...r._doc,
-                        billing_date : moment(r.billing_date).utc().add(7, 'hours').format('DD-MM-YYYY'),
-                        installation_date : moment(r.installation_date).utc().add(7, 'hours').format('DD-MM-YYYY'),
+                        periode : periode,
+                        tagihan : convertToNominal(r.tagihan),
+                        billing_date : billing_date,
+                        installation_date : moment(r.installation_date).utc().add(7, 'hours').format('DD MMMM YYYY'),
                     }
                 })
 
+                const setting = await ModelSetting.findOne()
                 console.log('[OUTPUT] ', output)
                 return res.render('pages/customer/preview',{
-                    data : output
+                    data : output,
+                    setting : setting
                 })
             })
             .catch((err) => {
@@ -139,6 +145,7 @@ module.exports.dataTable = async (req, res, next) => {
                                 Email : ${r.email}<br/>
                             </small>
                         `,
+                        company_name : `<small>${r.company_name?r.company_name:''}</small>`,
                         alamat : `<small>${r.alamat}</small>`,
                         tagihan : `<b>${convertToNominal(r.tagihan)}</b>`,
                         billing_date : billing_date,

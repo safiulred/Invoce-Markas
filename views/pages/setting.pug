@@ -1,0 +1,178 @@
+include ../partials/component.pug
+div.row
+    article.col-xs-12.col-sm-12.col-md-6.col-lg-6
+        div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
+            header
+                span.widget-icon
+                    i.fa.fa-cog
+                h2 SETTING GENERAL
+            div
+                div.jarviswidget-editbox
+                div(class='widget-body no-padding')
+                    form.form-horizontal#formSetting(action="/setting/proses" method='POST' enctype="multipart/form-data")
+                        div.form-group
+                            input#fId(type="hidden", name="_id" value = data?data._id:"").form-control
+                        .form-group 
+                            label.control-label.col-lg-2 No. Telp
+                            div.col-lg-7
+                                input.form-control#telpSetting(type="text" name = "telpSetting" value = data?data.telp : "")
+                        .form-group 
+                            label.control-label.col-lg-2 Email
+                            div.col-lg-7
+                                input.form-control#emailSetting(type="text" name = "emailSetting" value = data?data.email : "")
+                        .form-group 
+                            label.control-label.col-lg-2 Alamat
+                            div.col-lg-7
+                                textarea.form-control#alamatSetting(rows = "8" name = "alamatSetting" cols = "4")=data?data.alamat : ''
+
+                        div.form-group
+                            div.col-lg-7.col-lg-offset-2
+                                button#submitSetting(type="button" class="btn btn-sm btn-primary")
+                                    i.icon-save
+                                    span  Simpan
+    
+    article.col-xs-12.col-sm-12.col-md-5.col-lg-5
+        div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
+            header
+                span.widget-icon
+                    i.fa.fa-upload
+                h2 UPLOAD LOGO
+            div(class="widget-body")
+                div#prosesUpload
+                div.col-lg-12(style = 'height : 280px;margin-left : 10px; display:none;')#coverOrderJasa
+                    img(src = data?`/uploads/`+data.logo:'' width = '100%' height = '100%')
+                div#wrapUploadJasa
+                    button(class='btn btn-lg btn-default col-lg-12' style='height:220px' type = 'button')#tombole
+                        h2#loading
+                            i(class='glyphicon glyphicon-cloud-upload' style='font-size:5em')#icone
+                        h1#file_label
+                            span(class='label label-info') UPLOAD YOUR IMAGE
+                    input(type='file' name='logo' style='display:none')#file
+                button.btn.btn-danger.pull-right#btnClear(style='margin-top:10px; display:none;' type = "button" onClick = "return clearImg();") CLEAR
+                                    
+
+script.
+    pageSetUp();
+    const isData = #{isData}
+
+    function clearImg() {
+        $("#btnClear").hide();
+        $('#coverOrderJasa').hide();
+        $('#coverOrderJasa img').attr('src', '');
+        $('#wrapUploadJasa').show();
+        $('#wrapUploadJasa input#file').val("");
+    }
+
+    $(function (){
+        if (isData) {
+            $('#coverOrderJasa').show();
+            $('#btnClear').show();
+            $('#wrapUploadJasa').hide();
+        }
+
+        $("#tombole").click(function() {
+            $("input#file").trigger("click");
+        });
+
+        $("input#file").change(function() {
+            console.log('[CHANGE FILE UPLOAD]');
+            var file = $("input[type=file]#file").get(0).files[0];
+            if(file){
+                var reader = new FileReader();
+
+                reader.onload = function(){
+                    $("#coverOrderJasa img").attr("src", reader.result);
+                }
+                reader.readAsDataURL(file);
+
+                $('#coverOrderJasa').show();
+                $('#btnClear').show();
+                $('#wrapUploadJasa').hide();
+            }
+        });
+
+        $("#submitSetting").click(function (e){
+            e.preventDefault();
+            $('#prosesUpload').html("");
+            const telp = $('#telpSetting').val();
+            const email = $('#emailSetting').val();
+            const alamat = $('#alamatSetting').val();
+            var files = $('input#file')[0].files;
+            console.log('FILE PATH : ',files[0]);
+
+            if (telp == "" || email == "" || alamat == "") {
+                $.smallBox({
+                    title : "Peringatan",
+                    content : "<i class='fa fa-clock-o'></i> <i> Data Belum Lengkap</i>",
+                    color : "#C46A69",
+                    iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+                    timeout : 3000
+                });
+            } else {
+                console.log('SEND');
+                var formData = new FormData();
+                formData.append('_id', $('#fId').val())
+                formData.append('telp', telp)
+                formData.append('email', email)
+                formData.append('alamat', alamat)
+                formData.append('logo', files[0]);
+                console.log(formData)
+
+                $.ajax({
+                    url : '/setting-general/proses',
+                    type : 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function(jqXHR, settings) {
+                        $("#submitSetting").attr("disabled","disabled");
+                        $("#submitSetting").text("Loading ...");
+                        $("#loading").html("<h1 class=\"ajax-loading-animation\"><i class=\"fa fa-cog fa-spin\"></i> Loading...</h1>");
+                        $("#file_label").html("");
+                        console.log("Uploading ....");
+                    },
+                    success : function (msg) {
+                        if (msg.status == 200) {
+                            $.smallBox({
+                                title : "Sukses",
+                                content : "<i>Successfull</i>",
+                                color : "#659265",
+                                iconSmall : "fa fa-check fa-1x fadeInRight animated",
+                                timeout : 3000
+                            });
+                        } else {
+                            $.smallBox({
+                                title : "Peringatan",
+                                content : "<i class='fa fa-clock-o'></i> <i> "+msg.message+"</i>",
+                                color : "#C46A69",
+                                iconSmall : "fa fa-times fa-1x fadeInRight animated",
+                                timeout : 3000
+                            });
+                        }
+                        $("#submitSetting").text("SUBMIT");
+                        $("#submitSetting").removeAttr("disabled");
+                        $("#tombole").find("h1").html("<span class=\"label label-info\">UPLOAD YOUR IMAGE</span>");
+                        $("#loading").html("<i class='glyphicon glyphicon-cloud-upload' style='font-size:5em' id='icone'></i>");
+                    },
+                    error : function (jqXHR, textStatus, errorThrown) {
+                        $("#submitSetting").text("SUBMIT");
+                        $("#submitSetting").removeAttr("disabled");
+                        //- $("#tombole").find("h1").html("<span class=\"label label-info\">UPLOAD YOUR IMAGE</span>");
+                        if ($("input#file").val() == '') {
+                            $("#tombole").find("h1").html("<span class=\"label label-info\">UPLOAD YOUR IMAGE</span>");
+                        } else {
+                            $("#tombole").find("h1").html("<span class=\"label label-warning\">" + $("#file").val().replace(/C:\\fakepath\\/i, '') + "</span>");
+                        }
+                        $("#loading").html("<i class='glyphicon glyphicon-cloud-upload' style='font-size:5em' id='icone'></i>");
+                        $.smallBox({
+                            title : "Peringatan",
+                            content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+                            color : "#C46A69",
+                            iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+                            timeout : 3000
+                        });	
+                    }
+                })
+            }
+        })
+    });

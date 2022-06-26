@@ -33,6 +33,7 @@ div.row
                             tr
                                 th Action
                                 th Pelanggan
+                                th Perusahaan
                                 th Alamat
                                 th Tagihan
                                 th(data-hide = 'phone,tablet') Tanggal Tagihan
@@ -192,6 +193,8 @@ script.
                 },{
                     "data" : "customer"
                 },{
+                    "data" : "company_name"
+                },{
                     "data" : "alamat"
                 },{
                     "data" : "tagihan"
@@ -208,6 +211,7 @@ script.
                 { width: "20%", targets: 3 },
                 { width: "20%", targets: 4 },
                 { width: "20%", targets: 5 },
+                { width: "20%", targets: 6 },
             ],
         });
 
@@ -226,6 +230,8 @@ script.
                     },{
                         "data" : "customer"
                     },{
+                        "data" : "company_name"
+                    },{
                         "data" : "alamat"
                     },{
                         "data" : "tagihan"
@@ -242,6 +248,7 @@ script.
                     { width: "20%", targets: 3 },
                     { width: "20%", targets: 4 },
                     { width: "20%", targets: 5 },
+                    { width: "20%", targets: 6 },
                 ],
             });
         })
