@@ -60,7 +60,7 @@ module.exports.viewPrint = async (req, res, next) => {
                 })
 
                 const setting = await ModelSetting.findOne()
-                console.log('[OUTPUT] ', output)
+                // console.log('[OUTPUT] ', output)
                 return res.render('pages/customer/preview',{
                     data : output,
                     setting : setting
