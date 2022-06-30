@@ -11,16 +11,16 @@ style.
         div(style = "margin-left : 5pxl margin-right : 5px; margin-bottom : 10px;")
             div(style="padding: 10px; display: flex; flex-wrap: wrap; margin-right: -15px; margin-left: -15px;")
                 div(style = "flex : 1")
-                    if (setting.logo)
-                        img(src = setting? "/uploads/"+setting.logo : "/logo.png" style = "object-fit : cover; height: 10%")
+                    img(src = setting? "/uploads/"+setting.logo : "/logo.png" style = "object-fit : cover; height: 10%")
                     div(style = "display: flex; align-item: center;")
                         div(style="flex : 1;")
                         div(style="flex : 1;")
                             div(style = "display:flex;")
                                 b.text(style = "flex: 1;") No.
                                 div(style = "border-bottom : 1px solid #000; width : 100%; flex : 5;") #{idx+1}
-                    b(style = "text-decoration : underline; font-weight: bold;").text NOTA
-                    table(style="width: 100%;")
+                    //- h5(style="font-weight: bold;") 
+                    b(style = "text-decoration : underline; font-weight: bold;").text INVOICE
+                    table#tableLeft(style="width: 100%;")
                         tbody
                             tr(style = 'padding : 10px;')
                                 td(width = "5%").text NAMA
@@ -40,26 +40,23 @@ style.
                                 td(style = "border-bottom:1px solid #000" width="15%").text #{r.tagihan}
                 
                 div(style = "flex : 2; margin-left: 40px;")
-                    if (setting.logo)
-                        img(src = setting? "/uploads/"+setting.logo : "/logo.png" style = "object-fit : cover; height: 10%;")
-                    div(style = "display : flex; flex-wrap: wrap; margin-top : 10px;")
+                    img(src = setting? "/uploads/"+setting.logo : "/logo.png" style = "object-fit : cover; height: 10%;")
+                    div(style = "margin-top : -5px;")
+                        b(style="text-align: left; font-size : 13px; font-weight: bold;")  Stay Connected With Others
+                    div(style = "display : flex; flex-wrap: wrap;")
                         div(style = "flex : 1;")
-                            b(style = "text-decoration : underline; font-weight: bold;").text NOTA
-                            div(style = "display:flex; margin-top : 10px;")
-                                table(style="width: 100%;")
-                                    tbody
-                                        tr(style = 'padding : 10px;')
-                                            td(width = "15%").text Tagihan Internet Periode 
-                                            td(width = '1%').text : 
-                                            td.text(style = "border-bottom:1px solid #000" width="15%") #{r.periode}
-                                        tr(style = 'padding : 10px;')
-                                            td(width = "5%").text Total 
-                                            td(width = '1%').text : 
-                                            td.text(style = "border-bottom:1px solid #000" width="15%") #{r.tagihan}
-                                //- b(style = "flex: 5; font-weight:bold;").text Tagihan Internet Periode :
-                                //- div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4;").text #{r.periode}
-                            //- br
-                            //- div(style = "display:flex;")
+                            span #{setting?setting.alamat:''}
+                            br
+                            span Phone &amp; Whatsapp : #{setting?setting.telp:'-'}
+                            br
+                            span Email : #{setting?setting.email:''}
+                            br
+                            b(style = "text-decoration : underline; font-weight: bold;").text INVOICE
+                            div(style = "display:flex;")
+                                b(style = "flex: 5; font-weight:bold;").text Tagihan Internet Periode :
+                                div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4;").text #{r.periode}
+                            br
+                            div(style = "display:flex;")
                                 b(style = "flex: 1").text Total : 
                                 div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4;").text #{r.tagihan}
                         div(style = "flex : 1; margin-left : 10px;")
@@ -71,12 +68,12 @@ style.
                                     b(style = "flex : 3;").text Perusahaan
                                     div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4;").text #{r.company_name}
                                 div(style = "display : flex; align-item : center;")
-                                    b(style = "flex : 3;").text Alamat
-                                    div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4;").text #{r.alamat}
+                                    b(style = "flex : 3;") Alamat
+                                    div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4;") #{r.alamat}
                                 div(style = "display : flex; align-item : center;")
-                                    b(style = "flex : 3;").text No. Telp
-                                    div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4;").text #{r.telp}
+                                    b(style = "flex : 3;") No. Telp
+                                    div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4;") #{r.telp}
                                 div(style = "display : flex; align-item : center;")
-                                    b(style = "flex : 3;").text Tgl
-                                    div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4;").text #{r.billing_date}
+                                    b(style = "flex : 3;") Tgl
+                                    div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4;") #{r.billing_date}
 
