@@ -1,4 +1,7 @@
 style.
+    * {
+        font-family: Arial;
+    }
     th, td {
         padding-top: 10px;
     }
@@ -21,7 +24,7 @@ style.
             div(style="padding: 10px; display: flex; flex-wrap: wrap; margin-right: 25px; margin-left: -15px;")
                 div(style = "flex : 1")
                     if (setting.logo)
-                        img(src = setting? "/uploads/"+setting.logo : "/logo.png" style = "object-fit : cover; height: 30px; margin-top : 10px;")
+                        img(src = setting? "/uploads/"+setting.logo : "/logo.png" style = "object-fit : cover; height: 30px; margin-top : 13px;")
                     div(style = "display: flex; align-item: center;")
                         div(style="flex : 1;")
                         div(style="flex : 1;")
@@ -30,32 +33,29 @@ style.
                                     td(width = "5%").text NO
                                     td(width = '1%').text : 
                                     td.text(style = "border-bottom:1px solid #000" width="10%") #{idx+1}
-                            //- div(style = "display:flex;")
-                                b.text(style = "flex: 1;") No.
-                                div(style = "border-bottom : 1px solid #000; width : 100%; flex : 5;") #{idx+1}
                     b(style = "text-decoration : underline; font-weight: bold;").text NOTA
                     table(style="width: 90%;")
                         tbody
                             tr(style = 'padding : 10px;')
-                                td(width = "5%" style = "font-weight: bold; font-size : 12px;").text NAMA
+                                td(width = "5%" style = "font-weight: bold; font-size : 11px;").text NAMA
                                 td(width = '1%').text : 
-                                td.text(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 12px;" width="10%") #{r.nama}
+                                td.text(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 11px;" width="10%") #{r.nama}
                             tr
-                                td(width = "5%" style = "font-weight: bold; font-size : 12px;").text TGL
+                                td(width = "5%" style = "font-weight: bold; font-size : 11px;").text TGL
                                 td(width = '1%').text : 
-                                td(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 12px;" width="10%").text #{r.billing_date}
+                                td(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 11px;" width="10%").text #{r.billing_date}
                             tr
-                                td(width = "5%" style = "font-weight: bold; font-size : 12px;").text BULAN
+                                td(width = "5%" style = "font-weight: bold; font-size : 11px;").text BULAN
                                 td(width = '1%').text : 
-                                td(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 12px;" width="10%").text #{r.periode}
+                                td(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 11px;" width="10%").text #{r.periode}
                             tr
-                                td(width = "5%" style = "font-weight: bold; font-size : 12px;").text TOTAL
+                                td(width = "5%" style = "font-weight: bold; font-size : 11px;").text TOTAL
                                 td(width = '1%').text : 
-                                td(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 12px;" width="10%").text #{r.tagihan}
+                                td(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 11px;" width="10%").text #{r.tagihan}
                 
                 div(style = "flex : 2; margin-left: 40px;")
                     if (setting.logo)
-                        img(src = setting? "/uploads/"+setting.logo : "/logo.png" style = "object-fit : cover; height: 30px; margin-top : 10px;")
+                        img(src = setting? "/uploads/"+setting.logo : "/logo.png" style = "object-fit : cover; height: 30px; margin-top : 13px;")
                     div(style = "display : flex; flex-wrap: wrap; margin-top : 10px;")
                         div(style = "flex : 1;")
                             b(style = "text-decoration : underline; font-weight: bold;").text NOTA
@@ -63,13 +63,13 @@ style.
                                 table(style="width: 100%;")
                                     tbody
                                         tr(style = 'padding : 10px;')
-                                            td(width = "15%" style = "font-weight: bold; font-size : 12px;").text Layanan Internet Periode 
+                                            td(width = "15%" style = "font-weight: bold; font-size : 11px;").text Layanan Internet Periode 
                                             td(width = '1%').text : 
-                                            td.text(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 12px;" width="15%") #{r.periode}
+                                            td.text(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 11px;" width="15%") #{r.periode}
                                         tr(style = 'padding : 10px;')
-                                            td(width = "5%" style = "font-weight: bold; font-size : 12px;").text Total 
+                                            td(width = "5%" style = "font-weight: bold; font-size : 1`px;").text Total 
                                             td(width = '1%').text : 
-                                            td.text(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 12px;" width="15%") #{r.tagihan}
+                                            td.text(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 11px;" width="15%") #{r.tagihan}
                                 //- b(style = "flex: 5; font-weight:bold;").text Tagihan Internet Periode :
                                 //- div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4;").text #{r.periode}
                             //- br
