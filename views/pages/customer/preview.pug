@@ -10,6 +10,11 @@ style.
     .text-box {
         font-size : 13px;
     }
+
+    .text-bold {
+        font-weight : 'bold';
+        font-size : 12px;
+    }
 - if (data && data.length > 0)
     each r, idx in data 
         div(style = "margin-left : 5px; margin-right : 5px; margin-bottom : 10px;")
@@ -32,21 +37,21 @@ style.
                     table(style="width: 90%;")
                         tbody
                             tr(style = 'padding : 10px;')
-                                td(width = "5%").text NAMA
+                                td(width = "5%" style = "font-weight: bold; font-size : 12px;").text NAMA
                                 td(width = '1%').text : 
-                                td.text(style = "border-bottom:1px solid #000" width="10%") #{r.nama}
+                                td.text(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 12px;" width="10%") #{r.nama}
                             tr
-                                td(width = "5%").text TGL
+                                td(width = "5%" style = "font-weight: bold; font-size : 12px;").text TGL
                                 td(width = '1%').text : 
-                                td(style = "border-bottom:1px solid #000" width="10%").text #{r.billing_date}
+                                td(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 12px;" width="10%").text #{r.billing_date}
                             tr
-                                td(width = "5%").text BULAN
+                                td(width = "5%" style = "font-weight: bold; font-size : 12px;").text BULAN
                                 td(width = '1%').text : 
-                                td(style = "border-bottom:1px solid #000" width="10%").text #{r.periode}
+                                td(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 12px;" width="10%").text #{r.periode}
                             tr
-                                td(width = "5%").text TOTAL
+                                td(width = "5%" style = "font-weight: bold; font-size : 12px;").text TOTAL
                                 td(width = '1%').text : 
-                                td(style = "border-bottom:1px solid #000" width="10%").text #{r.tagihan}
+                                td(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 12px;" width="10%").text #{r.tagihan}
                 
                 div(style = "flex : 2; margin-left: 40px;")
                     if (setting.logo)
@@ -58,13 +63,13 @@ style.
                                 table(style="width: 100%;")
                                     tbody
                                         tr(style = 'padding : 10px;')
-                                            td(width = "15%").text Layanan Internet Periode 
+                                            td(width = "15%" style = "font-weight: bold; font-size : 12px;").text Layanan Internet Periode 
                                             td(width = '1%').text : 
-                                            td.text(style = "border-bottom:1px solid #000" width="15%") #{r.periode}
+                                            td.text(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 12px;" width="15%") #{r.periode}
                                         tr(style = 'padding : 10px;')
-                                            td(width = "5%").text Total 
+                                            td(width = "5%" style = "font-weight: bold; font-size : 12px;").text Total 
                                             td(width = '1%').text : 
-                                            td.text(style = "border-bottom:1px solid #000" width="15%") #{r.tagihan}
+                                            td.text(style = "border-bottom:1px solid #000; font-weight: bold; font-size : 12px;" width="15%") #{r.tagihan}
                                 //- b(style = "flex: 5; font-weight:bold;").text Tagihan Internet Periode :
                                 //- div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4;").text #{r.periode}
                             //- br
@@ -75,17 +80,17 @@ style.
                             div(style = "padding : 10px; border : 2px solid #000;")
                                 div(style = "display : flex; align-item : center;")
                                     b(style = "flex : 3;").text-box Kepada
-                                    div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4; font-size : 18px;") #{r.nama}
+                                    div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4; font-size : 15px;") #{r.nama}
                                 div(style = "display : flex; align-item : center;")
                                     b(style = "flex : 3;").text-box Perusahaan
-                                    div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4; font-size : 18px;") #{r.company_name}
+                                    div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4; font-size : 15px;") #{r.company_name}
                                 div(style = "display : flex; align-item : center;")
                                     b(style = "flex : 3;").text-box Alamat
-                                    div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4;font-size : 18px;") #{r.alamat}
+                                    div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4;font-size : 15px;") #{r.alamat}
                                 div(style = "display : flex; align-item : center;")
                                     b(style = "flex : 3;").text-box No. Telp
-                                    div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4; font-size : 18px;") #{r.telp}
+                                    div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4; font-size : 15px;") #{r.telp}
                                 div(style = "display : flex; align-item : center;")
                                     b(style = "flex : 3;").text-box Tgl
-                                    div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4; font-size : 18px;") #{r.billing_date}
+                                    div(style = "border-bottom : 1px solid #000; width : 100%; flex : 4; font-size : 15px;") #{r.billing_date}
 
