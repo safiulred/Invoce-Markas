@@ -20,25 +20,25 @@ module.exports.viewPrint = async (req, res, next) => {
     let {tgl_awal, tgl_akhir, status} = query;
     let filterTanggal = {}
     try {
-        if (tgl_awal == 'all') {
-			filterTanggal.tgl_awal = moment().startOf("month").toDate();
-		}
+        // if (tgl_awal == 'all') {
+		// 	filterTanggal.tgl_awal = moment().startOf("month").toDate();
+		// }
 
-        if (tgl_akhir == 'all') {
-			filterTanggal.tgl_akhir = moment().endOf("month").toDate();
-		}
+        // if (tgl_akhir == 'all') {
+		// 	filterTanggal.tgl_akhir = moment().endOf("month").toDate();
+		// }
+
+        let  where = {}
 
         if (tgl_awal != 'all' && tgl_akhir != 'all') {
 			filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
 			filterTanggal.tgl_akhir = moment(tgl_akhir, "YYYY-MM-DD").endOf("days").toDate()
-		}
-
-        let  where = {
-            billing_date : {
+            where['billing_date'] = {
                 $gte: moment.utc(filterTanggal.tgl_awal).toDate(),
                 $lte: moment.utc(filterTanggal.tgl_akhir).toDate(),
             }
 		}
+
 
         if (status != 'all') {
 			where['active'] = Number(status)==0?true:false
@@ -80,21 +80,20 @@ module.exports.dataTable = async (req, res, next) => {
     let filterTanggal = {}
 
     try {
-        if (tgl_awal == 'all') {
-			filterTanggal.tgl_awal = moment().startOf("month").toDate();
-		}
+        // if (tgl_awal == 'all') {
+		// 	filterTanggal.tgl_awal = moment().startOf("month").toDate();
+		// }
 
-        if (tgl_akhir == 'all') {
-			filterTanggal.tgl_akhir = moment().endOf("month").toDate();
-		}
-
+        // if (tgl_akhir == 'all') {
+		// 	filterTanggal.tgl_akhir = moment().endOf("month").toDate();
+		// }
+        
+        let  where = {}
+        
         if (tgl_awal != 'all' && tgl_akhir != 'all') {
-			filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
+            filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
 			filterTanggal.tgl_akhir = moment(tgl_akhir, "YYYY-MM-DD").endOf("days").toDate()
-		}
-
-        let  where = {
-            billing_date : {
+            where['billing_date'] = {
                 $gte: moment.utc(filterTanggal.tgl_awal).toDate(),
                 $lte: moment.utc(filterTanggal.tgl_akhir).toDate(),
             }
