@@ -10,7 +10,7 @@ module.exports = {
         secret:'markatnett',
         sessionName : 'invoicenet',
         host : 'localhost',
-        port : 12315,
+        port : 6379,
         password : ''
     }
 }
