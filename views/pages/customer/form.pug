@@ -61,8 +61,17 @@ div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data
 script.
     pageSetUp();
 
+    function fnumber(number){
+        return new Intl.NumberFormat('id-ID').format(number)
+    }
+
     $(function () {
         $('#namaCustomer').focus();
+
+        $("input#tagCustomer").keyup(function(e){
+            console.log('[TAG]')
+            console.log(e.target.value)
+        })
 
         $('.datepicker').datepicker({
             defaultDate : new Date(),
@@ -82,7 +91,7 @@ script.
             var tglBayar = $('#tglBayar').val();
             var tglPasang = $('#tglPasang').val()
 
-            if (nama == "" || email == "" || telp == "" || companyName == "" || alamat == "" || tagCustomer == "" || tglPasang == "" || tglBayar == "") {
+            if (nama == "" || telp == "" || alamat == "") {
                 selector.attr('disabled', false);
                 $.smallBox({
                     title: 'Peringantan',
