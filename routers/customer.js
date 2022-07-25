@@ -20,14 +20,6 @@ module.exports.viewPrint = async (req, res, next) => {
     let {tgl_awal, tgl_akhir, status} = query;
     let filterTanggal = {}
     try {
-        // if (tgl_awal == 'all') {
-		// 	filterTanggal.tgl_awal = moment().startOf("month").toDate();
-		// }
-
-        // if (tgl_akhir == 'all') {
-		// 	filterTanggal.tgl_akhir = moment().endOf("month").toDate();
-		// }
-
         let  where = {}
 
         if (tgl_awal != 'all' && tgl_akhir != 'all') {
@@ -139,7 +131,7 @@ module.exports.dataTable = async (req, res, next) => {
                         action : action,
                         customer : `
                             <small>
-                                Nama : <b>${r.nama}</b><br/>
+                                Nama : <b>${r.nama.toUpperCase()}</b><br/>
                                 Telp : ${r.telp}<br/>
                                 Email : ${r.email}<br/>
                             </small>
