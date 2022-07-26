@@ -1,9 +1,41 @@
-console.log('[LOAD PREIVEW JS]')
-
 var tmpData = []
 var currentPage = 1
 var rowsPerPage = 10
 var no = 0
+
+$(function () {
+    $("#bntNext").click(function (e){
+        e.preventDefault()
+        currentPage+=1
+        main()
+    })
+
+    $("#btnPrev").click(function (e){
+        e.preventDefault()
+        currentPage-=1
+        main()
+    })
+})
+
+function validatePaging(totalPages) {
+    // console.log({totalPages, currentPage})
+    if (currentPage > 1) {
+        $('#btnPrev').attr('disabled', false)
+        $('#btnPrev').attr('data-page', parseInt(currentPage-1))
+    }
+    else if (currentPage===1) {
+        $('#btnPrev').attr('disabled', true)
+        $('#btnPrev').attr('data-page', 1)
+    }
+    
+    if (currentPage===parseInt(totalPages)) {
+        $('#bntNext').attr('disabled', true)
+    }
+    else {
+        $('#bntNext').attr('disabled', false)
+        $('#bntNext').attr('data-page', parseInt(currentPage+1))
+    }
+}
 
 function main () {
     const tgl_awal = $('#fTglAwal').val() || 'all'
@@ -31,7 +63,7 @@ function main () {
             loadMessage(msg.output, msg.setting)
             const totalPages = msg.totalPages
             const totalData = msg.totalData
-            
+            validatePaging(totalPages)
         },
         error : function (xhr, ajaxOptions, thrownError) {
             $.smallBox({
@@ -46,8 +78,8 @@ function main () {
 }
 
 function loadMessage (data, setting) {
+    $('#contentView').html('')
     let indukElement = $("<div/>")
-
     data.map((r, idx)=>{
         let grid = $('<div/>',{
             style : 'margin-left : 5px; margin-right : 5px; margin-bottom : 10px;'
