@@ -110,7 +110,7 @@ module.exports.dataTable = async (req, res, next) => {
 		}
 
         // console.log(req.query.start)
-        console.log(where)
+        // console.log(where)
         ModelCustomer.find(where)
             .sort({billing_date: 1})
             .skip(parseInt(req.query.start))

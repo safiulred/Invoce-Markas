@@ -61,10 +61,6 @@ div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data
 script.
     pageSetUp();
 
-    function fnumber(number){
-        return new Intl.NumberFormat('id-ID').format(number)
-    }
-
     function formatRupiah(angka){
         var number_string = angka.replace(/[^,\d]/g, '').toString(),
         split   		= number_string.split(','),
@@ -74,25 +70,31 @@ script.
 
         // tambahkan titik jika yang di input sudah menjadi angka ribuan
         if(ribuan){
-        separator = sisa ? '.' : '';
-        rupiah += separator + ribuan.join('.');
+            separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
         }
 
         rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
         return rupiah
     }
 
+    function convertNominal (str) {
+        var angka = str.replace(/[^\w\s]/gi, '')
+        return Number(angka)
+    }
+
     $(function () {
+        if ($('#formEditable').attr('data-action')==="edit") {
+            let val = $('#tagCustomer').val()
+            $('#tagCustomer').val(formatRupiah(val))
+        }
+
         $('#namaCustomer').focus();
 
-        //- $("input#tagCustomer").keyup(function(e){
-        //-     let value = e.target.value
-        //-     console.log({value})
-        //-     $('#submitCustomer').attr('data-nominal', value)
-        //-     const rp = formatRupiah(value)
-        //-     $('#tagCustomer').val(rp)
-        //-     //- $('.money').simpleMoneyFormat();
-        //- })
+        $("input#tagCustomer").keyup(function(e){
+            var value = e.target.value
+            $('#tagCustomer').val(formatRupiah(value))
+        })
 
         $('.datepicker').datepicker({
             defaultDate : new Date(),
@@ -130,11 +132,12 @@ script.
                     alamat : alamat,
                     company_name : companyName,
                     status : status,
-                    tagihan : tagihan,
+                    tagihan : convertNominal(tagihan),
                     tgl_pasang : tglPasang,
                     tgl_bayar : tglBayar
                 }
 
+                //- console.log(dataToSend)
                 saveData(dataToSend, $('#formEditable').attr('data-action'), selector);
             }
 
