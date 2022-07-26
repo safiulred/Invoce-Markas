@@ -51,12 +51,16 @@ module.exports.getPrint = async (req, res, next) => {
             .then(async (result) => {
                 const output = result.map((r) => {
                     const billing_date =  moment(r.billing_date).utc().add(7, 'hours').format('DD MMMM YYYY')
-                    const periode = moment(billing_date, 'DD MMMM YYYY').format('DD MMMM')
+                    const date = moment(billing_date, 'DD MMMM YYYY').format('DD')
+                    const month = moment().format('MMMM')
+                    const year = moment().format('YYYY')
+                    const periode = `${date} ${month}`
                     return {
                         ...r._doc,
                         periode : periode,
                         tagihan : convertToNominal(r.tagihan),
-                        billing_date : billing_date,
+                        month : month,
+                        billing_date : `${date} ${month} ${year}`,
                         installation_date : moment(r.installation_date).utc().add(7, 'hours').format('DD MMMM YYYY'),
                     }
                 })
