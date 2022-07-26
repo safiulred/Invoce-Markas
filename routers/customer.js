@@ -15,13 +15,12 @@ module.exports.Home = async (req, res, next) => {
     })
 }
 
-module.exports.viewPrint = async (req, res, next) => {
-    const query = req.query;
-    let {tgl_awal, tgl_akhir, status} = query;
+module.exports.getPrint = async (req, res, next) => {
+    let {tgl_awal, tgl_akhir, status} = req.body;
     let filterTanggal = {}
+    // console.log(req.body)
     try {
         let  where = {}
-
         if (tgl_awal != 'all' && tgl_akhir != 'all') {
 			filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
 			filterTanggal.tgl_akhir = moment(tgl_akhir, "YYYY-MM-DD").endOf("days").toDate()
@@ -31,7 +30,63 @@ module.exports.viewPrint = async (req, res, next) => {
             }
 		}
 
+        if (status != 'all') {
+			where['active'] = Number(status)==0?true:false
+		}
 
+        const rowsPerPage = req.body.rowsPerPage
+        const currentPage = req.body.currentPage
+        const totalData = await ModelCustomer.countDocuments({
+            ...where
+        })
+
+        const totalPages = totalData%rowsPerPage===0? parseInt(totalData/rowsPerPage):parseInt(totalData/rowsPerPage)+1
+        const offset = rowsPerPage?(currentPage-1) * rowsPerPage:0
+        const limit = rowsPerPage
+        console.log({totalPages, offset, limit, totalData})
+        ModelCustomer.find(where)
+            .sort({nama : 1})
+            .skip(parseInt(offset))
+            .limit(parseInt(limit))
+            .then(async (result) => {
+                const output = result.map((r) => {
+                    const billing_date =  moment(r.billing_date).utc().add(7, 'hours').format('DD MMMM YYYY')
+                    const periode = moment(billing_date, 'DD MMMM YYYY').format('DD MMMM')
+                    return {
+                        ...r._doc,
+                        periode : periode,
+                        tagihan : convertToNominal(r.tagihan),
+                        billing_date : billing_date,
+                        installation_date : moment(r.installation_date).utc().add(7, 'hours').format('DD MMMM YYYY'),
+                    }
+                })
+
+                const setting = await ModelSetting.findOne()
+                res.status(200).send({output, totalPages, totalData, setting})
+            })
+            .catch((err)=>{
+                res.status(500).send(err.message)
+            })
+    } catch (err) {
+        res.status(500).send(err.message)
+    }
+}
+
+module.exports.viewPrint = async (req, res, next) => {
+    const query = req.query;
+    let {tgl_awal, tgl_akhir, status} = query;
+    let filterTanggal = {}
+
+    try {
+        let  where = {}
+        if (tgl_awal != 'all' && tgl_akhir != 'all') {
+			filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
+			filterTanggal.tgl_akhir = moment(tgl_akhir, "YYYY-MM-DD").endOf("days").toDate()
+            where['billing_date'] = {
+                $gte: moment.utc(filterTanggal.tgl_awal).toDate(),
+                $lte: moment.utc(filterTanggal.tgl_akhir).toDate(),
+            }
+		}
         if (status != 'all') {
 			where['active'] = Number(status)==0?true:false
 		}
@@ -54,7 +109,7 @@ module.exports.viewPrint = async (req, res, next) => {
                 const setting = await ModelSetting.findOne()
                 // console.log('[OUTPUT] ', output)
                 return res.render('pages/customer/preview',{
-                    data : output,
+                    // data : output,
                     setting : setting
                 })
             })
@@ -95,7 +150,7 @@ module.exports.dataTable = async (req, res, next) => {
 			where['active'] = Number(status)==0?true:false
 		}
 
-        // console.log(where)
+        // console.log(req.query.start)
         ModelCustomer.find(where)
             .sort({billing_date: 1})
             .skip(parseInt(req.query.start))

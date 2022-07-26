@@ -37,8 +37,12 @@ div#modalBig(class="modal fade" style="position: fixed;left: 0;right: 0;top: 0;b
 			div(class="modal-header" style="background-color: rgb(236, 240, 241);")
 				.pull-left
 					button(onclick="printPriview();" style="margin-right: 10px;" class="btn btn-primary" type="button") PRINT PREVIEW
-				button.close(type="button" data-dismiss="modal")
-					span(aria-hidden="true") x
+					button(style="margin-right: 10px;" class="btn btn-danger" type="button" data-dismiss="modal") TUTUP
+				.pull-right 
+					button#btnPrev(style="margin-right: 10px;" class="btn btn-primary" type="button") <
+					button#bntNext(style="margin-right: 10px;" class="btn btn-primary" type="button") >
+				//- button.close(type="button" data-dismiss="modal")
+				//- 	span(aria-hidden="true") x
 			.modal-body(style = 'height:550px; overflow:scroll;')
 				#content-cetak
 
