@@ -81,48 +81,11 @@ module.exports.viewPrint = async (req, res, next) => {
     let {tgl_awal, tgl_akhir, status} = query;
     let filterTanggal = {}
 
-    try {
-        let  where = {}
-        if (tgl_awal != 'all' && tgl_akhir != 'all') {
-			filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
-			filterTanggal.tgl_akhir = moment(tgl_akhir, "YYYY-MM-DD").endOf("days").toDate()
-            where['date'] = {
-                $gte: moment.utc(filterTanggal.tgl_awal).format('DD'),
-                $lte: moment.utc(filterTanggal.tgl_akhir).format('DD')
-            }
-		}
-        if (status != 'all') {
-			where['active'] = Number(status)==0?true:false
-		}
-
-        ModelCustomer.find(where)
-            .sort({nama : 1})
-            .then(async (result) => {
-                const output = result.map((r) => {
-                    const billing_date =  moment(r.billing_date).utc().add(7, 'hours').format('DD MMMM YYYY')
-                    const periode = moment(billing_date, 'DD MMMM YYYY').format('DD MMMM')
-                    return {
-                        ...r._doc,
-                        periode : periode,
-                        tagihan : convertToNominal(r.tagihan),
-                        billing_date : billing_date,
-                        installation_date : moment(r.installation_date).utc().add(7, 'hours').format('DD MMMM YYYY'),
-                    }
-                })
-
-                const setting = await ModelSetting.findOne()
-                // console.log('[OUTPUT] ', output)
-                return res.render('pages/customer/preview',{
-                    // data : output,
-                    setting : setting
-                })
-            })
-            .catch((err) => {
-                return res.json({status : 402, message : err.message})
-            })
-    } catch (error) {
-        return res.json({status : 402, message : error.message})
-    }
+    const setting = await ModelSetting.findOne()
+    return res.render('pages/customer/preview',{
+        // data : output,
+        setting : setting
+    })
 }
 
 module.exports.dataTable = async (req, res, next) => {
@@ -156,7 +119,6 @@ module.exports.dataTable = async (req, res, next) => {
                 // console.log(result)
                 const output = result.map((r) => {
                     let status = r.active ? `<small class='badge bg-color-greenLight'>Aktif</small>`: `<small class='badge bg-color-red'>Tidak Aktif</small>`;
-                    const billing_date = moment(r.billing_date).utc().add(7, 'hours').format('DD-MM-YYYY')
                     let action = `
 						<div class = 'btn-group'>
 							<button class = 'btn btn-primary dropdown-toggle' data-toggle = 'dropdown' aria-expanded = 'false' id='dropdown-${r.id}'>
@@ -178,6 +140,10 @@ module.exports.dataTable = async (req, res, next) => {
 						</div>
 					`;
 
+                    const billing_date = moment(r.billing_date).utc().add(7, 'hours').format('DD MMMM YYYY')
+                    const date = moment(billing_date, 'DD MMMM YYYY').format('DD')
+                    const month = moment().format('MMMM')
+                    const year = moment().format('YYYY')
                     return {
                         _id : r._id,
                         action : action,
@@ -191,7 +157,7 @@ module.exports.dataTable = async (req, res, next) => {
                         company_name : `<small>${r.company_name?r.company_name:''}</small>`,
                         alamat : `<small>${r.alamat?r.alamat.toUpperCase():'-'}</small>`,
                         tagihan : `<b>${convertToNominal(r.tagihan)}</b>`,
-                        billing_date : billing_date,
+                        billing_date : `${date} ${month} ${year}`,
                         status : `<center>${status}</center>`,
                     }
                 })
