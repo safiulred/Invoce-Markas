@@ -12,6 +12,7 @@ const CustomerModel = new Schema({
     billing_date : {
         type : Schema.Types.Date
     },
+    date : String,
     installation_date : {
         type : Schema.Types.Date
     },

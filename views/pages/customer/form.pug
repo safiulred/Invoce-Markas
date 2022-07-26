@@ -65,13 +65,34 @@ script.
         return new Intl.NumberFormat('id-ID').format(number)
     }
 
+    function formatRupiah(angka){
+        var number_string = angka.replace(/[^,\d]/g, '').toString(),
+        split   		= number_string.split(','),
+        sisa     		= split[0].length % 3,
+        rupiah     		= split[0].substr(0, sisa),
+        ribuan     		= split[0].substr(sisa).match(/\d{3}/gi);
+
+        // tambahkan titik jika yang di input sudah menjadi angka ribuan
+        if(ribuan){
+        separator = sisa ? '.' : '';
+        rupiah += separator + ribuan.join('.');
+        }
+
+        rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+        return rupiah
+    }
+
     $(function () {
         $('#namaCustomer').focus();
 
-        $("input#tagCustomer").keyup(function(e){
-            console.log('[TAG]')
-            console.log(e.target.value)
-        })
+        //- $("input#tagCustomer").keyup(function(e){
+        //-     let value = e.target.value
+        //-     console.log({value})
+        //-     $('#submitCustomer').attr('data-nominal', value)
+        //-     const rp = formatRupiah(value)
+        //-     $('#tagCustomer').val(rp)
+        //-     //- $('.money').simpleMoneyFormat();
+        //- })
 
         $('.datepicker').datepicker({
             defaultDate : new Date(),
@@ -87,7 +108,7 @@ script.
             let companyName = $('#companyName').val();
             var alamat = $('#alamatCustomer').val();
             var status = $('#statusCustomer').val();
-            var tagihan = $('#tagCustomer').val();
+            var tagihan = $('#tagCustomer').val()
             var tglBayar = $('#tglBayar').val();
             var tglPasang = $('#tglPasang').val()
 

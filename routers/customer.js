@@ -127,22 +127,18 @@ module.exports.dataTable = async (req, res, next) => {
     let filterTanggal = {}
 
     try {
-        // if (tgl_awal == 'all') {
-		// 	filterTanggal.tgl_awal = moment().startOf("month").toDate();
-		// }
-
-        // if (tgl_akhir == 'all') {
-		// 	filterTanggal.tgl_akhir = moment().endOf("month").toDate();
-		// }
         
         let  where = {}
-        
         if (tgl_awal != 'all' && tgl_akhir != 'all') {
             filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
 			filterTanggal.tgl_akhir = moment(tgl_akhir, "YYYY-MM-DD").endOf("days").toDate()
-            where['billing_date'] = {
-                $gte: moment.utc(filterTanggal.tgl_awal).toDate(),
-                $lte: moment.utc(filterTanggal.tgl_akhir).toDate(),
+            // where['billing_date'] = {
+            //     $gte: moment.utc(filterTanggal.tgl_awal).toDate(),
+            //     $lte: moment.utc(filterTanggal.tgl_akhir).toDate(),
+            // }
+            where['date'] = {
+                $gte: moment.utc(filterTanggal.tgl_awal).format('DD'),
+                $lte: moment.utc(filterTanggal.tgl_akhir).format('DD')
             }
 		}
 
@@ -151,6 +147,7 @@ module.exports.dataTable = async (req, res, next) => {
 		}
 
         // console.log(req.query.start)
+        console.log(where)
         ModelCustomer.find(where)
             .sort({billing_date: 1})
             .skip(parseInt(req.query.start))
@@ -192,7 +189,7 @@ module.exports.dataTable = async (req, res, next) => {
                             </small>
                         `,
                         company_name : `<small>${r.company_name?r.company_name:''}</small>`,
-                        alamat : `<small>${r.alamat}</small>`,
+                        alamat : `<small>${r.alamat?r.alamat.toUpperCase():'-'}</small>`,
                         tagihan : `<b>${convertToNominal(r.tagihan)}</b>`,
                         billing_date : billing_date,
                         status : `<center>${status}</center>`,
@@ -252,9 +249,12 @@ module.exports.saveCustomer = async (req, res, next) => {
     // console.log(body)
     try {
         delete body.id
+        const date = moment.utc(moment(body.tgl_bayar, 'YYYY-MM-DD')).format('DD')
+        // console.log({month})
         const dataInsert = {
             ...body,
             active: Number(body.status)==0?true:false,
+            date : date,
             billing_date : moment.utc(moment(body.tgl_bayar, 'YYYY-MM-DD')).toDate(),
             installation_date : moment.utc(moment(body.tgl_pasang, 'YYYY-MM-DD')).toDate(),
             created_at : moment().utc().toDate()
@@ -262,7 +262,7 @@ module.exports.saveCustomer = async (req, res, next) => {
 
         delete dataInsert.tgl_pasang
         delete dataInsert.tgl_bayar
-        // console.log('[INSERT] ', dataInsert)
+        console.log('[INSERT] ', dataInsert)
         ModelCustomer.create(dataInsert)
             .then((result) => {
                 return res.json({status : 200, message : 'Successfull Save Customer'})
@@ -280,9 +280,11 @@ module.exports.updateCustomer = async (req, res, next) => {
     const body = req.body
     try {
         const id = body.id
+        const date = moment.utc(moment(body.tgl_bayar, 'YYYY-MM-DD')).format('DD')
         const dataUpdate = {
             ...body,
             active: Number(body.status)==0?true:false,
+            date : date,
             billing_date : moment.utc(moment(body.tgl_bayar, 'YYYY-MM-DD')).toDate(),
             installation_date : moment.utc(moment(body.tgl_pasang, 'YYYY-MM-DD')).toDate(),
             updated_at : moment().utc().toDate()
@@ -291,7 +293,7 @@ module.exports.updateCustomer = async (req, res, next) => {
         delete dataUpdate.id
         delete dataUpdate.tgl_pasang
         delete dataUpdate.tgl_bayar
-        // console.log('[UPDATE] ', dataUpdate)
+        console.log('[UPDATE] ', dataUpdate)
         ModelCustomer.updateOne({_id : id}, {
             $set : dataUpdate
         }).then((result) => {
