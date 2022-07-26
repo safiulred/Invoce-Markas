@@ -24,9 +24,9 @@ module.exports.getPrint = async (req, res, next) => {
         if (tgl_awal != 'all' && tgl_akhir != 'all') {
 			filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
 			filterTanggal.tgl_akhir = moment(tgl_akhir, "YYYY-MM-DD").endOf("days").toDate()
-            where['billing_date'] = {
-                $gte: moment.utc(filterTanggal.tgl_awal).toDate(),
-                $lte: moment.utc(filterTanggal.tgl_akhir).toDate(),
+            where['date'] = {
+                $gte: moment.utc(filterTanggal.tgl_awal).format('DD'),
+                $lte: moment.utc(filterTanggal.tgl_akhir).format('DD')
             }
 		}
 
@@ -82,9 +82,9 @@ module.exports.viewPrint = async (req, res, next) => {
         if (tgl_awal != 'all' && tgl_akhir != 'all') {
 			filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
 			filterTanggal.tgl_akhir = moment(tgl_akhir, "YYYY-MM-DD").endOf("days").toDate()
-            where['billing_date'] = {
-                $gte: moment.utc(filterTanggal.tgl_awal).toDate(),
-                $lte: moment.utc(filterTanggal.tgl_akhir).toDate(),
+            where['date'] = {
+                $gte: moment.utc(filterTanggal.tgl_awal).format('DD'),
+                $lte: moment.utc(filterTanggal.tgl_akhir).format('DD')
             }
 		}
         if (status != 'all') {
@@ -132,10 +132,6 @@ module.exports.dataTable = async (req, res, next) => {
         if (tgl_awal != 'all' && tgl_akhir != 'all') {
             filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
 			filterTanggal.tgl_akhir = moment(tgl_akhir, "YYYY-MM-DD").endOf("days").toDate()
-            // where['billing_date'] = {
-            //     $gte: moment.utc(filterTanggal.tgl_awal).toDate(),
-            //     $lte: moment.utc(filterTanggal.tgl_akhir).toDate(),
-            // }
             where['date'] = {
                 $gte: moment.utc(filterTanggal.tgl_awal).format('DD'),
                 $lte: moment.utc(filterTanggal.tgl_akhir).format('DD')
