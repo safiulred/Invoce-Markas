@@ -5,6 +5,8 @@ const {convertToNominal} = require('../libs/generate')
 const moment = require('moment')
 moment.locale('ID')
 
+var number = 0
+
 module.exports.Home = async (req, res, next) => {
     const tgl_awal = moment().startOf("month").format("YYYY-MM-DD");
     const tgl_akhir = moment().endOf('month').format('YYYY-MM-DD');
@@ -50,6 +52,7 @@ module.exports.getPrint = async (req, res, next) => {
             .limit(parseInt(limit))
             .then(async (result) => {
                 const output = result.map((r) => {
+                    number+=1
                     const billing_date =  moment(r.billing_date).utc().add(7, 'hours').format('DD MMMM YYYY')
                     const date = moment(billing_date, 'DD MMMM YYYY').format('DD')
                     const month = moment().format('MMMM')
@@ -57,6 +60,7 @@ module.exports.getPrint = async (req, res, next) => {
                     const periode = `${date} ${month}`
                     return {
                         ...r._doc,
+                        number : number,
                         periode : periode,
                         tagihan : convertToNominal(r.tagihan),
                         month : month,
@@ -77,8 +81,7 @@ module.exports.getPrint = async (req, res, next) => {
 }
 
 module.exports.viewPrint = async (req, res, next) => {
-    const query = req.query;
-
+    number = 0
     const setting = await ModelSetting.findOne()
     return res.render('pages/customer/preview',{
         setting : setting

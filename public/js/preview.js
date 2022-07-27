@@ -3,29 +3,15 @@ var currentPage = 1
 var rowsPerPage = 10
 var no = 0
 
-$(function () {
-    // $("#bntNext").click(function (e){
-    //     e.preventDefault()
-    //     currentPage+=1
-    //     main()
-    // })
-
-    // $("#btnPrev").click(function (e){
-    //     e.preventDefault()
-    //     currentPage-=1
-    //     main()
-    // })
-})
-
 function onPrev () {
     currentPage-=1
-    main()
+    main('prev')
     return false
 }
 
 function onNext () {
     currentPage+=1
-    main()
+    main('next')
     return false
 }
 
@@ -49,7 +35,8 @@ function validatePaging(totalPages) {
     }
 }
 
-function main () {
+function main (param) {
+    const str = param || null
     const tgl_awal = $('#fTglAwal').val() || 'all'
     const tgl_akhir = $('#fTglAkhir').val() || 'all'
     const stsCustomer = $('#fStsCustomer').val();
@@ -72,7 +59,7 @@ function main () {
             console.log('Loading...')
         },
         success : function (msg) {
-            loadMessage(msg.output, msg.setting)
+            loadMessage(msg.output, msg.setting, str)
             const totalPages = msg.totalPages
             const totalData = msg.totalData
             validatePaging(totalPages)
@@ -89,10 +76,12 @@ function main () {
     })
 }
 
-function loadMessage (data, setting) {
+function loadMessage (data, setting, str) {
     $('#contentView').html('')
-    let indukElement = $("<div/>")
+    if (str==='prev')
+        no -=20
     data.map((r, idx)=>{
+        no +=1
         let grid = $('<div/>',{
             style : 'margin-left : 5px; margin-right : 5px; margin-bottom : 10px;'
         })
@@ -145,7 +134,7 @@ function loadMessage (data, setting) {
             style : "border-bottom:1px solid #000",
             width : "10%",
             class : 'text',
-            text : no+1
+            text : no
         })
         tdNoLeftTop.appendTo(trTableLeftTop)
         tdSeperator.appendTo(trTableLeftTop)
@@ -383,8 +372,6 @@ function loadMessage (data, setting) {
         row1.appendTo(grid)
         row2.appendTo(grid)
         $('#contentView').append(grid)
-
-        no +=1
     })
 }
 
