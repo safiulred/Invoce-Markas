@@ -78,12 +78,9 @@ module.exports.getPrint = async (req, res, next) => {
 
 module.exports.viewPrint = async (req, res, next) => {
     const query = req.query;
-    let {tgl_awal, tgl_akhir, status} = query;
-    let filterTanggal = {}
 
     const setting = await ModelSetting.findOne()
     return res.render('pages/customer/preview',{
-        // data : output,
         setting : setting
     })
 }

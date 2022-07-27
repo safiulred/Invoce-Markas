@@ -32,17 +32,9 @@ div#componentModal2
 
 //- MODAL CETAK LARGE
 div#modalBig(class="modal fade" style="position: fixed;left: 0;right: 0;top: 0;bottom: 0;background-color: rgba(255, 255, 255, 0.75);z-index: 99999;" tabindex="-1" role="dialog" aria-labelledby="modal-group" aria-hidden="true")
-	div(class="modal-dialog modal-dialog-centered modal-xl" role="document" style = 'width : 90% !important;')
-		.modal-content
-			div(class="modal-header" style="background-color: rgb(236, 240, 241);")
-				.pull-left
-					button(onclick="printPriview();" style="margin-right: 10px;" class="btn btn-primary" type="button") PRINT PREVIEW
-					button(style="margin-right: 10px;" class="btn btn-danger" type="button" data-dismiss="modal") TUTUP
-				.pull-right 
-					button#btnPrev(style="margin-right: 10px;" class="btn btn-primary" type="button" disabled data-page = "1") <
-					button#bntNext(style="margin-right: 10px;" class="btn btn-primary" type="button" disabled data-page = "1") >
-			.modal-body(style = 'height:550px; overflow:scroll;')
-				#content-cetak
+	div#modalDialog(class="modal-dialog modal-dialog-centered modal-xl" role="document" style = 'width : 90% !important;')
+		
+			
 
 
 

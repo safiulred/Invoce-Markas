@@ -4,18 +4,30 @@ var rowsPerPage = 10
 var no = 0
 
 $(function () {
-    $("#bntNext").click(function (e){
-        e.preventDefault()
-        currentPage+=1
-        main()
-    })
+    // $("#bntNext").click(function (e){
+    //     e.preventDefault()
+    //     currentPage+=1
+    //     main()
+    // })
 
-    $("#btnPrev").click(function (e){
-        e.preventDefault()
-        currentPage-=1
-        main()
-    })
+    // $("#btnPrev").click(function (e){
+    //     e.preventDefault()
+    //     currentPage-=1
+    //     main()
+    // })
 })
+
+function onPrev () {
+    currentPage-=1
+    main()
+    return false
+}
+
+function onNext () {
+    currentPage+=1
+    main()
+    return false
+}
 
 function validatePaging(totalPages) {
     // console.log({totalPages, currentPage})
