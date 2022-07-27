@@ -16,8 +16,8 @@ div.row
                                 option(value="0") Aktif
                                 option(value="1") Tidak Aktif 
                         div(class = 'col-lg-2 col-sm-2 col-xs-2')
-                            input#fTglAwal(class = 'form-control datepicker' data-dateformat = "yy-mm-dd" placeholder = 'Tanggal Awal')
-                        div(class = 'col-lg-2 col-sm-2 col-xs-2')
+                            input#fTglAwal(class = 'form-control datepicker' data-dateformat = "yy-mm-dd" placeholder = 'Tanggal')
+                        //- div(class = 'col-lg-2 col-sm-2 col-xs-2')
                             input#fTglAkhir(class = 'form-control datepicker' data-dateformat = "yy-mm-dd" placeholder = 'Tanggal Akhir')
                         div(class = 'col-lg-4 col-sm-4 col-xs-4')
                             button#searchRekapProd(class = 'btn btn-default pull-left' data-original-title = 'Pencarian' data-placement="bottom" rel="tooltip")
@@ -156,7 +156,7 @@ script.
     }
 
     /*
-    PREVIEW STRUK
+        PREVIEW STRUK
     */
     async function printPriview() {
         console.log('PRINT PREVIEW')
