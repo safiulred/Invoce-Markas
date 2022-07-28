@@ -1,3 +1,4 @@
+const ModelUser = require('../models/users')
 const ModelCustomer = require('../models/customer')
 const ModelSetting = require('../models/setting')
 
@@ -17,11 +18,18 @@ module.exports.Home = async (req, res, next) => {
 }
 
 module.exports.getPrint = async (req, res, next) => {
+    const userLogin = req.user;
+    const isAdmin = userLogin.isAdmin
     let {tgl_awal, tgl_akhir, status} = req.body;
     let filterTanggal = {}
     let month, year
     try {
         let  where = {}
+
+        if (!isAdmin) {
+            where['pic'] = userLogin._id
+        }
+
         if (tgl_awal != 'all') {
 			filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
             where['date'] = moment.utc(filterTanggal.tgl_awal).format('DD')
@@ -50,7 +58,6 @@ module.exports.getPrint = async (req, res, next) => {
         ModelCustomer.find(where)
             .sort({nama : 1})
             .skip(parseInt(offset))
-            // .limit(3)
             .limit(parseInt(limit))
             .then(async (result) => {
                 const output = result.map((r) => {
@@ -118,7 +125,7 @@ module.exports.dataTable = async (req, res, next) => {
 			where['active'] = Number(status)==0?true:false
 		}
 
-        console.log(where)
+        // console.log(where)
         ModelCustomer.find(where)
             .sort({billing_date: 1})
             .skip(parseInt(req.query.start))
@@ -126,6 +133,16 @@ module.exports.dataTable = async (req, res, next) => {
             .then(async (result) => {
                 const output = result.map((r) => {
                     let status = r.active ? `<small class='badge bg-color-greenLight'>Aktif</small>`: `<small class='badge bg-color-red'>Tidak Aktif</small>`;
+                    let btnChangePic = `
+                        <li>
+                            <a onclick='return viewPic("${r.id}","${r.pic}");' href='javascript:void(0);' title='Edit'>Edit Kolektor</a>
+                        </li>
+                    `
+                    let btnUpdateTag = `
+                        <li>
+                            <a onclick='return updateTag("${r.id}","${r.tagihan}");' href='javascript:void(0);' title='Edit Tagihan'>Edit Tagihan</a>
+                        </li>
+                    `
                     let action = `
 						<div class = 'btn-group'>
 							<button class = 'btn btn-primary dropdown-toggle' data-toggle = 'dropdown' aria-expanded = 'false' id='dropdown-${r.id}'>
@@ -140,9 +157,8 @@ module.exports.dataTable = async (req, res, next) => {
 								<li>
 									<a onclick='return removeData("${r.id}");' href='javascript:void(0);' title='Delete'>Delete</a>
 								</li>
-                                <li>
-									<a onclick='return updateTag("${r.id}","${r.tagihan}");' href='javascript:void(0);' title='Update Tagihan'>Update Tagihan</a>
-								</li>
+                                ${btnUpdateTag}
+                                ${isAdmin? btnChangePic : ''}
 							</ul>
 						</div>
 					`;
@@ -307,4 +323,27 @@ module.exports.updateTag = async (req, res, next) => {
     } catch (error) {
         return res.json({status : 402, message : error.message})
     }
+}
+
+module.exports.getKolektor = (req, res) => {
+    const user = req.user
+    ModelUser.find({})
+        .sort({nama : 1})
+        .then(users=>{
+            res.status(200).send(users)
+        }) 
+        .catch(err=>{
+            res.status(500).send([])
+        })
+}
+
+module.exports.updateKolektor = (req, res, next) => {
+    const {id, userId} = req.body
+    ModelCustomer.updateOne({_id : id},{$set : {pic : userId}})
+        .then(result=>{
+            res.send({status:200})
+        })
+        .catch(err=>{
+            res.send({status:500})
+        })
 }

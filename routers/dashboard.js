@@ -7,7 +7,5 @@ module.exports.index = async (req, res, next) => {
 }
 
 module.exports.Home = async (req, res, next) => {
-    return res.send('HOME',{
-        isAdmin : req.user.isAdmin
-    })
+    return res.send('HOME')
 }

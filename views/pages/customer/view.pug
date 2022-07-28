@@ -41,6 +41,34 @@ div.row
                                 th Status
     
     article.col-md-5(style="display: none;" data-action="edit")#formEditable
+    article.col-md-5(style="display: none;" data-action="edit")#formEditPic
+        div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
+            header(role = 'heading')
+                div.jarviswidget-ctrls
+                    a(class = 'button-icon jarviswidget-toggle-btn' href = 'javascript:void(0);' rel = 'tooltip' data-placement = 'bottom' data-original-title = 'Tutup' onclick="return closeForm('#formEditTag');")#btnCloseForm
+                        i.fa.fa-times
+                span.widget-icon
+                    i.fa.fa-pencil
+                h2 Update Kolektor
+            div
+                div.jarviswidget-editbox
+                div(class='widget-body no-padding')
+                    form.form-horizontal
+                        div.form-group
+                            input#userId(type="hidden", name="_id").form-control
+                        div.form-group
+                            label(for = "inputNewTag").control-label.col-lg-3 Kolektor
+                            div.col-lg-7
+                                select.form-control#listKolektor
+                                    option(value="") Pilih Kolektor
+                        div.form-group
+                            div.col-lg-7.col-lg-offset-3
+                                button#submitKolektor(type="submit" class="btn btn-sm btn-primary")
+                                    i.icon-save
+                                    span  Simpan
+                                button#batal(type="button" onclick="return closeForm('#formEditPic');" style="margin-left : 10px;" class="btn btn-outline-danger btn-sm")
+                                    span Batal
+
     article.col-md-5(style="display: none;" data-action="edit")#formEditTag
         div.jarviswidget.jarviswidget-color-orange(data-widget-editbutton="false" , data-widget-deletebutton='false')
             header(role = 'heading')
@@ -88,6 +116,7 @@ script.
 
     function addData () {
         $("#formEditTag").fadeOut();
+        $('#formEditPic').fadeOut();
         $("#cardList").removeClass("col-md-12").addClass("col-md-7");
         $("#formEditable").attr("data-action", "add").fadeIn(200);
         $("#formEditable").load('/customer/createForm/add');
@@ -96,6 +125,7 @@ script.
 
     function getData (id) {
         $("#formEditTag").fadeOut();
+        $('#formEditPic').fadeOut();
         $("#cardList").removeClass("col-md-12").addClass("col-md-7")
         $("#formEditable").attr("data-action", "edit").fadeIn(200)
         $("#formEditable").load(`/customer/createForm/edit?id=${id}`);
@@ -149,11 +179,42 @@ script.
 
     function updateTag(id, tagihan) {
         $("#formEditable").fadeOut();
+        $('#formEditPic').fadeOut();
         $("#cardList").removeClass("col-md-12").addClass("col-md-7")
         $('#formEditTag button#submitTag').attr('data-id', id)
         $('#formEditTag input#newTag').val(tagihan)
         $("#formEditTag").fadeIn(200)
         $('#newTag').focus()
+        refreshData();
+    }
+
+    function viewPic(customerId, userId) {
+        $.ajax({
+            url: '/customer/kolektor',
+            method: 'POST',
+            header: {
+                'Content-Type' : 'application/json'
+            },
+            success : function (items) {
+                let elmKolektor = '<option value="">Pilih Kolektor</option>'
+                items.map(key=> {
+                    if (key._id.toString()===userId.toString()) {
+                        elmKolektor+= `<option selected value='${key._id}'>${key.nama}</option>`
+                    }
+                    else {
+                        elmKolektor+= `<option value='${key._id}'>${key.nama}</option>`
+                    }
+                })
+
+                $('#listKolektor').html(elmKolektor)
+                $("#formEditable").fadeOut();
+                $('#formEditTag').fadeOut();
+                $("#cardList").removeClass("col-md-12").addClass("col-md-7")
+                $('#formEditPic button#submitKolektor').attr('data-id', customerId)
+                $("#formEditPic").fadeIn(200)
+                refreshData();
+            }
+        })
     }
 
     /*
@@ -162,13 +223,6 @@ script.
     async function printPriview() {
         console.log('PRINT PREVIEW')
         let content = document.getElementById("contentView")
-        //- let pri = document.getElementById("contentView")
-        //- pri.document.open();
-        //- pri.document.write(content.innerHTML);
-        //- await new Promise(r => setTimeout(r, 2000));
-        //- pri.document.close();
-        //- pri.focus();
-        //- pri.print();
 
         //- / Create window object and print the data.
         let  newWin = window.open('', '', '');
@@ -336,6 +390,73 @@ script.
                     { width: "20%", targets: 6 },
                 ],
             });
+        })
+
+        $('#formEditPic form').submit(function (){
+            const selector = $(this)
+            const customerId = $('#formEditPic button#submitKolektor').attr('data-id')
+            const newKolektor = $('#formEditPic select#listKolektor').val()
+            
+            if (newKolektor==""){
+                $.smallBox({
+                    title: 'Peringantan',
+                    content : "<i class='fa fa-clock-o'></i> <i>Maaf, Data Masih Belum Lengkap</i>",
+                    color : "#C46A69",
+                    iconSmall : "fa fa-times fa-1x fadeInRight animated",
+                    timeout : 1000
+                });
+            }
+            else {
+                $.ajax({
+                    url : '/customer/update-kolektor',
+                    method: 'POST',
+                    header: {
+                        'Content-Type' : 'application/json'
+                    },
+                    data : {
+                        id : customerId,
+                        userId : newKolektor
+                    },
+                    beforeSend: function() {
+                        selector.attr('disabled', true);
+                        console.log('Loading...')
+                    },
+                    success : function (msg) {
+                        selector.attr('disabled', false);
+                        if (msg.status == 200) {
+                            $.smallBox({
+                                title: 'Success',
+                                content : "<i class='fa fa-clock-o'></i> <i>Successfull</i>",
+                                color : "#659265",
+                                iconSmall : "fa fa-check fa-1x fadeInRight animated",
+                                timeout : 1000
+                            });
+                            refreshData()
+                            closeForm('#formEditPic');
+                        } else {
+                            $.smallBox({
+                                title : "Peringatan",
+                                content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+                                color : "#C46A69",
+                                iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+                                timeout : 1000
+                            });
+                        }
+                    },
+                    error : function (xhr, ajaxOptions, thrownError) {
+                        selector.attr('disabled', false);
+                        $.smallBox({
+                            title : "Peringatan",
+                            content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+                            color : "#C46A69",
+                            iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+                            timeout : 1000
+                        });
+                    },
+                })
+            }
+
+            return false 
         })
 
         $("#formEditTag form").submit(function() {
