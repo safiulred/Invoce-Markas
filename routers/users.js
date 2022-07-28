@@ -110,6 +110,7 @@ module.exports.saveUser = async (req, res, next) => {
         nama : body.nama.toLowerCase(),
         username : body.username,
         password : password,
+        isAdmin : body.isAdmin,
         active : body.status,
         created_at : moment().utc().toDate()
     }
@@ -130,6 +131,7 @@ module.exports.updateUser = async (req, res, next) => {
     let dataUpdate = {
         nama : body.nama.toLowerCase(),
         active : body.status,
+        isAdmin : body.isAdmin,
         updated_at : moment().utc().toDate(),
     }
 

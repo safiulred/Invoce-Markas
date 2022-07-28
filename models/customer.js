@@ -13,6 +13,10 @@ const CustomerModel = new Schema({
         type : Schema.Types.Date
     },
     date : String,
+    pic : {
+        type : Schema.Types.ObjectId,
+        ref: 'UserModel'
+    },
     installation_date : {
         type : Schema.Types.Date
     },

@@ -11,7 +11,8 @@ module.exports.Home = async (req, res, next) => {
     return res.render('pages/customer/view',{
         title : 'Daftar Pelanggan',
         tgl_awal : tgl_awal,
-        tgl_akhir : tgl_akhir
+        tgl_akhir : tgl_akhir,
+        isAdmin : req.user.isAdmin
     })
 }
 
@@ -82,63 +83,11 @@ module.exports.viewPrint = async (req, res, next) => {
     return res.render('pages/customer/preview',{
         setting : setting
     })
-    
-    let {tgl_awal, tgl_akhir, status} = req.query;
-    let filterTanggal = {}
-    let month, year
-    try {
-        let  where = {}
-        if (tgl_awal != 'all') {
-            // console.log('[CONVERT]')
-			filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
-            where['date'] = moment.utc(filterTanggal.tgl_awal).format('DD')
-            month = moment.utc(filterTanggal.tgl_awal).format('MMMM')
-            year = moment.utc(filterTanggal.tgl_awal).format('YYYY')
-		}
-        else {
-            month = moment().format('MMMM')
-            year = moment().format('YYYY')
-        }
-
-        if (status != 'all') {
-			where['active'] = Number(status)==0?true:false
-		}
-        console.log({where})
-        ModelCustomer.find(where)
-            .sort({nama : 1})
-            .limit(4)
-            .then(async (result)=>{
-                const output = result.map((r) => {
-                    const billing_date =  moment(r.billing_date).utc().add(7, 'hours').format('DD MMMM YYYY')
-                    const date = moment(billing_date, 'DD MMMM YYYY').format('DD')
-                    const periode = `${date} ${month}`
-                    return {
-                        ...r._doc,
-                        periode : periode,
-                        tagihan : convertToNominal(r.tagihan),
-                        month : month,
-                        billing_date : `${date} ${month} ${year}`,
-                        installation_date : moment(r.installation_date).utc().add(7, 'hours').format('DD MMMM YYYY'),
-                    }
-                })
-
-                
-                console.log(output)
-                return res.render('pages/customer/preview-bak1',{
-                    data : output,
-                    setting : setting
-                })
-            })
-            .catch(err=>{
-                return res.send(err)
-            })
-    } catch (err) {
-        // next(err)
-        res.send(err)
-    }
 }
 
 module.exports.dataTable = async (req, res, next) => {
+    const userLogin = req.user;
+    const isAdmin = userLogin.isAdmin
     const query = req.query;
     let {tgl_awal, tgl_akhir, status, nama} = query;
     let filterTanggal = {}
@@ -146,6 +95,10 @@ module.exports.dataTable = async (req, res, next) => {
     try {
         
         let  where = {}
+        if (!isAdmin) {
+            where['pic'] = userLogin._id
+        }
+
         if (nama) {
             where['nama'] = new RegExp(nama.replace(/\\/g, ""), 'gi')
         }
@@ -165,6 +118,7 @@ module.exports.dataTable = async (req, res, next) => {
 			where['active'] = Number(status)==0?true:false
 		}
 
+        console.log(where)
         ModelCustomer.find(where)
             .sort({billing_date: 1})
             .skip(parseInt(req.query.start))
