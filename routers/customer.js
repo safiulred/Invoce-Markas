@@ -23,11 +23,6 @@ module.exports.getPrint = async (req, res, next) => {
         let  where = {}
         if (tgl_awal != 'all') {
 			filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
-			// filterTanggal.tgl_akhir = moment(tgl_akhir, "YYYY-MM-DD").endOf("days").toDate()
-            // where['date'] = {
-            //     $gte: moment.utc(filterTanggal.tgl_awal).format('DD'),
-            //     $lte: moment.utc(filterTanggal.tgl_akhir).format('DD')
-            // }
             where['date'] = moment.utc(filterTanggal.tgl_awal).format('DD')
             month = moment.utc(filterTanggal.tgl_awal).format('MMMM')
             year = moment.utc(filterTanggal.tgl_awal).format('YYYY')
@@ -86,24 +81,76 @@ module.exports.viewPrint = async (req, res, next) => {
     return res.render('pages/customer/preview',{
         setting : setting
     })
+    
+    let {tgl_awal, tgl_akhir, status} = req.query;
+    let filterTanggal = {}
+    let month, year
+    try {
+        let  where = {}
+        if (tgl_awal != 'all') {
+            // console.log('[CONVERT]')
+			filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
+            where['date'] = moment.utc(filterTanggal.tgl_awal).format('DD')
+            month = moment.utc(filterTanggal.tgl_awal).format('MMMM')
+            year = moment.utc(filterTanggal.tgl_awal).format('YYYY')
+		}
+        else {
+            month = moment().format('MMMM')
+            year = moment().format('YYYY')
+        }
+
+        if (status != 'all') {
+			where['active'] = Number(status)==0?true:false
+		}
+        console.log({where})
+        ModelCustomer.find(where)
+            .sort({nama : 1})
+            .limit(4)
+            .then(async (result)=>{
+                const output = result.map((r) => {
+                    const billing_date =  moment(r.billing_date).utc().add(7, 'hours').format('DD MMMM YYYY')
+                    const date = moment(billing_date, 'DD MMMM YYYY').format('DD')
+                    const periode = `${date} ${month}`
+                    return {
+                        ...r._doc,
+                        periode : periode,
+                        tagihan : convertToNominal(r.tagihan),
+                        month : month,
+                        billing_date : `${date} ${month} ${year}`,
+                        installation_date : moment(r.installation_date).utc().add(7, 'hours').format('DD MMMM YYYY'),
+                    }
+                })
+
+                
+                console.log(output)
+                return res.render('pages/customer/preview-bak1',{
+                    data : output,
+                    setting : setting
+                })
+            })
+            .catch(err=>{
+                return res.send(err)
+            })
+    } catch (err) {
+        // next(err)
+        res.send(err)
+    }
 }
 
 module.exports.dataTable = async (req, res, next) => {
     const query = req.query;
-    let {tgl_awal, tgl_akhir, status} = query;
+    let {tgl_awal, tgl_akhir, status, nama} = query;
     let filterTanggal = {}
     let month,year
     try {
         
         let  where = {}
-        // if (tgl_awal != 'all' && tgl_akhir != 'all') {
+        if (nama) {
+            where['nama'] = new RegExp(nama.replace(/\\/g, ""), 'gi')
+        }
+
         if (tgl_awal != 'all') {
             filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
-			// filterTanggal.tgl_akhir = moment(tgl_akhir, "YYYY-MM-DD").endOf("days").toDate()
-            // where['date'] = {
-            //     $gte: moment.utc(filterTanggal.tgl_awal).format('DD'),
-            //     $lte: moment.utc(filterTanggal.tgl_akhir).format('DD')
-            // }
             where['date'] = moment.utc(filterTanggal.tgl_awal).format('DD')
             month = moment.utc(filterTanggal.tgl_awal).format('MMMM')
             year = moment.utc(filterTanggal.tgl_awal).format('YYYY')

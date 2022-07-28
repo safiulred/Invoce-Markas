@@ -82,20 +82,24 @@ function loadMessage (data, setting, str) {
         no -=20
     data.map((r, idx)=>{
         no +=1
-        let grid = $('<div/>',{
-            style : 'margin-left : 5px; margin-right : 5px; margin-bottom : 10px;'
+        let page = $('<div/>',{
+            class : 'page'
         })
-
+        let grid = $('<div/>',{
+            // style : `margin-left : 5px; margin-right : 5px;`,
+            class : 'subpage'
+        })
+        
         let row1 = $('<div/>',{
             style : 'padding: 10px; display: flex; flex-wrap: wrap; margin-right: 25px; margin-left: -15px;'
         })
         let row2 = $('<div/>',{
-            style : 'margin-bottom : 50px;'
+            // style : idx===0? 'margin-bottom : 70px;' : idx===1 ? 'margin-bottom : 80px;' : 'margin-bottom : 50px;'
         })
 
         // CONTENT LEFT
         let contentLeft = $('<div/>',{
-            style : 'flex : 1; margin-right :20px;'
+            style : 'flex : 1; margin-right :20px; margin-top:10px;'
         })
         if (setting&&setting.logo) {
             const logo = `/uploads/${setting.logo}`
@@ -106,6 +110,13 @@ function loadMessage (data, setting, str) {
 
             contentImg.appendTo(contentLeft)
         }
+
+        let seperatorLeft = $('<b/>',{
+            style : "text-decoration : underline; font-weight: bold;",
+            class : 'text',
+            text : 'NOTA'
+        })
+        seperatorLeft.appendTo(contentLeft)
 
         let contentLeftTop = $('<div/>',{
             style : "display: flex; align-item: center;"
@@ -124,10 +135,12 @@ function loadMessage (data, setting, str) {
         let trTableLeftTop = $("<tr style = 'padding : 10px;'>")
         let tdNoLeftTop = $("<td/>",{
             style : 'width:5%;',
+            class : 'text',
             text : 'NO'
         })
         let tdSeperator = $("<td/>",{
             style : 'width:1%;',
+            class : 'text',
             text : ':'
         })
         let tdValNoLeftTop = $("<td />",{
@@ -140,19 +153,13 @@ function loadMessage (data, setting, str) {
         tdSeperator.appendTo(trTableLeftTop)
         tdValNoLeftTop.appendTo(trTableLeftTop)
         trTableLeftTop.appendTo(tableLeftTop)
+        
         tableLeftTop.appendTo(contentFlex)
 
         contentFlex2.appendTo(contentLeftTop)
         contentFlex.appendTo(contentLeftTop)
 
         contentLeftTop.appendTo(contentLeft)
-
-        let seperatorLeft = $('<b/>',{
-            style : "text-decoration : underline; font-weight: bold;",
-            class : 'text',
-            text : 'NOTA'
-        })
-        seperatorLeft.appendTo(contentLeft)
 
         let tableLeftBottom = $('<table/>',{
             style : "width: 90%;"
@@ -370,8 +377,9 @@ function loadMessage (data, setting, str) {
         contentRight.appendTo(row1)
 
         row1.appendTo(grid)
-        row2.appendTo(grid)
-        $('#contentView').append(grid)
+        // row2.appendTo(grid)
+        grid.appendTo(page)
+        $('#contentView').append(page)
     })
 }
 

@@ -17,8 +17,9 @@ div.row
                                 option(value="1") Tidak Aktif 
                         div(class = 'col-lg-2 col-sm-2 col-xs-2')
                             input#fTglAwal(class = 'form-control datepicker' data-dateformat = "yy-mm-dd" placeholder = 'Tanggal')
-                        //- div(class = 'col-lg-2 col-sm-2 col-xs-2')
-                            input#fTglAkhir(class = 'form-control datepicker' data-dateformat = "yy-mm-dd" placeholder = 'Tanggal Akhir')
+                        div(class = 'col-lg-2 col-sm-2 col-xs-2')
+                            input.form-control#searchName(type="text" placeholder ="Pencarian By Nama")
+                            //- input#fTglAkhir(class = 'form-control datepicker' data-dateformat = "yy-mm-dd" placeholder = 'Tanggal Akhir')
                         div(class = 'col-lg-4 col-sm-4 col-xs-4')
                             button#searchRekapProd(class = 'btn btn-default pull-left' data-original-title = 'Pencarian' data-placement="bottom" rel="tooltip")
                                 i(class="fa fa-fw fa-search")
@@ -160,8 +161,8 @@ script.
     */
     async function printPriview() {
         console.log('PRINT PREVIEW')
-        let content = document.getElementById("contentView");
-        //- let pri = document.getElementById("ifmcontentstoprint").contentWindow;
+        let content = document.getElementById("contentView")
+        //- let pri = document.getElementById("contentView")
         //- pri.document.open();
         //- pri.document.write(content.innerHTML);
         //- await new Promise(r => setTimeout(r, 2000));
@@ -171,7 +172,64 @@ script.
 
         //- / Create window object and print the data.
         let  newWin = window.open('', '', '');
+        newWin.document.write(`<html><head><title>${document.title}</title>`)
+        newWin.document.write(`
+            <style>
+                * {
+                    box-sizing: border-box;
+                    -moz-box-sizing: border-box;
+                }
+                .page {
+                    width: 100%;
+                    min-height: 70mm;
+                    background: white;
+                }
+                .subpage {
+                    height: 70mm;
+                    padding : 10px;
+                }
+                th, td {
+                    padding-top: 10px;
+                }
+                
+                .text {
+                    font-size : 9px;
+                }
+
+                .text-box {
+                    font-size : 14px;
+                }
+
+                .text-bold {
+                    font-weight : 'bold';
+                    font-size : 12px;
+                }
+                @page {
+                    size: A4 landscape;
+                    margin: 0;
+                }
+                @media print {
+                    html, body {
+                        width: 100%;
+                        margin : 0;
+                        padding: 0;
+                        font-family: "sans-serif";
+                    }
+                    .page {
+                        width: 100%;
+                        min-height: 70mm;
+                        background: white;
+                        break-before: always;
+                    }
+                    .subpage {
+                        height: 70mm;
+                        padding : 10px;
+                    }
+                }
+            </style>
+        `)
         newWin.document.write(content.innerHTML);
+        newWin.document.write('</html>')
         await new Promise(r => setTimeout(r, 500));
         newWin.print();
         newWin.close();
@@ -220,10 +278,11 @@ script.
             var tgl_awal = $('#fTglAwal').val() || 'all'
             var tgl_akhir = $('#fTglAkhir').val() || 'all'
             var stsCustomer = $('#fStsCustomer').val();
+            var searchName = $('#searchName').val()
 
             tableCustomer = dataTable('#customerTable',{
                 searching : false,
-                url : `/customer/dataTable?tgl_awal=${tgl_awal}&tgl_akhir=${tgl_akhir}&status=${stsCustomer}`,
+                url : `/customer/dataTable?tgl_awal=${tgl_awal}&tgl_akhir=${tgl_akhir}&status=${stsCustomer}&nama=${searchName}`,
                 columns : [
                     {
                         "data" : "action",
@@ -324,9 +383,11 @@ script.
             var tgl_awal = $('#fTglAwal').val() || 'all'
             var tgl_akhir = $('#fTglAkhir').val() || 'all'
             var stsCustomer = $('#fStsCustomer').val();
+            var searchName = $('#searchName').val()
 
-            let urlPreview = `/customer/list-preview?tgl_awal=${tgl_awal}&tgl_akhir=${tgl_akhir}&status=${stsCustomer}`;
+            let urlPreview = `/customer/list-preview?tgl_awal=${tgl_awal}&tgl_akhir=${tgl_akhir}&status=${stsCustomer}&nama=${searchName}`;
             $("#modalBig #modalDialog").load('/customer/list-preview');
+            //- $("#modalBig #modalDialog").load(urlPreview);
             $('#modalBig').modal('show');
         })
     })
