@@ -86,16 +86,13 @@ function loadMessage (data, setting, str) {
             class : 'page'
         })
         let grid = $('<div/>',{
-            // style : `margin-left : 5px; margin-right : 5px;`,
             class : 'subpage'
         })
         
         let row1 = $('<div/>',{
             style : 'padding: 10px; display: flex; flex-wrap: wrap; margin-right: 25px; margin-left: -15px;'
         })
-        let row2 = $('<div/>',{
-            // style : idx===0? 'margin-bottom : 70px;' : idx===1 ? 'margin-bottom : 80px;' : 'margin-bottom : 50px;'
-        })
+        let row2 = $('<div/>',{})
 
         // CONTENT LEFT
         let contentLeft = $('<div/>',{
@@ -113,7 +110,7 @@ function loadMessage (data, setting, str) {
 
         let seperatorLeft = $('<b/>',{
             style : "text-decoration : underline; font-weight: bold;",
-            class : 'text',
+            class : 'text-nota',
             text : 'NOTA'
         })
         seperatorLeft.appendTo(contentLeft)
@@ -171,13 +168,12 @@ function loadMessage (data, setting, str) {
             style : "padding : 10px;"
         })
         let tdLabelLeftBottom1 = $('<td/>',{
-            style : "font-weight: bold; font-size : 11px;",
             class : "text",
-            width : "5%",
+            width : "2%",
             text : 'NAMA'
         })
         let tdValueLeftBottom1 = $('<td/>',{
-            style : "border-bottom:1px solid #000; font-weight: bold; font-size : 11px;",
+            style : "border-bottom:1px solid #000; font-weight: bold;",
             class : "text",
             width : "10%",
             text : r.nama.toUpperCase()
@@ -186,21 +182,20 @@ function loadMessage (data, setting, str) {
         $("<td style = 'width:1%'>:</td>").appendTo(trLeftBottom1)
         tdValueLeftBottom1.appendTo(trLeftBottom1)
         trLeftBottom1.appendTo(tbodyLeftBottom)
-        // ROW TANGGAL
+        // ROW ALAMAT
         let trLeftBottom2 = $('<tr/>',{
             style : "padding : 10px;"
         })
         let tdLabelLeftBottom2 = $('<td/>',{
-            style : "font-weight: bold; font-size : 11px;",
             class : "text",
-            width : "5%",
-            text : 'TGL'
+            width : "2%",
+            text : 'ALAMAT'
         })
         let tdValueLeftBottom2 = $('<td/>',{
-            style : "border-bottom:1px solid #000; font-weight: bold; font-size : 11px;",
+            style : "border-bottom:1px solid #000; font-weight: bold;",
             class : "text",
             width : "10%",
-            text : r.billing_date
+            text : r.alamat
         })
         tdLabelLeftBottom2.appendTo(trLeftBottom2)
         $("<td style = 'width:1%'>:</td>").appendTo(trLeftBottom2)
@@ -211,13 +206,12 @@ function loadMessage (data, setting, str) {
             style : "padding : 10px;"
         })
         let tdLabelLeftBottom3 = $('<td/>',{
-            style : "font-weight: bold; font-size : 11px;",
             class : "text",
-            width : "5%",
+            width : "2%",
             text : 'BULAN'
         })
         let tdValueLeftBottom3 = $('<td/>',{
-            style : "border-bottom:1px solid #000; font-weight: bold; font-size : 11px;",
+            style : "border-bottom:1px solid #000; font-weight: bold;",
             class : "text",
             width : "10%",
             text : r.periode
@@ -231,13 +225,12 @@ function loadMessage (data, setting, str) {
             style : "padding : 10px;"
         })
         let tdLabelLeftBottom4 = $('<td/>',{
-            style : "font-weight: bold; font-size : 11px;",
             class : "text",
-            width : "5%",
+            width : "2%",
             text : 'TOTAL'
         })
         let tdValueLeftBottom4 = $('<td/>',{
-            style : "border-bottom:1px solid #000; font-weight: bold; font-size : 11px;",
+            style : "border-bottom:1px solid #000; font-weight: bold;",
             class : "text",
             width : "10%",
             text : r.tagihan
@@ -256,7 +249,8 @@ function loadMessage (data, setting, str) {
         let contentRight = $('<div/>',{
             style : 'flex : 2; margin-left: 40px;'
         })
-
+        
+        let marginTop=""
         if (setting&&setting.logo) {
             const logo = `/uploads/${setting.logo}`
             const contentImg = $('<img/>',{
@@ -265,15 +259,20 @@ function loadMessage (data, setting, str) {
             })
 
             contentImg.appendTo(contentRight)
+            marginTop="10px;"
+        } else {
+            marginTop="75px;"
         }
+
         let rowContentRight = $('<div/>',{
-            style : "display : flex; flex-wrap: wrap; margin-top : 10px;"
+            style : `display : flex; flex-wrap: wrap;`
         })
+        
         // CONTENT RIGHT OF LEFT BOX
         let contentRightBoxLeft = $('<div/>',{
-            style : "flex : 1;"
+            style : `flex : 2; margin-top : 10px;`
         })
-        $("<b class='text' style ='text-decoration : underline; font-weight: bold;' >NOTA</b>").appendTo(contentRightBoxLeft)
+        $("<b class='text-nota' style ='text-decoration : underline; font-weight: bold;' >NOTA</b>").appendTo(contentRightBoxLeft)
         let divBoxLeft = $('<div/>',{
             style : "display:flex; margin-top : 10px;"
         })
@@ -281,24 +280,65 @@ function loadMessage (data, setting, str) {
             style : "width: 100%;"
         })
         let boxTbodyRight = $('<tbody/>')
+
+        // ROW KEPADA
+        let boxTrRight3 = $('<tr/>',{
+            style : "padding : 10px;"
+        })
+        let boxTdLabelRight3 = $('<td/>',{
+            style : "font-size : 14px;",
+            class : 'text-bold',
+            width : '30%',
+            text : 'KEPADA'
+        })
+        let boxTdValueRight3 = $('<td/>',{
+            style : "border-bottom:1px solid #000;font-size : 14px; font-weight:bold;",
+            class : 'text-bold',
+            width : '10%',
+            text : r.nama.toUpperCase()
+        })
+        boxTdLabelRight3.appendTo(boxTrRight3)
+        $("<td style = 'width:1%;' class='text-bold'>:</td>").appendTo(boxTrRight3)
+        boxTdValueRight3.appendTo(boxTrRight3)
+        boxTrRight3.appendTo(boxTbodyRight)
+        // ROW ALAMAT
+        let boxTrRight4 = $('<tr/>',{
+            style : "padding : 10px;"
+        })
+        let boxTdLabelRight4 = $('<td/>',{
+            style : "font-size : 14px;",
+            class : 'text-bold',
+            width : '30%',
+            text : 'ALAMAT'
+        })
+        let boxTdValueRight4 = $('<td/>',{
+            style : "border-bottom:1px solid #000;font-size : 14px; font-weight:bold;",
+            class : 'text-bold',
+            width : '10%',
+            text : r.alamat.toUpperCase()
+        })
+        boxTdLabelRight4.appendTo(boxTrRight4)
+        $("<td style = 'width:1%;' class='text-bold'>:</td>").appendTo(boxTrRight4)
+        boxTdValueRight4.appendTo(boxTrRight4)
+        boxTrRight4.appendTo(boxTbodyRight)
         // ROW LAYANAN
         let boxTrRight1 = $('<tr/>',{
             style : "padding : 10px;"
         })
         let boxTdLabelRight1 = $('<td/>',{
-            style : "font-weight: bold; font-size : 11px;",
-            class : 'text',
-            width : '15%',
+            style : "font-size : 14px;",
+            class : 'text-bold',
+            width : '30%',
             text : 'Layanan Internet Periode'
         })
         let boxTdValueRight1 = $('<td/>',{
-            style : "border-bottom:1px solid #000; font-weight: bold; font-size : 11px;",
-            class : 'text',
-            width : '15%',
+            style : "border-bottom:1px solid #000;font-size : 14px; font-weight:bold;",
+            class : 'text-bold',
+            width : '10%',
             text : r.periode
         })
         boxTdLabelRight1.appendTo(boxTrRight1)
-        $("<td style = 'width:1%'>:</td>").appendTo(boxTrRight1)
+        $("<td style = 'width:1%;' class='text-bold'>:</td>").appendTo(boxTrRight1)
         boxTdValueRight1.appendTo(boxTrRight1)
         boxTrRight1.appendTo(boxTbodyRight)
         // ROW TOTAL
@@ -306,19 +346,18 @@ function loadMessage (data, setting, str) {
             style : "padding : 10px;"
         })
         let boxTdLabelRight2 = $('<td/>',{
-            style : "font-weight: bold; font-size : 11px;",
-            class : 'text',
-            width : '15%',
+            class : 'text-bold',
+            width : '30%',
             text : 'Total'
         })
         let boxTdValueRight2 = $('<td/>',{
-            style : "border-bottom:1px solid #000; font-weight: bold; font-size : 11px;",
-            class : 'text',
-            width : '15%',
+            style : "border-bottom:1px solid #000;",
+            class : 'text-bold',
+            width : '10%',
             text : r.tagihan
         })
         boxTdLabelRight2.appendTo(boxTrRight2)
-        $("<td style = 'width:1%'>:</td>").appendTo(boxTrRight2)
+        $("<td style = 'width:1%;' class='text-bold'>:</td>").appendTo(boxTrRight2)
         boxTdValueRight2.appendTo(boxTrRight2)
         boxTrRight2.appendTo(boxTbodyRight)
 
@@ -328,6 +367,7 @@ function loadMessage (data, setting, str) {
         divBoxLeft.appendTo(contentRightBoxLeft)
         contentRightBoxLeft.appendTo(rowContentRight)
         // END
+
         // CONTENT RIGHT OF RIGHT BOX
         let contentRightBoxRight = $('<div/>',{
             style : "flex : 1; margin-left : 10px;"
@@ -335,39 +375,23 @@ function loadMessage (data, setting, str) {
         let divBoxRight = $('<div/>',{
             style : "padding : 10px; border : 2px solid #000;"
         })
-        // ROW KEPADA
+        // ROW TANGGAL
         let rowBoxRight1 = $('<div/>',{
             style : "display : flex; align-item : center;"
         })
         let captionBoxRight1 = $('<div/>',{
-            style : "border-bottom : 1px solid #000; width : 100%; flex : 4; font-size : 15px;",
-            text : r.nama.toUpperCase()
-        })
-        $("<b style = 'flex:3' class='text-box'>Kepada</b>").appendTo(rowBoxRight1)
-        captionBoxRight1.appendTo(rowBoxRight1)
-        rowBoxRight1.appendTo(divBoxRight)
-        // ROW ALAMAT
-        let rowBoxRight2 = $('<div/>',{
-            style : "display : flex; align-item : center;"
-        })
-        let captionBoxRight2 = $('<div/>',{
-            style : "border-bottom : 1px solid #000; width : 100%; flex : 4; font-size : 15px;",
-            text : r.alamat
-        })
-        $("<b style = 'flex:3' class='text-box'>Alamat</b>").appendTo(rowBoxRight2)
-        captionBoxRight2.appendTo(rowBoxRight2)
-        rowBoxRight2.appendTo(divBoxRight)
-        // ROW TGL
-        let rowBoxRight3 = $('<div/>',{
-            style : "display : flex; align-item : center;"
-        })
-        let captionBoxRight3 = $('<div/>',{
-            style : "border-bottom : 1px solid #000; width : 100%; flex : 4; font-size : 15px;",
+            style : "width : 100%; flex : 4; font-size:13px !important; font-weight : bold;",
             text : r.billing_date
         })
-        $("<b style = 'flex:3' class='text-box'>Tgl</b>").appendTo(rowBoxRight3)
-        captionBoxRight3.appendTo(rowBoxRight3)
-        rowBoxRight3.appendTo(divBoxRight)
+        
+        $("<b style = 'flex:1;font-size:13px; font-weight : bold;' >Tgl</b>").appendTo(rowBoxRight1)
+        $('<div/>',{
+            style : 'flex:1; font-size:13px !important; font-weight : bold;',
+            // class : "text-box",
+            text : ':'
+        }).appendTo(rowBoxRight1)
+        captionBoxRight1.appendTo(rowBoxRight1)
+        rowBoxRight1.appendTo(divBoxRight)
 
         divBoxRight.appendTo(contentRightBoxRight)
         contentRightBoxRight.appendTo(rowContentRight)

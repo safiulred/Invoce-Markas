@@ -179,51 +179,77 @@ script.
                     box-sizing: border-box;
                     -moz-box-sizing: border-box;
                 }
-                .page {
+                body {
                     width: 100%;
-                    min-height: 70mm;
-                    background: white;
-                }
-                .subpage {
-                    height: 70mm;
-                    padding : 10px;
+                    height: 100%;
+                    margin: 0;
+                    padding: 0;
+                    background-color: #FAFAFA;
+                    font-family: sans-serif !important;
                 }
                 th, td {
                     padding-top: 10px;
                 }
-                
+                .page {
+                    width: 100%;
+                    height: 8cm;
+                    margin:10px;
+                    background: white;
+                }
+                .subpage {
+                    height: 8cm;
+                    padding : 10px;
+                }
                 .text {
-                    font-size : 9px;
+                    font-size : 13px !important;
+                    font-weight: bold !important;
                 }
-
-                .text-box {
-                    font-size : 14px;
-                }
-
                 .text-bold {
-                    font-weight : 'bold';
-                    font-size : 12px;
+                    font-size : 18px !important;
+                    font-weight: bold !important;
+                }
+                .text-box{
+                    font-size : 18px !important;
+                    font-weight:bold !important;
+                }
+                .text-nota {
+                    font-size : 18px !important;
                 }
                 @page {
-                    size: A4 landscape;
-                    margin: 0;
+                    size: auto;
+                    margin: 0mm;
                 }
                 @media print {
                     html, body {
                         width: 100%;
                         margin : 0;
                         padding: 0;
-                        font-family: "sans-serif";
+                        font-family: sans-serif !important;
                     }
                     .page {
                         width: 100%;
-                        min-height: 70mm;
+                        height: 8cm;
                         background: white;
+                        margin:10px;
                         break-before: always;
                     }
                     .subpage {
-                        height: 70mm;
                         padding : 10px;
+                    }
+                    .text {
+                        font-size : 13px !important;
+                        font-weight: bold !important;
+                    }
+                    .text-bold {
+                        font-size : 18px !important;
+                        font-weight: bold !important;
+                    }
+                    .text-box{
+                        font-size : 18px !important;
+                        font-weight:bold !important;
+                    }
+                    .text-nota {
+                        font-size : 18px !important;
                     }
                 }
             </style>

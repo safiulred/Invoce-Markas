@@ -49,6 +49,7 @@ module.exports.getPrint = async (req, res, next) => {
         ModelCustomer.find(where)
             .sort({nama : 1})
             .skip(parseInt(offset))
+            // .limit(3)
             .limit(parseInt(limit))
             .then(async (result) => {
                 const output = result.map((r) => {
