@@ -98,15 +98,15 @@ function loadMessage (data, setting, str) {
         let contentLeft = $('<div/>',{
             style : 'flex : 1; margin-right :20px; margin-top:10px;'
         })
-        if (setting&&setting.logo) {
-            const logo = `/uploads/${setting.logo}`
-            const contentImg = $('<img/>',{
-                style : "object-fit : cover; height: 30px; margin-top : 13px;",
-                src : logo
-            })
+        // if (setting&&setting.logo) {
+        //     const logo = `/uploads/${setting.logo}`
+        //     const contentImg = $('<img/>',{
+        //         style : "object-fit : cover; height: 30px; margin-top : 13px;",
+        //         src : logo
+        //     })
 
-            contentImg.appendTo(contentLeft)
-        }
+        //     contentImg.appendTo(contentLeft)
+        // }
 
         let seperatorLeft = $('<b/>',{
             style : "text-decoration : underline; font-weight: bold;",
@@ -249,20 +249,6 @@ function loadMessage (data, setting, str) {
         let contentRight = $('<div/>',{
             style : 'flex : 2; margin-left: 40px;'
         })
-        
-        let marginTop=""
-        if (setting&&setting.logo) {
-            const logo = `/uploads/${setting.logo}`
-            const contentImg = $('<img/>',{
-                style : "object-fit : cover; height: 30px; margin-top : 13px;",
-                src : logo
-            })
-
-            contentImg.appendTo(contentRight)
-            marginTop="10px;"
-        } else {
-            marginTop="75px;"
-        }
 
         let rowContentRight = $('<div/>',{
             style : `display : flex; flex-wrap: wrap;`
@@ -394,6 +380,21 @@ function loadMessage (data, setting, str) {
         rowBoxRight1.appendTo(divBoxRight)
 
         divBoxRight.appendTo(contentRightBoxRight)
+        
+        if (setting&&setting.logo) {
+            const logo = `/uploads/${setting.logo}`
+            const contentImg = $('<img/>',{
+                style : "object-fit : cover; height: 70px; margin-top : 50px;",
+                src : logo
+            })
+            const divImg = $('<div/>',{
+                style : 'height : 100%; display: flex; justify-content: center; align-content:center;'
+            })
+
+            contentImg.appendTo(divImg)
+            divImg.appendTo(contentRightBoxRight)
+        }
+
         contentRightBoxRight.appendTo(rowContentRight)
         // END
 
