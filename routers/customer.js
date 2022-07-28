@@ -1,6 +1,4 @@
-const ModelUser = require('../models/users')
-const ModelCustomer = require('../models/customer')
-const ModelSetting = require('../models/setting')
+const {CustomerModel, UserModel, SettingModel} = require('../models')
 
 const {convertToNominal} = require('../libs/generate')
 const moment = require('moment')
@@ -47,7 +45,7 @@ module.exports.getPrint = async (req, res, next) => {
 
         const rowsPerPage = req.body.rowsPerPage
         const currentPage = req.body.currentPage
-        const totalData = await ModelCustomer.countDocuments({
+        const totalData = await CustomerModel.countDocuments({
             ...where
         })
 
@@ -55,7 +53,7 @@ module.exports.getPrint = async (req, res, next) => {
         const offset = rowsPerPage?(currentPage-1) * rowsPerPage:0
         const limit = rowsPerPage
         console.log({totalPages, offset, limit, totalData})
-        ModelCustomer.find(where)
+        CustomerModel.find(where)
             .sort({nama : 1})
             .skip(parseInt(offset))
             .limit(parseInt(limit))
@@ -74,7 +72,7 @@ module.exports.getPrint = async (req, res, next) => {
                     }
                 })
 
-                const setting = await ModelSetting.findOne()
+                const setting = await SettingModel.findOne()
                 res.status(200).send({output, totalPages, totalData, setting})
             })
             .catch((err)=>{
@@ -86,7 +84,7 @@ module.exports.getPrint = async (req, res, next) => {
 }
 
 module.exports.viewPrint = async (req, res, next) => {
-    const setting = await ModelSetting.findOne()
+    const setting = await SettingModel.findOne()
     return res.render('pages/customer/preview',{
         setting : setting
     })
@@ -126,7 +124,7 @@ module.exports.dataTable = async (req, res, next) => {
 		}
 
         // console.log(where)
-        ModelCustomer.find(where)
+        CustomerModel.find(where)
             .sort({billing_date: 1})
             .skip(parseInt(req.query.start))
             .limit(parseInt(req.query.length))
@@ -183,7 +181,7 @@ module.exports.dataTable = async (req, res, next) => {
                     }
                 })
 
-                ModelCustomer.countDocuments(where).then((total) => {
+                CustomerModel.countDocuments(where).then((total) => {
 					return res.json({
 						draw: req.query.draw,
 						recordsFiltered : total,
@@ -203,7 +201,7 @@ module.exports.dataTable = async (req, res, next) => {
             })
 
     } catch (error) {
-        console.log('[ERROR DATATABLE] ', err.message);
+        console.log('[ERROR DATATABLE] ', error.message);
         return res.json({
             draw: req.query.draw,
             recordsFiltered : 0,
@@ -218,7 +216,7 @@ module.exports.createForm = async (req, res, next) => {
     const userLogin = req.user;
     let query = req.query;
 
-    let customer = await ModelCustomer.findOne({_id : query.id});
+    let customer = await CustomerModel.findOne({_id : query.id});
     if (customer) {
         customer['tgl_pasang'] = moment(customer.installation_date).utc().add(7, 'hours').format('YYYY-MM-DD')
         customer['tgl_bayar'] = moment(customer.billing_date).utc().add(7, 'hours').format('YYYY-MM-DD')
@@ -250,7 +248,7 @@ module.exports.saveCustomer = async (req, res, next) => {
         delete dataInsert.tgl_pasang
         delete dataInsert.tgl_bayar
         console.log('[INSERT] ', dataInsert)
-        ModelCustomer.create(dataInsert)
+        CustomerModel.create(dataInsert)
             .then((result) => {
                 return res.json({status : 200, message : 'Successfull Save Customer'})
             })
@@ -281,7 +279,7 @@ module.exports.updateCustomer = async (req, res, next) => {
         delete dataUpdate.tgl_pasang
         delete dataUpdate.tgl_bayar
         console.log('[UPDATE] ', dataUpdate)
-        ModelCustomer.updateOne({_id : id}, {
+        CustomerModel.updateOne({_id : id}, {
             $set : dataUpdate
         }).then((result) => {
             return res.json({status : 200, message : 'Successfull Update Customer'})
@@ -296,7 +294,7 @@ module.exports.updateCustomer = async (req, res, next) => {
 module.exports.removeCustomer = async (req, res, next) => {
     const {id} = req.body
     try {
-        ModelCustomer.deleteOne({_id : id})
+        CustomerModel.deleteOne({_id : id})
             .then((result) => {
                 return res.json({status : 200, message : 'OK'})
             })
@@ -311,7 +309,7 @@ module.exports.removeCustomer = async (req, res, next) => {
 module.exports.updateTag = async (req, res, next) => {
     const {id, tagihan} = req.body
     try {
-        ModelCustomer.updateOne({_id : id},{
+        CustomerModel.updateOne({_id : id},{
             $set : {
                 tagihan : tagihan
             }
@@ -327,7 +325,7 @@ module.exports.updateTag = async (req, res, next) => {
 
 module.exports.getKolektor = (req, res) => {
     const user = req.user
-    ModelUser.find({})
+    UserModel.find({})
         .sort({nama : 1})
         .then(users=>{
             res.status(200).send(users)
@@ -339,7 +337,7 @@ module.exports.getKolektor = (req, res) => {
 
 module.exports.updateKolektor = (req, res, next) => {
     const {id, userId} = req.body
-    ModelCustomer.updateOne({_id : id},{$set : {pic : userId}})
+    CustomerModel.updateOne({_id : id},{$set : {pic : userId}})
         .then(result=>{
             res.send({status:200})
         })

@@ -1,7 +1,7 @@
-const ModelSetting = require('../models/setting')
+const {SettingModel} = require('../models')
 
 module.exports.Home = (req, res, next) => {
-    ModelSetting.findOne({})
+    SettingModel.findOne({})
         .then((result) => {
             return res.render('pages/setting',{
                 data : result,
@@ -28,7 +28,7 @@ module.exports.updateData = (req, res, next) => {
         delete dataUpdate._id
         if (id) {
             console.log('[UPDATE SETTING] ', dataUpdate)
-            ModelSetting.updateOne({_id : id},{
+            SettingModel.updateOne({_id : id},{
                 $set : dataUpdate
             }).then((result) => {
                 return res.json({status : 200, message : 'Successfull Updated'})
@@ -36,7 +36,7 @@ module.exports.updateData = (req, res, next) => {
                 return res.json({status : 402, message : err.message})
             })
         } else {
-            ModelSetting.create(dataUpdate)
+            SettingModel.create(dataUpdate)
                 .then((result) => {
                     return res.json({status : 200, message : 'Successfull Saved'})
                 })

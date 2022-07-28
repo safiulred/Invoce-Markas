@@ -54,30 +54,10 @@ app.use(function(req,res,next){
 	next();
 });
 
-const router = require('./routers');
-
-// CONNECT DB MONGOOSE
-let AuthDB = configDB.password != "" ? configDB.username + ":" + configDB.password + "@" : "";
-console.log(`authMongodb : ${AuthDB}`);
-
-mongoose.connect(`mongodb://${AuthDB}${configDB.host}:${configDB.port}/${configDB.db}`, {
-	useUnifiedTopology: true,
-	useNewUrlParser: true,
-	useCreateIndex : true,
-	autoIndex: false
-}).then((db) => {
-	console.log(`CONNECTED DB [${configDB.db}]`);
-
-    // app.use(router)
-	routers(app)
-
-    app.listen(configApp.port, configApp.host, () =>{
-        console.log(`app running on [${env}] environment on port : ${configApp.port}`)
-    })
-}).catch((e) => {
-	console.error(e);
-	process.exit(0);
-});
+routers(app)
+app.listen(configApp.port, configApp.host, () =>{
+	console.log(`app running on [${env}] environment on port : ${configApp.port}`)
+})
 
 process.on('exit',code=>{
     console.log(`Exit code : ${code}`)

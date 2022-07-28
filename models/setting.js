@@ -1,19 +1,17 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
-
-const SettingModel = new Schema({
-    logo : String,
-    telp : String,
-    email : String,
-    alamat : String,
-    created_at: {
-		type: Schema.Types.Date,
-		default: new Date()
-	},
-	updated_at: {
-		type: Schema.Types.Date,
-		default: new Date()
-	},
-})
-
-module.exports = exports = mongoose.model('SettingModel', SettingModel, 'general_setting');
+module.exports = (mongoose) => {
+	const SettingModel = mongoose.model('SettingModel', mongoose.Schema({
+		logo : String,
+		telp : String,
+		email : String,
+		alamat : String,
+		created_at: {
+			type: mongoose.Schema.Types.Date,
+			default: new Date()
+		},
+		updated_at: {
+			type: mongoose.Schema.Types.Date,
+			default: new Date()
+		},
+	}), 'general_setting')
+	return SettingModel
+}

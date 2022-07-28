@@ -1,4 +1,4 @@
-const ModelUser = require('../models/users')
+const {UserModel} = require('../models')
 
 const {encryptPwd} = require('../libs/generate')
 const moment = require('moment')
@@ -14,7 +14,7 @@ module.exports.dataTable = async (req, res, next) => {
     const userLogin = req.user
     try {
         const where = {}
-        ModelUser.find(where)
+        UserModel.find(where)
             .sort({created_at : 1})
             .skip(parseInt(req.query.start))
             .limit(parseInt(req.query.length))
@@ -59,7 +59,7 @@ module.exports.dataTable = async (req, res, next) => {
                 })
 
                 // console.log('[OUTPUT] ', output)
-                ModelUser.countDocuments(where).then((total) => {
+                UserModel.countDocuments(where).then((total) => {
                     return res.json({
                         draw: req.query.draw,
                         recordsFiltered : total,
@@ -93,7 +93,7 @@ module.exports.createForm = async (req, res, next) => {
     const userLogin = req.user;
     let query = req.query;
 
-    let user = await ModelUser.findOne({_id : query.id});
+    let user = await UserModel.findOne({_id : query.id});
 
     return res.render('pages/manage/formUser',{
         type : type,
@@ -115,7 +115,7 @@ module.exports.saveUser = async (req, res, next) => {
         created_at : moment().utc().toDate()
     }
     console.log('[INSERT] ', dataInsert)
-    ModelUser.create(dataInsert)
+    UserModel.create(dataInsert)
         .then((result) => {
             return res.json({status : 200, message : 'Successfull Save User'})
         })
@@ -136,7 +136,7 @@ module.exports.updateUser = async (req, res, next) => {
     }
 
     console.log('[DATA UPDATE] ', dataUpdate);
-    ModelUser.updateOne({_id : body.id}, {
+    UserModel.updateOne({_id : body.id}, {
         $set : dataUpdate,
     }).then((result) => {
         return res.json({status : 200, message : 'Successfull Update User'})
@@ -147,7 +147,7 @@ module.exports.updateUser = async (req, res, next) => {
 
 module.exports.deleteUser = async (req, res, next) => {
     const {id} = req.body
-    ModelUser.deleteOne({_id : id}).then((result) => {
+    UserModel.deleteOne({_id : id}).then((result) => {
         return res.json({status : 200, message : 'Successfull Delete User'})
     }).catch((err) => {
         return res.json({ status : 500, message : err.message});
@@ -158,7 +158,7 @@ module.exports.resetPwd = async (req, res, next) => {
     const body = req.body
     const password = encryptPwd(body.password)
 
-    ModelUser.updateOne({_id : body.id}, { $set : { password : password}})
+    UserModel.updateOne({_id : body.id}, { $set : { password : password}})
         .then((rows) => {
             return res.json({status : 200, message : 'Successfull Reset Password'});
         })
