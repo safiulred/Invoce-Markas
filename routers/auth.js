@@ -1,7 +1,7 @@
 const bcrypt = require ('bcryptjs');
 const Session = require('../libs/session')
 
-const UserModel = require('../models/users')
+const {UserModel} = require('../models/')
 
 module.exports.viewAuth = async (req, res, next) => {
     // console.log(req.session)

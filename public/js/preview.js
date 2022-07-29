@@ -40,6 +40,8 @@ function main (param) {
     const tgl_awal = $('#fTglAwal').val() || 'all'
     const tgl_akhir = $('#fTglAkhir').val() || 'all'
     const stsCustomer = $('#fStsCustomer').val();
+    var searchName = $('#searchName').val()
+    var kolektor = $('#fKolektor').val() || 'all'
     
     const dataToSend = {
         tgl_awal,
@@ -47,6 +49,8 @@ function main (param) {
         currentPage,
         rowsPerPage,
         status: stsCustomer,
+        nama : searchName,
+        kolektor
     }
     $.ajax({
         url : '/customer/list-preview',

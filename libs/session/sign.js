@@ -9,7 +9,7 @@ module.exports = async (user, sessionBy) => {
     const token = crypto.AES.encrypt(strings, config.secret).toString().replace(/\=/g, '').replace(/\+/g, '_').replace(/\//g, '_')
 
     let sessionByUserId = await new Promise((resolve,reject)=>redisClient.hget(`${sessionBy?sessionBy:config.sessionName}SessionById`,user.id,(err,reply)=>err?reject(err):resolve(JSON.parse(reply)))) 
-    console.log(sessionByUserId)
+    // console.log(sessionByUserId)
 
     const oTokens = sessionByUserId && sessionByUserId.tokens?[...sessionByUserId.tokens,token]:[token]
     let tokens = oTokens

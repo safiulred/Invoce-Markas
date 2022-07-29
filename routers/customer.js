@@ -5,12 +5,21 @@ const moment = require('moment')
 moment.locale('ID')
 
 module.exports.Home = async (req, res, next) => {
+    const user = req.user
     const tgl_awal = moment().startOf("month").format("YYYY-MM-DD");
     const tgl_akhir = moment().endOf('month').format('YYYY-MM-DD');
+    const kolektor = await UserModel.find({
+        _id : {
+            $ne : user._id
+        },
+        isAdmin : false
+    })
+    // console.log('[KOLEKTOR] ', kolektor)
     return res.render('pages/customer/view',{
         title : 'Daftar Pelanggan',
         tgl_awal : tgl_awal,
         tgl_akhir : tgl_akhir,
+        kolektor : kolektor,
         isAdmin : req.user.isAdmin
     })
 }
@@ -18,7 +27,7 @@ module.exports.Home = async (req, res, next) => {
 module.exports.getPrint = async (req, res, next) => {
     const userLogin = req.user;
     const isAdmin = userLogin.isAdmin
-    let {tgl_awal, tgl_akhir, status} = req.body;
+    let {tgl_awal, tgl_akhir, status, nama, kolektor} = req.body;
     let filterTanggal = {}
     let month, year
     try {
@@ -26,6 +35,15 @@ module.exports.getPrint = async (req, res, next) => {
 
         if (!isAdmin) {
             where['pic'] = userLogin._id
+        }
+        else {
+            if (kolektor!=='all') {
+                where['pic'] = kolektor
+            }
+        }
+
+        if (nama) {
+            where['nama'] = new RegExp(nama.replace(/\\/g, ""), 'gi')
         }
 
         if (tgl_awal != 'all') {
@@ -52,6 +70,7 @@ module.exports.getPrint = async (req, res, next) => {
         const totalPages = totalData%rowsPerPage===0? parseInt(totalData/rowsPerPage):parseInt(totalData/rowsPerPage)+1
         const offset = rowsPerPage?(currentPage-1) * rowsPerPage:0
         const limit = rowsPerPage
+        console.log({where})
         console.log({totalPages, offset, limit, totalData})
         CustomerModel.find(where)
             .sort({nama : 1})
@@ -94,7 +113,7 @@ module.exports.dataTable = async (req, res, next) => {
     const userLogin = req.user;
     const isAdmin = userLogin.isAdmin
     const query = req.query;
-    let {tgl_awal, tgl_akhir, status, nama} = query;
+    let {tgl_awal, tgl_akhir, status, nama, kolektor} = query;
     let filterTanggal = {}
     let month,year
     try {
@@ -102,6 +121,11 @@ module.exports.dataTable = async (req, res, next) => {
         let  where = {}
         if (!isAdmin) {
             where['pic'] = userLogin._id
+        }
+        else {
+            if (kolektor!=='all') {
+                where['pic'] = kolektor
+            }
         }
 
         if (nama) {
@@ -123,7 +147,7 @@ module.exports.dataTable = async (req, res, next) => {
 			where['active'] = Number(status)==0?true:false
 		}
 
-        // console.log(where)
+        console.log(where)
         CustomerModel.find(where)
             .sort({billing_date: 1})
             .skip(parseInt(req.query.start))
@@ -175,7 +199,7 @@ module.exports.dataTable = async (req, res, next) => {
                         `,
                         company_name : `<small>${r.company_name?r.company_name:''}</small>`,
                         alamat : `<small>${r.alamat?r.alamat.toUpperCase():'-'}</small>`,
-                        tagihan : `<b>${convertToNominal(r.tagihan)}</b>`,
+                        tagihan : isAdmin?`<b>${convertToNominal(r.tagihan)}</b>`:'-',
                         billing_date : `${date} ${month} ${year}`,
                         status : `<center>${status}</center>`,
                     }
@@ -242,6 +266,7 @@ module.exports.saveCustomer = async (req, res, next) => {
             date : date,
             billing_date : moment.utc(moment(body.tgl_bayar, 'YYYY-MM-DD')).toDate(),
             installation_date : moment.utc(moment(body.tgl_pasang, 'YYYY-MM-DD')).toDate(),
+            pic : req.user._id,
             created_at : moment().utc().toDate()
         }
 
@@ -272,6 +297,7 @@ module.exports.updateCustomer = async (req, res, next) => {
             date : date,
             billing_date : moment.utc(moment(body.tgl_bayar, 'YYYY-MM-DD')).toDate(),
             installation_date : moment.utc(moment(body.tgl_pasang, 'YYYY-MM-DD')).toDate(),
+            // pic : req.user._id,
             updated_at : moment().utc().toDate()
         }
 
@@ -325,7 +351,7 @@ module.exports.updateTag = async (req, res, next) => {
 
 module.exports.getKolektor = (req, res) => {
     const user = req.user
-    UserModel.find({})
+    UserModel.find({isAdmin:false})
         .sort({nama : 1})
         .then(users=>{
             res.status(200).send(users)

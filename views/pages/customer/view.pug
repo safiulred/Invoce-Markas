@@ -19,7 +19,12 @@ div.row
                             input#fTglAwal(class = 'form-control datepicker' data-dateformat = "yy-mm-dd" placeholder = 'Tanggal')
                         div(class = 'col-lg-2 col-sm-2 col-xs-2')
                             input.form-control#searchName(type="text" placeholder ="Pencarian By Nama")
-                            //- input#fTglAkhir(class = 'form-control datepicker' data-dateformat = "yy-mm-dd" placeholder = 'Tanggal Akhir')
+                        - if (isAdmin)
+                            div(class = 'col-lg-2 col-sm-2 col-xs-2')
+                                select.form-control#fKolektor
+                                    option(value="all") Pilih Kolektor
+                                    each k in kolektor 
+                                        option(value=k._id) #{k.nama} 
                         div(class = 'col-lg-4 col-sm-4 col-xs-4')
                             button#searchRekapProd(class = 'btn btn-default pull-left' data-original-title = 'Pencarian' data-placement="bottom" rel="tooltip")
                                 i(class="fa fa-fw fa-search")
@@ -324,7 +329,7 @@ script.
 
         tableCustomer = dataTable('#customerTable',{
             searching : false,
-            url : '/customer/dataTable?tgl_awal=all&tgl_akhir=all&status=all',
+            url : '/customer/dataTable?tgl_awal=all&tgl_akhir=all&status=all&kolektor=all',
             columns : [
                 {
                     "data" : "action",
@@ -359,10 +364,11 @@ script.
             var tgl_akhir = $('#fTglAkhir').val() || 'all'
             var stsCustomer = $('#fStsCustomer').val();
             var searchName = $('#searchName').val()
+            var kolektor = $('#fKolektor').val() || 'all'
 
             tableCustomer = dataTable('#customerTable',{
                 searching : false,
-                url : `/customer/dataTable?tgl_awal=${tgl_awal}&tgl_akhir=${tgl_akhir}&status=${stsCustomer}&nama=${searchName}`,
+                url : `/customer/dataTable?tgl_awal=${tgl_awal}&tgl_akhir=${tgl_akhir}&status=${stsCustomer}&nama=${searchName}&kolektor=${kolektor}`,
                 columns : [
                     {
                         "data" : "action",
@@ -527,12 +533,13 @@ script.
 
         $('#printTable').click(function (e){
             e.preventDefault()
-            var tgl_awal = $('#fTglAwal').val() || 'all'
-            var tgl_akhir = $('#fTglAkhir').val() || 'all'
-            var stsCustomer = $('#fStsCustomer').val();
-            var searchName = $('#searchName').val()
+            //- var tgl_awal = $('#fTglAwal').val() || 'all'
+            //- var tgl_akhir = $('#fTglAkhir').val() || 'all'
+            //- var stsCustomer = $('#fStsCustomer').val();
+            //- var searchName = $('#searchName').val()
+            //- var kolektor = $('#fKolektor').val() || 'all'
 
-            let urlPreview = `/customer/list-preview?tgl_awal=${tgl_awal}&tgl_akhir=${tgl_akhir}&status=${stsCustomer}&nama=${searchName}`;
+            //- let urlPreview = `/customer/list-preview?tgl_awal=${tgl_awal}&tgl_akhir=${tgl_akhir}&status=${stsCustomer}&nama=${searchName}&kolektor=${kolektor}`;
             $("#modalBig #modalDialog").load('/customer/list-preview');
             //- $("#modalBig #modalDialog").load(urlPreview);
             $('#modalBig').modal('show');
