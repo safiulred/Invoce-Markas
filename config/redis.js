@@ -2,7 +2,7 @@ module.exports = {
     development : {
         secret:'markatnett',
         sessionName : 'invoicenet',
-        // host : 'localhost',
+        host : 'localhost',
         port : 12315,
         password : 'P!knik9@'
     },
@@ -10,7 +10,7 @@ module.exports = {
         secret:'markatnett',
         sessionName : 'invoicenet',
         host : 'localhost',
-        port : 6379,
+        port : 5470,
         password : ''
     }
 }

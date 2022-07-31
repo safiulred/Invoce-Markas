@@ -8,7 +8,7 @@ module.exports = {
     },
     production : {
         "host" : "localhost",
-        "port" : 37027,
+        "port" : 31015,
         "password" : "",
         "username" : "",
         "db" : "invoice-markas"
