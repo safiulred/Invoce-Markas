@@ -2,7 +2,7 @@ module.exports = {
     development : {
         secret:'markatnett',
         sessionName : 'invoicenet',
-        host : 'localhost',
+        // host : 'localhost',
         port : 12315,
         password : 'P!knik9@'
     },
