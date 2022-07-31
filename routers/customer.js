@@ -42,7 +42,7 @@ module.exports.getPrint = async (req, res, next) => {
             }
         }
 
-        if (nama) {
+        if (nama&&nama!=='') {
             where['nama'] = new RegExp(nama.replace(/\\/g, ""), 'gi')
         }
 
@@ -131,7 +131,7 @@ module.exports.dataTable = async (req, res, next) => {
             }
         }
 
-        if (nama) {
+        if (nama&&nama!=='') {
             where['nama'] = new RegExp(nama.replace(/\\/g, ""), 'gi')
         }
 
