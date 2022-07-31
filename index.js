@@ -23,8 +23,8 @@ app.set('view engine', 'pug');
 app.set('x-powered-by', 'Invoice Markas');
 
 // CONNECT REDIS
-// var client = redis.createClient(configRedis);
-// client.on('connect', () => { console.log('[!] Redis connected')});
+var client = redis.createClient(configRedis);
+client.on('connect', () => { console.log('[!] Redis connected')});
 
 // CONFIG SESSION
 app.use(session({
@@ -36,12 +36,12 @@ app.use(session({
 		secure : false,
 		maxAge : Date.now() + 3600000
 	},
-	// store : new redisStore({
-	// 	host : configRedis.host,
-	// 	port : configRedis.port,
-	// 	db: configRedis.db,
-	// 	client : client, ttl : 260
-	// })
+	store : new redisStore({
+		host : configRedis.host,
+		port : configRedis.port,
+		db: configRedis.db,
+		client : client, ttl : 260
+	})
 }));
 
 app.use(useragent.express())
