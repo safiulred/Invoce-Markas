@@ -274,7 +274,7 @@ module.exports.saveCustomer = async (req, res, next) => {
     // console.log(body)
     try {
         delete body.id
-        const date = moment.utc(moment(body.tgl_bayar, 'YYYY-MM-DD')).format('DD')
+        const date = moment(body.tgl_bayar, 'YYYY-MM-DD').format('DD')
         // console.log({month})
         const dataInsert = {
             ...body,
@@ -306,7 +306,8 @@ module.exports.updateCustomer = async (req, res, next) => {
     const body = req.body
     try {
         const id = body.id
-        const date = moment.utc(moment(body.tgl_bayar, 'YYYY-MM-DD')).format('DD')
+        // const date = moment.utc(moment(body.tgl_bayar, 'YYYY-MM-DD')).format('DD')
+        const date = moment(body.tgl_bayar, 'YYYY-MM-DD').format('DD')
         const dataUpdate = {
             ...body,
             active: Number(body.status)==0?true:false,
