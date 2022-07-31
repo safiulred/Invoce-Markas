@@ -212,11 +212,13 @@ module.exports.dataTable = async (req, res, next) => {
                         billing_date : `${date} ${month} ${year}`,
                         status : `<center>${status}</center>`,
                         kolektor : `
-                            <b>${kolektor}</b>
+                            <center>
+                                <b>${kolektor}</b>
+                            </center>
                         `
                     }
-                    return item
 
+                    return item
                 })
 
                 CustomerModel.countDocuments(where).then((total) => {

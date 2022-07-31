@@ -43,9 +43,11 @@ div.row
                                 th Alamat
                                 th Tagihan
                                 th(data-hide = 'phone,tablet') Tanggal Tagihan
-                                th Status
+                                th 
+                                    center Status
                                 - if (isAdmin)
-                                    th Kolektor
+                                    th 
+                                        center Kolektor
     
     article.col-md-5(style="display: none;" data-action="edit")#formEditable
     article.col-md-5(style="display: none;" data-action="edit")#formEditPic
