@@ -151,13 +151,14 @@ module.exports.dataTable = async (req, res, next) => {
 			where['active'] = Number(status)==0?true:false
 		}
 
-        console.log(where)
+        // console.log(where)
         CustomerModel.find(where)
+            .populate('pic')
             .sort({billing_date: 1})
             .skip(parseInt(req.query.start))
             .limit(parseInt(req.query.length))
-            .then(async (result) => {
-                const output = result.map((r) => {
+            .then(async (results) => {
+                const output = results.map((r) => {
                     let status = r.active ? `<small class='badge bg-color-greenLight'>Aktif</small>`: `<small class='badge bg-color-red'>Tidak Aktif</small>`;
                     let btnChangePic = `
                         <li>
@@ -191,7 +192,10 @@ module.exports.dataTable = async (req, res, next) => {
 
                     const billing_date = moment(r.billing_date).utc().add(7, 'hours').format('DD MMMM YYYY')
                     const date = moment(billing_date, 'DD MMMM YYYY').format('DD')
-                    return {
+                    const kolektor = isAdmin&&r.pic&&r.pic._id.toString()===userLogin._id.toString()
+                        ?'ADMIN'
+                        :r.pic&&r.pic.nama?r.pic.nama:'-'
+                    const item = {
                         _id : r._id,
                         action : action,
                         customer : `
@@ -199,14 +203,20 @@ module.exports.dataTable = async (req, res, next) => {
                                 Nama : <b>${r.nama.toUpperCase()}</b><br/>
                                 Telp : ${r.telp}<br/>
                                 Email : ${r.email}<br/>
+                                Perusahaan : ${r.company_name}<br/>
                             </small>
                         `,
-                        company_name : `<small>${r.company_name?r.company_name:''}</small>`,
+                        // company_name : `<small>${r.company_name?r.company_name:''}</small>`,
                         alamat : `<small>${r.alamat?r.alamat.toUpperCase():'-'}</small>`,
                         tagihan : isAdmin?`<b>${convertToNominal(r.tagihan)}</b>`:'-',
                         billing_date : `${date} ${month} ${year}`,
                         status : `<center>${status}</center>`,
+                        kolektor : `
+                            <b>${kolektor}</b>
+                        `
                     }
+                    return item
+
                 })
 
                 CustomerModel.countDocuments(where).then((total) => {

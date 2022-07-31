@@ -39,11 +39,13 @@ div.row
                             tr
                                 th Action
                                 th Pelanggan
-                                th Perusahaan
+                                //- th Perusahaan
                                 th Alamat
                                 th Tagihan
                                 th(data-hide = 'phone,tablet') Tanggal Tagihan
                                 th Status
+                                - if (isAdmin)
+                                    th Kolektor
     
     article.col-md-5(style="display: none;" data-action="edit")#formEditable
     article.col-md-5(style="display: none;" data-action="edit")#formEditPic
@@ -105,6 +107,7 @@ div.row
     iframe(id = "ifmcontentstoprint" style="height: 0px; width: 0px; position: absolute;")
 script.
     pageSetUp();
+    const isAdmin = "#{isAdmin}"
     var tableCustomer
 
     function closeForm(selector) {
@@ -327,40 +330,46 @@ script.
     }
 
     $(function () {
+        const columns = [
+            {
+                "data" : "action",
+            },{
+                "data" : "customer"
+            },{
+                "data" : "alamat"
+            },{
+                "data" : "tagihan"
+            },{
+                "data" : "billing_date"
+            },{
+                "data" : "status"
+            }
+        ]
+        const columnDefs= [
+            { width: "10%", targets: 0 },
+            { width: "20%", targets: 1 },
+            { width: "20%", targets: 2 },
+            { width: "15%", targets: 3 },
+            { width: "10%", targets: 4 },
+            { width: "10%", targets: 5 },
+        ]
+
+        if (isAdmin==="true") {
+            columns.push({data:'kolektor'})
+            columnDefs.push({width:"35%", targets:6})
+        }
+
         $('.datepicker').datepicker({
             defaultDate : new Date(),
             dateFormat : 'yy-mm-dd'
         });
 
+        //- console.log({columns})
         tableCustomer = dataTable('#customerTable',{
             searching : false,
             url : '/customer/dataTable?tgl_awal=all&tgl_akhir=all&status=all&kolektor=all',
-            columns : [
-                {
-                    "data" : "action",
-                },{
-                    "data" : "customer"
-                },{
-                    "data" : "company_name"
-                },{
-                    "data" : "alamat"
-                },{
-                    "data" : "tagihan"
-                },{
-                    "data" : "billing_date"
-                },{
-                    "data" : "status"
-                }
-            ],
-            columnDefs: [
-                { width: "10%", targets: 0 },
-                { width: "20%", targets: 1 },
-                { width: "20%", targets: 2 },
-                { width: "20%", targets: 3 },
-                { width: "20%", targets: 4 },
-                { width: "20%", targets: 5 },
-                { width: "20%", targets: 6 },
-            ],
+            columns : columns,
+            columnDefs: columnDefs,
         });
 
         $('#searchRekapProd').click(function (e){
@@ -374,32 +383,8 @@ script.
             tableCustomer = dataTable('#customerTable',{
                 searching : false,
                 url : `/customer/dataTable?tgl_awal=${tgl_awal}&tgl_akhir=${tgl_akhir}&status=${stsCustomer}&nama=${searchName}&kolektor=${kolektor}`,
-                columns : [
-                    {
-                        "data" : "action",
-                    },{
-                        "data" : "customer"
-                    },{
-                        "data" : "company_name"
-                    },{
-                        "data" : "alamat"
-                    },{
-                        "data" : "tagihan"
-                    },{
-                        "data" : "billing_date"
-                    },{
-                        "data" : "status"
-                    }
-                ],
-                columnDefs: [
-                    { width: "10%", targets: 0 },
-                    { width: "20%", targets: 1 },
-                    { width: "20%", targets: 2 },
-                    { width: "20%", targets: 3 },
-                    { width: "20%", targets: 4 },
-                    { width: "20%", targets: 5 },
-                    { width: "20%", targets: 6 },
-                ],
+                columns : columns,
+                columnDefs: columnDefs,
             });
         })
 
