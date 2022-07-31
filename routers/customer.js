@@ -48,9 +48,12 @@ module.exports.getPrint = async (req, res, next) => {
 
         if (tgl_awal != 'all') {
 			filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
-            where['date'] = moment.utc(filterTanggal.tgl_awal).format('DD')
-            month = moment.utc(filterTanggal.tgl_awal).format('MMMM')
-            year = moment.utc(filterTanggal.tgl_awal).format('YYYY')
+            // where['date'] = moment.utc(filterTanggal.tgl_awal).format('DD')
+            // month = moment.utc(filterTanggal.tgl_awal).format('MMMM')
+            // year = moment.utc(filterTanggal.tgl_awal).format('YYYY')
+            where['date'] = moment(tgl_awal, 'YYYY-MM-DD').format('DD')
+            month = moment(tgl_awal, 'YYYY-MM-DD').format('MMMM')
+            year = moment(tgl_awal, 'YYYY-MM-DD').format('YYYY')
 		}
         else {
             month = moment().format('MMMM')
@@ -134,9 +137,10 @@ module.exports.dataTable = async (req, res, next) => {
 
         if (tgl_awal != 'all') {
             filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
-            where['date'] = moment.utc(filterTanggal.tgl_awal).format('DD')
-            month = moment.utc(filterTanggal.tgl_awal).format('MMMM')
-            year = moment.utc(filterTanggal.tgl_awal).format('YYYY')
+            // where['date'] = moment.utc(filterTanggal.tgl_awal).format('DD')
+            where['date'] = moment(tgl_awal, 'YYYY-MM-DD').format('DD')
+            month = moment(tgl_awal, 'YYYY-MM-DD').format('MMMM')
+            year = moment(tgl_awal, 'YYYY-MM-DD').format('YYYY')
 		}
         else {
             month = moment().format('MMMM')
