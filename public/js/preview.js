@@ -172,13 +172,13 @@ function loadMessage (data, setting, str) {
             style : "padding : 10px;"
         })
         let tdLabelLeftBottom1 = $('<td/>',{
-            class : "text",
+            class : "text-bold",
             width : "2%",
             text : 'NAMA'
         })
         let tdValueLeftBottom1 = $('<td/>',{
             style : "border-bottom:1px solid #000; font-weight: bold;",
-            class : "text",
+            class : "text-bold",
             width : "10%",
             text : r.nama.toUpperCase()
         })
@@ -191,13 +191,13 @@ function loadMessage (data, setting, str) {
             style : "padding : 10px;"
         })
         let tdLabelLeftBottom2 = $('<td/>',{
-            class : "text",
+            class : "text-bold",
             width : "2%",
             text : 'ALAMAT'
         })
         let tdValueLeftBottom2 = $('<td/>',{
             style : "border-bottom:1px solid #000; font-weight: bold;",
-            class : "text",
+            class : "text-bold",
             width : "10%",
             text : r.alamat
         })
@@ -210,13 +210,13 @@ function loadMessage (data, setting, str) {
             style : "padding : 10px;"
         })
         let tdLabelLeftBottom3 = $('<td/>',{
-            class : "text",
+            class : "text-bold",
             width : "2%",
             text : 'BULAN'
         })
         let tdValueLeftBottom3 = $('<td/>',{
             style : "border-bottom:1px solid #000; font-weight: bold;",
-            class : "text",
+            class : "text-bold",
             width : "10%",
             text : r.periode
         })
@@ -229,13 +229,13 @@ function loadMessage (data, setting, str) {
             style : "padding : 10px;"
         })
         let tdLabelLeftBottom4 = $('<td/>',{
-            class : "text",
+            class : "text-bold",
             width : "2%",
             text : 'TOTAL'
         })
         let tdValueLeftBottom4 = $('<td/>',{
             style : "border-bottom:1px solid #000; font-weight: bold;",
-            class : "text",
+            class : "text-bold",
             width : "10%",
             text : r.tagihan
         })
