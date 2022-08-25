@@ -42,15 +42,18 @@ module.exports.getPrint = async (req, res, next) => {
             }
         }
 
-        if (nama) {
+        if (nama&&nama!=='') {
             where['nama'] = new RegExp(nama.replace(/\\/g, ""), 'gi')
         }
 
         if (tgl_awal != 'all') {
 			filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
-            where['date'] = moment.utc(filterTanggal.tgl_awal).format('DD')
-            month = moment.utc(filterTanggal.tgl_awal).format('MMMM')
-            year = moment.utc(filterTanggal.tgl_awal).format('YYYY')
+            // where['date'] = moment.utc(filterTanggal.tgl_awal).format('DD')
+            // month = moment.utc(filterTanggal.tgl_awal).format('MMMM')
+            // year = moment.utc(filterTanggal.tgl_awal).format('YYYY')
+            where['date'] = moment(tgl_awal, 'YYYY-MM-DD').format('DD')
+            month = moment(tgl_awal, 'YYYY-MM-DD').format('MMMM')
+            year = moment(tgl_awal, 'YYYY-MM-DD').format('YYYY')
 		}
         else {
             month = moment().format('MMMM')
@@ -128,15 +131,16 @@ module.exports.dataTable = async (req, res, next) => {
             }
         }
 
-        if (nama) {
+        if (nama&&nama!=='') {
             where['nama'] = new RegExp(nama.replace(/\\/g, ""), 'gi')
         }
 
         if (tgl_awal != 'all') {
             filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
-            where['date'] = moment.utc(filterTanggal.tgl_awal).format('DD')
-            month = moment.utc(filterTanggal.tgl_awal).format('MMMM')
-            year = moment.utc(filterTanggal.tgl_awal).format('YYYY')
+            // where['date'] = moment.utc(filterTanggal.tgl_awal).format('DD')
+            where['date'] = moment(tgl_awal, 'YYYY-MM-DD').format('DD')
+            month = moment(tgl_awal, 'YYYY-MM-DD').format('MMMM')
+            year = moment(tgl_awal, 'YYYY-MM-DD').format('YYYY')
 		}
         else {
             month = moment().format('MMMM')
@@ -147,13 +151,14 @@ module.exports.dataTable = async (req, res, next) => {
 			where['active'] = Number(status)==0?true:false
 		}
 
-        console.log(where)
+        // console.log(where)
         CustomerModel.find(where)
+            .populate('pic')
             .sort({billing_date: 1})
             .skip(parseInt(req.query.start))
             .limit(parseInt(req.query.length))
-            .then(async (result) => {
-                const output = result.map((r) => {
+            .then(async (results) => {
+                const output = results.map((r) => {
                     let status = r.active ? `<small class='badge bg-color-greenLight'>Aktif</small>`: `<small class='badge bg-color-red'>Tidak Aktif</small>`;
                     let btnChangePic = `
                         <li>
@@ -187,7 +192,10 @@ module.exports.dataTable = async (req, res, next) => {
 
                     const billing_date = moment(r.billing_date).utc().add(7, 'hours').format('DD MMMM YYYY')
                     const date = moment(billing_date, 'DD MMMM YYYY').format('DD')
-                    return {
+                    const kolektor = isAdmin&&r.pic&&r.pic._id.toString()===userLogin._id.toString()
+                        ?'ADMIN'
+                        :r.pic&&r.pic.nama?r.pic.nama:'-'
+                    const item = {
                         _id : r._id,
                         action : action,
                         customer : `
@@ -195,14 +203,22 @@ module.exports.dataTable = async (req, res, next) => {
                                 Nama : <b>${r.nama.toUpperCase()}</b><br/>
                                 Telp : ${r.telp}<br/>
                                 Email : ${r.email}<br/>
+                                Perusahaan : ${r.company_name}<br/>
                             </small>
                         `,
-                        company_name : `<small>${r.company_name?r.company_name:''}</small>`,
+                        // company_name : `<small>${r.company_name?r.company_name:''}</small>`,
                         alamat : `<small>${r.alamat?r.alamat.toUpperCase():'-'}</small>`,
                         tagihan : isAdmin?`<b>${convertToNominal(r.tagihan)}</b>`:'-',
                         billing_date : `${date} ${month} ${year}`,
                         status : `<center>${status}</center>`,
+                        kolektor : `
+                            <center>
+                                <b>${kolektor}</b>
+                            </center>
+                        `
                     }
+
+                    return item
                 })
 
                 CustomerModel.countDocuments(where).then((total) => {
@@ -258,7 +274,7 @@ module.exports.saveCustomer = async (req, res, next) => {
     // console.log(body)
     try {
         delete body.id
-        const date = moment.utc(moment(body.tgl_bayar, 'YYYY-MM-DD')).format('DD')
+        const date = moment(body.tgl_bayar, 'YYYY-MM-DD').format('DD')
         // console.log({month})
         const dataInsert = {
             ...body,
@@ -290,7 +306,8 @@ module.exports.updateCustomer = async (req, res, next) => {
     const body = req.body
     try {
         const id = body.id
-        const date = moment.utc(moment(body.tgl_bayar, 'YYYY-MM-DD')).format('DD')
+        // const date = moment.utc(moment(body.tgl_bayar, 'YYYY-MM-DD')).format('DD')
+        const date = moment(body.tgl_bayar, 'YYYY-MM-DD').format('DD')
         const dataUpdate = {
             ...body,
             active: Number(body.status)==0?true:false,
