@@ -16,11 +16,17 @@ module.exports.Home = async (req, res, next) => {
 }
 
 module.exports.getPrint = async (req, res, next) => {
-    let {tgl_awal, tgl_akhir, status} = req.body;
+    const body = JSON.parse(req.body.data)
+    let {tgl_awal, tgl_akhir, status, split} = body
+    // console.log(body)
     let filterTanggal = {}
     let month, year
     try {
-        let  where = {}
+        const queryCustomer = split? {_id: {$in : body.customerIds}}:{}
+        // console.log({queryCustomer})
+        let  where = {
+            ...queryCustomer
+        }
         if (tgl_awal != 'all') {
 			filterTanggal.tgl_awal = moment(tgl_awal, "YYYY-MM-DD").startOf("days").toDate()
 			// filterTanggal.tgl_akhir = moment(tgl_akhir, "YYYY-MM-DD").endOf("days").toDate()
@@ -41,8 +47,8 @@ module.exports.getPrint = async (req, res, next) => {
 			where['active'] = Number(status)==0?true:false
 		}
 
-        const rowsPerPage = req.body.rowsPerPage
-        const currentPage = req.body.currentPage
+        const rowsPerPage = body.rowsPerPage
+        const currentPage = body.currentPage
         const totalData = await ModelCustomer.countDocuments({
             ...where
         })

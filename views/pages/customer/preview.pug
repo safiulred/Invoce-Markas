@@ -23,7 +23,7 @@ style.
     div(class="modal-header" style="background-color: rgb(236, 240, 241);")
         .pull-left
             button(onclick="printPriview();" style="margin-right: 10px;" class="btn btn-primary" type="button") PRINT PREVIEW
-            button(style="margin-right: 10px;" class="btn btn-danger" type="button" data-dismiss="modal") TUTUP
+            button(style="margin-right: 10px;" class="btn btn-danger" type="button" onclick="closeModal()") TUTUP
         .pull-right 
             button#btnPrev(onClick="return onPrev();" style="margin-right: 10px;" class="btn btn-primary" type="button" disabled data-page = "1") <
             button#bntNext(onClick="return onNext();" style="margin-right: 10px;" class="btn btn-primary" type="button" disabled data-page = "1") >

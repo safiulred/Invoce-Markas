@@ -40,13 +40,15 @@ function main (param) {
     const tgl_awal = $('#fTglAwal').val() || 'all'
     const tgl_akhir = $('#fTglAkhir').val() || 'all'
     const stsCustomer = $('#fStsCustomer').val();
-    
+    console.log({selected,printSplit})
+    const customerIds = printSplit?{customerIds:selected,split:true}:{split:false}
     const dataToSend = {
         tgl_awal,
         tgl_akhir,
         currentPage,
         rowsPerPage,
         status: stsCustomer,
+        ...customerIds
     }
     $.ajax({
         url : '/customer/list-preview',
@@ -54,7 +56,9 @@ function main (param) {
         header: {
             'Content-Type' : 'application/json'
         },
-        data : dataToSend,
+        data : {
+            data:JSON.stringify(dataToSend)
+        },
         beforeSend: function() {
             console.log('Loading...')
         },
