@@ -26,7 +26,7 @@ module.exports.loginUser = async (req, res, next) => {
     try {
         const user = await UserModel.findOne({username : body.username})
         if (!user) {
-            return res.status(404).json({status : 404, message : 'data user tidak di temukan'})
+            return res.json({status : 404, message : 'data user tidak di temukan'})
         }
 
         if ( !bcrypt.compareSync( body.password , user.password ) ) {

@@ -28,9 +28,12 @@ div.row
                                 i(class="fa fa-fw fa-refresh")
                             button#printTable(class = 'btn btn-default pull-left' data-original-title = 'Cetak' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;')
                                 i(class="fa fa-fw fa-print")
+                        div(class = 'col-lg-4 col-sm-4 col-xs-4').pull-right
+                            button#editTagihan(class = 'btn btn-default pull-left' data-original-title = 'Edit Tagihan' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;') Edit Tagihan
                     table(id = "customerTable" class = "table table-striped table-bordered table-hover" width = "100%")
                         thead
                             tr
+                                th 
                                 th Action
                                 th Pelanggan
                                 th Perusahaan
@@ -71,7 +74,9 @@ div.row
     iframe(id = "ifmcontentstoprint" style="height: 0px; width: 0px; position: absolute;")
 script.
     pageSetUp();
+    const selectorTable = "#customerTable"
     var tableCustomer
+    var selected = []
 
     function closeForm(selector) {
         $(selector).slideUp(200, function() {
@@ -83,6 +88,7 @@ script.
 
     function refreshData () {
         tableCustomer.ajax.reload(null, false);
+        selected = []
     }
 
     function addData () {
@@ -178,17 +184,47 @@ script.
         return false;
     }
 
+    function chooseColumn(selector, id) {
+        var index = $.inArray(id , selected)
+        var data_cheked = $('table'+selectorTable+' tbody tr.single');
+        var id_cheked = data_cheked.eq(0).find('#centang').attr('data-id');
+        var index_cheked = $.inArray(id_cheked , selected);
+        data_cheked.removeClass('selected')
+        var cek = $('table'+selectorTable+' tbody tr').hasClass('single')
+        if (cek == true && id != id_cheked) {
+            selected.splice(index_cheked, 1);
+        }
+
+        if (index === -1 ){
+            selected.push(id);
+        } else if (id != id_cheked) {
+            selected.splice(index , 1);
+        }
+        $('table'+selectorTable+' tr[data-id="'+id+'"]').toggleClass('selected');
+        if (id_cheked != undefined && id == id_cheked)
+            $('table'+selectorTable+' tr[data-id="'+id+'"]').addClass('selected');
+        $('table'+selectorTable+' tr').removeClass('single');
+    }
+
     $(function () {
         $('.datepicker').datepicker({
             defaultDate : new Date(),
             dateFormat : 'yy-mm-dd'
         });
 
+        $('#editTagihan').click(function (e){
+            e.preventDefault()
+            console.log({selected})
+        })
+        
+
         tableCustomer = dataTable('#customerTable',{
             searching : false,
             url : '/customer/dataTable?tgl_awal=all&tgl_akhir=all&status=all',
             columns : [
                 {
+                    "data":"_id"
+                },{
                     "data" : "action",
                 },{
                     "data" : "customer"
@@ -205,14 +241,55 @@ script.
                 }
             ],
             columnDefs: [
-                { width: "10%", targets: 0 },
-                { width: "20%", targets: 1 },
+                { 
+                    width: "10%", 
+                    targets: 0,
+                    render: function (data, type, row) {
+                        let elmtCheck
+                        var index = $.inArray(data , selected)
+                        if (index===-1) {
+                            elmtCheck = `
+                                <input type='checkbox' name='checkbox' 
+                                    id='centang'
+                                    onClick='chooseColumn(this,"${data.toString()}")' 
+                                    data-id='${data}'/>
+                            `
+                        } 
+                        else {
+                            elmtCheck = `
+                                <input type='checkbox' name='checkbox' 
+                                    id='centang'
+                                    checked
+                                    onClick='chooseColumn(this,"${data.toString()}")' 
+                                    data-id='${data}'/>
+                            `
+                        }
+                        return `
+                            <center>
+                                <div class='checkbox'>
+                                    <label>
+                                        ${elmtCheck}
+                                    </label>
+                                </div>
+                            </center>
+                        `
+                    }
+                },
+                { width: "10%", targets: 1 },
                 { width: "20%", targets: 2 },
                 { width: "20%", targets: 3 },
                 { width: "20%", targets: 4 },
                 { width: "20%", targets: 5 },
                 { width: "20%", targets: 6 },
+                { width: "20%", targets: 7 },
             ],
+            'fnRowCallback' : function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                var element = aData.toString().split(',')
+                //- conso
+            },
+            "rowCallback": function( row, data ) {
+                console.log({row, data})
+            },
         });
 
         $('#searchRekapProd').click(function (e){
