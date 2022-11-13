@@ -28,6 +28,8 @@ div.row
                                 i(class="fa fa-fw fa-refresh")
                             button#printTable(class = 'btn btn-default pull-left' data-original-title = 'Cetak' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;')
                                 i(class="fa fa-fw fa-print")
+                            button#selectAll(class = 'btn btn-default pull-left' data-original-title = 'Pilih Semua' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;' onClick="SelectAll()")
+                                i(class="fa fa-fw fa-check")
                         div(class = 'col-lg-4 col-sm-4 col-xs-4').pull-right
                             button#editTagihan(class = 'btn btn-default pull-left' data-original-title = 'Edit Tagihan' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;') Edit Tagihan
                     table(id = "customerTable" class = "table table-striped table-bordered table-hover" width = "100%")
@@ -76,6 +78,7 @@ script.
     pageSetUp();
     const selectorTable = "#customerTable"
     var tableCustomer
+    var multiTag = false
     var selected = []
 
     function closeForm(selector) {
@@ -153,12 +156,22 @@ script.
     }
 
     function updateTag(id, tagihan) {
+        var tag = tagihan || 0
         $("#formEditable").fadeOut();
         $("#cardList").removeClass("col-md-12").addClass("col-md-7")
         $('#formEditTag button#submitTag').attr('data-id', id)
-        $('#formEditTag input#newTag').val(tagihan)
+        $('#formEditTag input#newTag').val(tag)
         $("#formEditTag").fadeIn(200)
         $('#newTag').focus()
+    }
+
+    function SelectAll () {
+        //- selected = [];
+        $('table'+selectorTable+' tbody > tr').each(function (){
+            var id = $(this).find("input[name='checkbox']").attr('data-id');
+            $('input[type="checkbox"]').prop('checked',true);
+            selected.push(id);
+        });
     }
 
     /*
@@ -214,7 +227,14 @@ script.
 
         $('#editTagihan').click(function (e){
             e.preventDefault()
-            console.log({selected})
+            //- console.log({selected})
+            multiTag=true
+            $("#formEditable").fadeOut();
+            $("#cardList").removeClass("col-md-12").addClass("col-md-7")
+            $('#formEditTag button#submitTag').attr('data-id', "")
+            $('#formEditTag input#newTag').val(0)
+            $("#formEditTag").fadeIn(200)
+            $('#newTag').focus()
         })
         
 
@@ -344,6 +364,12 @@ script.
                     timeout : 1000
                 });
             } else {
+                var params = multiTag? {idx:selected}:{idx:[id]}
+                const dataToSend = {
+                    tagihan:new_tagihan,
+                    ...params
+                }
+                //- console.log({dataToSend})
                 $.ajax({
                     url : '/customer/update-tagihan',
                     method: 'POST',
@@ -351,8 +377,7 @@ script.
                         'Content-Type' : 'application/json'
                     },
                     data : {
-                        id : id,
-                        tagihan : new_tagihan
+                        data: JSON.stringify(dataToSend)
                     },
                     beforeSend: function() {
                         selector.attr('disabled', true);
