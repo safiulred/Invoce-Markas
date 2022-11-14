@@ -124,7 +124,8 @@ module.exports.dataTable = async (req, res, next) => {
 		}
 
         ModelCustomer.find(where)
-            .sort({billing_date: 1})
+            .sort({nama: 1})
+            // .sort({billing_date:1, nama:1})
             .skip(parseInt(req.query.start))
             .limit(parseInt(req.query.length))
             .then(async (result) => {

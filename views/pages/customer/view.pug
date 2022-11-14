@@ -135,23 +135,23 @@ script.
                             timeout : 1000
                         });
                     } else {
-                    $.smallBox({
-                    title : "Peringatan",
-                    content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
-                    color : "#C46A69",
-                    iconSmall : "fa fa-times  fa-1x fadeInRight animated",
-                    timeout : 1000
-                    });
+                        $.smallBox({
+                            title : "Peringatan",
+                            content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+                            color : "#C46A69",
+                            iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+                            timeout : 1000
+                        });
                     }
                 },
                 error : function (xhr, ajaxOptions, thrownError) {
-                $.smallBox({
-                title : "Peringatan",
-                content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
-                color : "#C46A69",
-                iconSmall : "fa fa-times  fa-1x fadeInRight animated",
-                timeout : 1000
-                });
+                    $.smallBox({
+                        title : "Peringatan",
+                        content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+                        color : "#C46A69",
+                        iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+                        timeout : 1000
+                    });
                 },
             })
         }
@@ -245,79 +245,74 @@ script.
             $('#newTag').focus()
         })
         
+        const columns = [
+            {
+                "data":"_id"
+            },{
+                "data" : "action",
+            },{
+                "data" : "customer"
+            },{
+                "data" : "company_name"
+            },{
+                "data" : "alamat"
+            },{
+                "data" : "tagihan"
+            },{
+                "data" : "billing_date"
+            },{
+                "data" : "status"
+            }
+        ]
+        const columnDefs = [
+            { 
+                width: "10%", 
+                targets: 0,
+                render: function (data, type, row) {
+                    let elmtCheck
+                    var index = $.inArray(data , selected)
+                    if (index===-1) {
+                        elmtCheck = `
+                            <input type='checkbox' name='checkbox' 
+                                id='centang'
+                                onClick='chooseColumn(this,"${data.toString()}")' 
+                                data-id='${data}'/>
+                        `
+                    } 
+                    else {
+                        elmtCheck = `
+                            <input type='checkbox' name='checkbox' 
+                                id='centang'
+                                checked
+                                onClick='chooseColumn(this,"${data.toString()}")' 
+                                data-id='${data}'/>
+                        `
+                    }
+                    return `
+                        <center>
+                            <div class='checkbox'>
+                                <label>
+                                    ${elmtCheck}
+                                </label>
+                            </div>
+                        </center>
+                    `
+                }
+            },
+            { width: "10%", targets: 1 },
+            { width: "20%", targets: 2 },
+            { width: "20%", targets: 3 },
+            { width: "20%", targets: 4 },
+            { width: "20%", targets: 5 },
+            { width: "20%", targets: 6 },
+            { width: "20%", targets: 7 },
+        ]
 
         tableCustomer = dataTable('#customerTable',{
             searching : false,
             url : '/customer/dataTable?tgl_awal=all&tgl_akhir=all&status=all',
-            columns : [
-                {
-                    "data":"_id"
-                },{
-                    "data" : "action",
-                },{
-                    "data" : "customer"
-                },{
-                    "data" : "company_name"
-                },{
-                    "data" : "alamat"
-                },{
-                    "data" : "tagihan"
-                },{
-                    "data" : "billing_date"
-                },{
-                    "data" : "status"
-                }
-            ],
-            columnDefs: [
-                { 
-                    width: "10%", 
-                    targets: 0,
-                    render: function (data, type, row) {
-                        let elmtCheck
-                        var index = $.inArray(data , selected)
-                        if (index===-1) {
-                            elmtCheck = `
-                                <input type='checkbox' name='checkbox' 
-                                    id='centang'
-                                    onClick='chooseColumn(this,"${data.toString()}")' 
-                                    data-id='${data}'/>
-                            `
-                        } 
-                        else {
-                            elmtCheck = `
-                                <input type='checkbox' name='checkbox' 
-                                    id='centang'
-                                    checked
-                                    onClick='chooseColumn(this,"${data.toString()}")' 
-                                    data-id='${data}'/>
-                            `
-                        }
-                        return `
-                            <center>
-                                <div class='checkbox'>
-                                    <label>
-                                        ${elmtCheck}
-                                    </label>
-                                </div>
-                            </center>
-                        `
-                    }
-                },
-                { width: "10%", targets: 1 },
-                { width: "20%", targets: 2 },
-                { width: "20%", targets: 3 },
-                { width: "20%", targets: 4 },
-                { width: "20%", targets: 5 },
-                { width: "20%", targets: 6 },
-                { width: "20%", targets: 7 },
-            ],
-            'fnRowCallback' : function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-                var element = aData.toString().split(',')
-                //- conso
-            },
-            "rowCallback": function( row, data ) {
-                console.log({row, data})
-            },
+            columns,
+            columnDefs
         });
 
         $('#searchRekapProd').click(function (e){
@@ -329,32 +324,8 @@ script.
             tableCustomer = dataTable('#customerTable',{
                 searching : false,
                 url : `/customer/dataTable?tgl_awal=${tgl_awal}&tgl_akhir=${tgl_akhir}&status=${stsCustomer}`,
-                columns : [
-                    {
-                        "data" : "action",
-                    },{
-                        "data" : "customer"
-                    },{
-                        "data" : "company_name"
-                    },{
-                        "data" : "alamat"
-                    },{
-                        "data" : "tagihan"
-                    },{
-                        "data" : "billing_date"
-                    },{
-                        "data" : "status"
-                    }
-                ],
-                columnDefs: [
-                    { width: "10%", targets: 0 },
-                    { width: "20%", targets: 1 },
-                    { width: "20%", targets: 2 },
-                    { width: "20%", targets: 3 },
-                    { width: "20%", targets: 4 },
-                    { width: "20%", targets: 5 },
-                    { width: "20%", targets: 6 },
-                ],
+                columns,
+                columnDefs
             });
         })
 
@@ -443,8 +414,20 @@ script.
 
         $('#splitPrint').click(function (e){
             e.preventDefault()
-            printSplit=true
-            $("#modalBig #modalDialog").load('/customer/list-preview');
-            $('#modalBig').modal('show');
+            if (selected.length>0) {
+                printSplit=true
+                $("#modalBig #modalDialog").load('/customer/list-preview');
+                $('#modalBig').modal('show');
+            }
+            else {
+                printSplit=false
+                $.smallBox({
+                    title : "Peringatan",
+                    content : `<i class='fa fa-clock-o'></i>data belum ada yang dipilih<i></i>`,
+                    color : "#C46A69",
+                    iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+                    timeout : 1000
+                });
+            }
         })
     })
