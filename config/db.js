@@ -1,7 +1,7 @@
 module.exports = {
     development : {
-        "host" : "localhost",
-        "port" : 27017,
+        "host" : "128.199.174.159",
+        "port" : 37027,
         "password" : "",
         "username" : "",
         "db" : "invoice-markas"

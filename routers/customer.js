@@ -27,11 +27,16 @@ module.exports.Home = async (req, res, next) => {
 module.exports.getPrint = async (req, res, next) => {
     const userLogin = req.user;
     const isAdmin = userLogin.isAdmin
-    let {tgl_awal, tgl_akhir, status, nama, kolektor} = req.body;
+    const body = JSON.parse(req.body.data)
+    let {tgl_awal, tgl_akhir, status, nama, kolektor} = body;
     let filterTanggal = {}
     let month, year
     try {
-        let  where = {}
+        const queryCustomer = split? {_id: {$in : body.customerIds}}:{}
+        // console.log({queryCustomer})
+        let  where = {
+            ...queryCustomer
+        }
 
         if (!isAdmin) {
             where['pic'] = userLogin._id
@@ -64,8 +69,8 @@ module.exports.getPrint = async (req, res, next) => {
 			where['active'] = Number(status)==0?true:false
 		}
 
-        const rowsPerPage = req.body.rowsPerPage
-        const currentPage = req.body.currentPage
+        const rowsPerPage = body.rowsPerPage
+        const currentPage = body.currentPage
         const totalData = await CustomerModel.countDocuments({
             ...where
         })
@@ -151,10 +156,9 @@ module.exports.dataTable = async (req, res, next) => {
 			where['active'] = Number(status)==0?true:false
 		}
 
-        // console.log(where)
-        CustomerModel.find(where)
-            .populate('pic')
-            .sort({billing_date: 1})
+        ModelCustomer.find(where)
+            .sort({nama: 1})
+            // .sort({billing_date:1, nama:1})
             .skip(parseInt(req.query.start))
             .limit(parseInt(req.query.length))
             .then(async (results) => {
@@ -350,9 +354,14 @@ module.exports.removeCustomer = async (req, res, next) => {
 }
 
 module.exports.updateTag = async (req, res, next) => {
-    const {id, tagihan} = req.body
     try {
+<<<<<<< HEAD
         CustomerModel.updateOne({_id : id},{
+=======
+        const body = JSON.parse(req.body.data)
+        const {idx, tagihan} = body
+        ModelCustomer.updateMany({_id : {$in : idx}},{
+>>>>>>> master
             $set : {
                 tagihan : tagihan
             }

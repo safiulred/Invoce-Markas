@@ -42,6 +42,7 @@ function main (param) {
     const stsCustomer = $('#fStsCustomer').val();
     var searchName = $('#searchName').val()
     var kolektor = $('#fKolektor').val() || 'all'
+    const customerIds = printSplit?{customerIds:selected,split:true}:{split:false}
     
     const dataToSend = {
         tgl_awal,
@@ -50,7 +51,8 @@ function main (param) {
         rowsPerPage,
         status: stsCustomer,
         nama : searchName,
-        kolektor
+        kolektor,
+        ...customerIds
     }
     $.ajax({
         url : '/customer/list-preview',
@@ -58,7 +60,9 @@ function main (param) {
         header: {
             'Content-Type' : 'application/json'
         },
-        data : dataToSend,
+        data : {
+            data:JSON.stringify(dataToSend)
+        },
         beforeSend: function() {
             console.log('Loading...')
         },
