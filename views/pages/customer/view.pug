@@ -475,7 +475,8 @@ script.
 
         tableCustomer = dataTable('#customerTable',{
             searching : false,
-            url : '/customer/dataTable?tgl_awal=all&tgl_akhir=all&status=all',
+            //- url : '/customer/dataTable?tgl_awal=all&tgl_akhir=all&status=all',
+            url:`/customer/dataTable?tgl_awal=all&tgl_akhir=all&status=all&kolektor=all`,
             columns,
             columnDefs
         });

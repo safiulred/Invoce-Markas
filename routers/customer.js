@@ -125,9 +125,9 @@ module.exports.dataTable = async (req, res, next) => {
     let filterTanggal = {}
     let month,year
     try {
-        
+        // console.log({query})
         let  where = {}
-        if (!isAdmin) {
+        if (!isAdmin ) {
             where['pic'] = userLogin._id
         }
         else {
@@ -156,6 +156,7 @@ module.exports.dataTable = async (req, res, next) => {
 			where['active'] = Number(status)==0?true:false
 		}
 
+        console.log({where})
         CustomerModel.find(where)
             .sort({billing_date: 1})
             // .sort({billing_date:1, nama:1})
