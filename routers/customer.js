@@ -28,7 +28,7 @@ module.exports.getPrint = async (req, res, next) => {
     const userLogin = req.user;
     const isAdmin = userLogin.isAdmin
     const body = JSON.parse(req.body.data)
-    let {tgl_awal, tgl_akhir, status, nama, kolektor} = body;
+    let {tgl_awal, tgl_akhir, status, nama, kolektor, split} = body;
     let filterTanggal = {}
     let month, year
     try {
@@ -156,7 +156,7 @@ module.exports.dataTable = async (req, res, next) => {
 			where['active'] = Number(status)==0?true:false
 		}
 
-        ModelCustomer.find(where)
+        CustomerModel.find(where)
             .sort({nama: 1})
             // .sort({billing_date:1, nama:1})
             .skip(parseInt(req.query.start))
