@@ -32,11 +32,17 @@ div.row
                                 i(class="fa fa-fw fa-plus")
                             button(class = 'btn btn-default pull-left' data-original-title = 'Reset & Refresh' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;' onclick = "return refreshData();")
                                 i(class="fa fa-fw fa-refresh")
-                            button#printTable(class = 'btn btn-default pull-left' data-original-title = 'Cetak' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;')
+                            button#printTable(class = 'btn btn-default pull-left' data-original-title = 'Cetak Semua' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;')
                                 i(class="fa fa-fw fa-print")
+                            button#selectAll(class = 'btn btn-default pull-left' data-original-title = 'Pilih Semua' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;' onClick="SelectAll()")
+                                i(class="fa fa-fw fa-check")
+                        div(class = 'col-lg-4 col-sm-4 col-xs-4').pull-right
+                            button#splitPrint(class = 'btn btn-primary pull-right' data-original-title = 'Cetak Sebagian' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;') Cetak Sebagian
+                            button#editTagihan(class = 'btn btn-primary pull-right' data-original-title = 'Edit Tagihan' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;') Edit Tagihan
                     table(id = "customerTable" class = "table table-striped table-bordered table-hover" width = "100%")
                         thead
                             tr
+                                th 
                                 th Action
                                 th Pelanggan
                                 //- th Perusahaan
@@ -110,7 +116,11 @@ div.row
 script.
     pageSetUp();
     const isAdmin = "#{isAdmin}"
+    const selectorTable = "#customerTable"
     var tableCustomer
+    var multiTag = false
+    var printSplit=false
+    var selected = []
 
     function closeForm(selector) {
         $(selector).slideUp(200, function() {
@@ -127,6 +137,8 @@ script.
         $('#searchName').val('')
         $('#fKolektor').val('all')
         $('#searchRekapProd').click()
+        tableCustomer.ajax.reload(null, false);
+        selected = []
     }
 
     function addData () {
@@ -170,34 +182,35 @@ script.
                             timeout : 1000
                         });
                     } else {
-                    $.smallBox({
-                    title : "Peringatan",
-                    content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
-                    color : "#C46A69",
-                    iconSmall : "fa fa-times  fa-1x fadeInRight animated",
-                    timeout : 1000
-                    });
+                        $.smallBox({
+                            title : "Peringatan",
+                            content : `<i class='fa fa-clock-o'></i>${msg.message}<i></i>`,
+                            color : "#C46A69",
+                            iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+                            timeout : 1000
+                        });
                     }
                 },
                 error : function (xhr, ajaxOptions, thrownError) {
-                $.smallBox({
-                title : "Peringatan",
-                content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
-                color : "#C46A69",
-                iconSmall : "fa fa-times  fa-1x fadeInRight animated",
-                timeout : 1000
-                });
+                    $.smallBox({
+                        title : "Peringatan",
+                        content : `<i class='fa fa-clock-o'></i>Internal Server Error<i></i>`,
+                        color : "#C46A69",
+                        iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+                        timeout : 1000
+                    });
                 },
             })
         }
     }
 
     function updateTag(id, tagihan) {
+        var tag = tagihan || 0
         $("#formEditable").fadeOut();
         $('#formEditPic').fadeOut();
         $("#cardList").removeClass("col-md-12").addClass("col-md-7")
         $('#formEditTag button#submitTag').attr('data-id', id)
-        $('#formEditTag input#newTag').val(tagihan)
+        $('#formEditTag input#newTag').val(tag)
         $("#formEditTag").fadeIn(200)
         $('#newTag').focus()
         refreshData();
@@ -230,6 +243,21 @@ script.
                 refreshData();
             }
         })
+    }
+
+    function closeModal() {
+        $('#modalBig').modal('hide')
+        refreshData()
+        printSplit=false
+    }
+
+    function SelectAll () {
+        //- selected = [];
+        $('table'+selectorTable+' tbody > tr').each(function (){
+            var id = $(this).find("input[name='checkbox']").attr('data-id');
+            $('input[type="checkbox"]').prop('checked',true);
+            selected.push(id);
+        });
     }
 
     /*
@@ -331,6 +359,28 @@ script.
         return false;
     }
 
+    function chooseColumn(selector, id) {
+        var index = $.inArray(id , selected)
+        var data_cheked = $('table'+selectorTable+' tbody tr.single');
+        var id_cheked = data_cheked.eq(0).find('#centang').attr('data-id');
+        var index_cheked = $.inArray(id_cheked , selected);
+        data_cheked.removeClass('selected')
+        var cek = $('table'+selectorTable+' tbody tr').hasClass('single')
+        if (cek == true && id != id_cheked) {
+            selected.splice(index_cheked, 1);
+        }
+
+        if (index === -1 ){
+            selected.push(id);
+        } else if (id != id_cheked) {
+            selected.splice(index , 1);
+        }
+        $('table'+selectorTable+' tr[data-id="'+id+'"]').toggleClass('selected');
+        if (id_cheked != undefined && id == id_cheked)
+            $('table'+selectorTable+' tr[data-id="'+id+'"]').addClass('selected');
+        $('table'+selectorTable+' tr').removeClass('single');
+    }
+
     $(function () {
         const columns = [
             {
@@ -366,12 +416,86 @@ script.
             dateFormat : 'yy-mm-dd'
         });
 
-        //- console.log({columns})
+        $('#editTagihan').click(function (e){
+            e.preventDefault()
+            //- console.log({selected})
+            multiTag=true
+            $("#formEditable").fadeOut();
+            $("#cardList").removeClass("col-md-12").addClass("col-md-7")
+            $('#formEditTag button#submitTag').attr('data-id', "")
+            $('#formEditTag input#newTag').val(0)
+            $("#formEditTag").fadeIn(200)
+            $('#newTag').focus()
+        })
+        
+        const columns = [
+            {
+                "data":"_id"
+            },{
+                "data" : "action",
+            },{
+                "data" : "customer"
+            },{
+                "data" : "company_name"
+            },{
+                "data" : "alamat"
+            },{
+                "data" : "tagihan"
+            },{
+                "data" : "billing_date"
+            },{
+                "data" : "status"
+            }
+        ]
+        const columnDefs = [
+            { 
+                width: "10%", 
+                targets: 0,
+                render: function (data, type, row) {
+                    let elmtCheck
+                    var index = $.inArray(data , selected)
+                    if (index===-1) {
+                        elmtCheck = `
+                            <input type='checkbox' name='checkbox' 
+                                id='centang'
+                                onClick='chooseColumn(this,"${data.toString()}")' 
+                                data-id='${data}'/>
+                        `
+                    } 
+                    else {
+                        elmtCheck = `
+                            <input type='checkbox' name='checkbox' 
+                                id='centang'
+                                checked
+                                onClick='chooseColumn(this,"${data.toString()}")' 
+                                data-id='${data}'/>
+                        `
+                    }
+                    return `
+                        <center>
+                            <div class='checkbox'>
+                                <label>
+                                    ${elmtCheck}
+                                </label>
+                            </div>
+                        </center>
+                    `
+                }
+            },
+            { width: "10%", targets: 1 },
+            { width: "20%", targets: 2 },
+            { width: "20%", targets: 3 },
+            { width: "20%", targets: 4 },
+            { width: "20%", targets: 5 },
+            { width: "20%", targets: 6 },
+            { width: "20%", targets: 7 },
+        ]
+
         tableCustomer = dataTable('#customerTable',{
             searching : false,
-            url : '/customer/dataTable?tgl_awal=all&tgl_akhir=all&status=all&kolektor=all',
-            columns : columns,
-            columnDefs: columnDefs,
+            url : '/customer/dataTable?tgl_awal=all&tgl_akhir=all&status=all',
+            columns,
+            columnDefs
         });
 
         $('#searchRekapProd').click(function (e){
@@ -471,6 +595,12 @@ script.
                     timeout : 1000
                 });
             } else {
+                var params = multiTag? {idx:selected}:{idx:[id]}
+                const dataToSend = {
+                    tagihan:new_tagihan,
+                    ...params
+                }
+                //- console.log({dataToSend})
                 $.ajax({
                     url : '/customer/update-tagihan',
                     method: 'POST',
@@ -478,8 +608,7 @@ script.
                         'Content-Type' : 'application/json'
                     },
                     data : {
-                        id : id,
-                        tagihan : new_tagihan
+                        data: JSON.stringify(dataToSend)
                     },
                     beforeSend: function() {
                         selector.attr('disabled', true);
@@ -487,6 +616,7 @@ script.
                     },
                     success : function (msg) {
                         selector.attr('disabled', false);
+                        multiTag=false
                         if (msg.status == 200) {
                             $.smallBox({
                                 title: 'Success',
@@ -535,5 +665,24 @@ script.
             $("#modalBig #modalDialog").load('/customer/list-preview');
             //- $("#modalBig #modalDialog").load(urlPreview);
             $('#modalBig').modal('show');
+        })
+
+        $('#splitPrint').click(function (e){
+            e.preventDefault()
+            if (selected.length>0) {
+                printSplit=true
+                $("#modalBig #modalDialog").load('/customer/list-preview');
+                $('#modalBig').modal('show');
+            }
+            else {
+                printSplit=false
+                $.smallBox({
+                    title : "Peringatan",
+                    content : `<i class='fa fa-clock-o'></i>data belum ada yang dipilih<i></i>`,
+                    color : "#C46A69",
+                    iconSmall : "fa fa-times  fa-1x fadeInRight animated",
+                    timeout : 1000
+                });
+            }
         })
     })
