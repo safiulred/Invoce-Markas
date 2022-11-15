@@ -475,8 +475,8 @@ script.
 
         tableCustomer = dataTable('#customerTable',{
             searching : false,
-            //- url : '/customer/dataTable?tgl_awal=all&tgl_akhir=all&status=all',
             url:`/customer/dataTable?tgl_awal=all&tgl_akhir=all&status=all&kolektor=all`,
+            pageLength:100,
             columns,
             columnDefs
         });
@@ -492,6 +492,7 @@ script.
             tableCustomer = dataTable('#customerTable',{
                 searching : false,
                 url : `/customer/dataTable?tgl_awal=${tgl_awal}&tgl_akhir=${tgl_akhir}&status=${stsCustomer}&nama=${searchName}&kolektor=${kolektor}`,
+                pageLength:100,
                 columns : columns,
                 columnDefs: columnDefs,
             });
