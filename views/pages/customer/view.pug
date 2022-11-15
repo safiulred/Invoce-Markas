@@ -384,60 +384,12 @@ script.
     $(function () {
         const columns = [
             {
-                "data" : "action",
-            },{
-                "data" : "customer"
-            },{
-                "data" : "alamat"
-            },{
-                "data" : "tagihan"
-            },{
-                "data" : "billing_date"
-            },{
-                "data" : "status"
-            }
-        ]
-        const columnDefs= [
-            { width: "10%", targets: 0 },
-            { width: "20%", targets: 1 },
-            { width: "20%", targets: 2 },
-            { width: "15%", targets: 3 },
-            { width: "10%", targets: 4 },
-            { width: "10%", targets: 5 },
-        ]
-
-        if (isAdmin==="true") {
-            columns.push({data:'kolektor'})
-            columnDefs.push({width:"35%", targets:6})
-        }
-
-        $('.datepicker').datepicker({
-            defaultDate : new Date(),
-            dateFormat : 'yy-mm-dd'
-        });
-
-        $('#editTagihan').click(function (e){
-            e.preventDefault()
-            //- console.log({selected})
-            multiTag=true
-            $("#formEditable").fadeOut();
-            $("#cardList").removeClass("col-md-12").addClass("col-md-7")
-            $('#formEditTag button#submitTag').attr('data-id', "")
-            $('#formEditTag input#newTag').val(0)
-            $("#formEditTag").fadeIn(200)
-            $('#newTag').focus()
-        })
-        
-        const columns = [
-            {
                 "data":"_id"
             },{
                 "data" : "action",
             },{
                 "data" : "customer"
             },{
-                "data" : "company_name"
-            },{
                 "data" : "alamat"
             },{
                 "data" : "tagihan"
@@ -447,6 +399,14 @@ script.
                 "data" : "status"
             }
         ]
+        //- const columnDefs= [
+        //-     { width: "10%", targets: 0 },
+        //-     { width: "20%", targets: 1 },
+        //-     { width: "20%", targets: 2 },
+        //-     { width: "15%", targets: 3 },
+        //-     { width: "10%", targets: 4 },
+        //-     { width: "10%", targets: 5 },
+        //- ]
         const columnDefs = [
             { 
                 width: "10%", 
@@ -490,6 +450,28 @@ script.
             { width: "20%", targets: 6 },
             { width: "20%", targets: 7 },
         ]
+
+        if (isAdmin==="true") {
+            columns.push({data:'kolektor'})
+            columnDefs.push({width:"35%", targets:6})
+        }
+
+        $('.datepicker').datepicker({
+            defaultDate : new Date(),
+            dateFormat : 'yy-mm-dd'
+        });
+
+        $('#editTagihan').click(function (e){
+            e.preventDefault()
+            //- console.log({selected})
+            multiTag=true
+            $("#formEditable").fadeOut();
+            $("#cardList").removeClass("col-md-12").addClass("col-md-7")
+            $('#formEditTag button#submitTag').attr('data-id', "")
+            $('#formEditTag input#newTag').val(0)
+            $("#formEditTag").fadeIn(200)
+            $('#newTag').focus()
+        })
 
         tableCustomer = dataTable('#customerTable',{
             searching : false,
