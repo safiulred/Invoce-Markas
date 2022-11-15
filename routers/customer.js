@@ -355,13 +355,10 @@ module.exports.removeCustomer = async (req, res, next) => {
 
 module.exports.updateTag = async (req, res, next) => {
     try {
-<<<<<<< HEAD
-        CustomerModel.updateOne({_id : id},{
-=======
+
         const body = JSON.parse(req.body.data)
         const {idx, tagihan} = body
-        ModelCustomer.updateMany({_id : {$in : idx}},{
->>>>>>> master
+        CustomerModel.updateMany({_id : {$in : idx}},{
             $set : {
                 tagihan : tagihan
             }
