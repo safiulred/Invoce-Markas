@@ -39,6 +39,7 @@ div.row
                         div(class = 'col-lg-4 col-sm-4 col-xs-4' style="margin-top:10px").pull-right
                             button#splitPrint(class = 'btn btn-primary pull-right' data-original-title = 'Cetak Sebagian' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;') Cetak Sebagian
                             button#editTagihan(class = 'btn btn-primary pull-right' data-original-title = 'Edit Tagihan' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;') Edit Tagihan
+                            button#editKolektor(class = 'btn btn-primary pull-right' data-original-title = 'Edit Kolektor' data-placement="bottom" rel="tooltip" style = 'margin-left : 5px;') Edit Kolektor
                     table(id = "customerTable" class = "table table-striped table-bordered table-hover" width = "100%")
                         thead
                             tr
@@ -119,6 +120,7 @@ script.
     const selectorTable = "#customerTable"
     var tableCustomer
     var multiTag = false
+    var multiKol = false
     var printSplit=false
     var selected = []
 
@@ -204,6 +206,7 @@ script.
         }
     }
 
+    //- Edit single tagihan
     function updateTag(id, tagihan) {
         var tag = tagihan || 0
         $("#formEditable").fadeOut();
@@ -461,6 +464,7 @@ script.
             dateFormat : 'yy-mm-dd'
         });
 
+        //- Edit multi tagihan
         $('#editTagihan').click(function (e){
             e.preventDefault()
             //- console.log({selected})
@@ -471,6 +475,39 @@ script.
             $('#formEditTag input#newTag').val(0)
             $("#formEditTag").fadeIn(200)
             $('#newTag').focus()
+        })
+
+        //- Edit multi kolektor
+        $('#editKolektor').click(function(e){
+             e.preventDefault()
+
+             $.ajax({
+                url: '/customer/kolektor',
+                method: 'POST',
+                header: {
+                    'Content-Type' : 'application/json'
+                },
+                success : function (items) {
+                    let elmKolektor = '<option value="">Pilih Kolektor</option>'
+                    items.map(key=> {
+                        if (key._id.toString()===userId.toString()) {
+                            elmKolektor+= `<option selected value='${key._id}'>${key.nama}</option>`
+                        }
+                        else {
+                            elmKolektor+= `<option value='${key._id}'>${key.nama}</option>`
+                        }
+                    })
+
+                    multiKol=true
+                    $('#listKolektor').html(elmKolektor)
+                    $("#formEditable").fadeOut();
+                    $('#formEditTag').fadeOut();
+                    $("#cardList").removeClass("col-md-12").addClass("col-md-7")
+                    $('#formEditPic button#submitKolektor').attr('data-id', '')
+                    $("#formEditPic").fadeIn(200)
+                    //- refreshData();
+                }
+            })
         })
 
         tableCustomer = dataTable('#customerTable',{
@@ -513,6 +550,12 @@ script.
                 });
             }
             else {
+                var params = multiKol ? {ids:selected}:{ids:[customerId]}
+                const dataToSend = {
+                    kolektorId:newKolektor,
+                    ...params
+                }
+
                 $.ajax({
                     url : '/customer/update-kolektor',
                     method: 'POST',
@@ -520,8 +563,7 @@ script.
                         'Content-Type' : 'application/json'
                     },
                     data : {
-                        id : customerId,
-                        userId : newKolektor
+                        data: JSON.stringify(dataToSend)
                     },
                     beforeSend: function() {
                         selector.attr('disabled', true);
