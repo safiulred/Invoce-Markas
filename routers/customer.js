@@ -81,6 +81,7 @@ module.exports.getPrint = async (req, res, next) => {
         console.log({ where })
         console.log({ totalPages, offset, limit, totalData })
         CustomerModel.find(where)
+            .populate('pic')
             .sort({ nama: 1 })
             .skip(parseInt(offset))
             .limit(parseInt(limit))
@@ -158,6 +159,7 @@ module.exports.dataTable = async (req, res, next) => {
 
         console.log({ where })
         CustomerModel.find(where)
+            .populate('pic')
             .sort({ billing_date: 1 })
             // .sort({billing_date:1, nama:1})
             .skip(parseInt(req.query.start))
