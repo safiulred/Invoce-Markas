@@ -1,10 +1,10 @@
 module.exports = {
-    development : {
-        "host" : "localhost",
-        "port" : 3131
+    development: {
+        port: process.env.DEV_PORT,
+        host: process.env.DEV_HOST,
     },
-    production : {
-        "host" : "::",
-        "port" : 3131
+    production: {
+        port: process.env.PORT,
+        host: process.env.HOST,
     }
 }
