@@ -1,16 +1,16 @@
 module.exports = {
     development: {
-        secret: 'markatnett',
-        sessionName: 'invoicenet',
-        host: 'localhost',
-        port: 12315,
-        password: '{SHA512}d6+Wcw6WHqSzDR/Xj+kriXUHMorgfZGt7zuj3GusoOUuybLuIezOHwaNCRto7Bicdw8d9ft9HNldlThp0rV60w=='
+        secret: process.env.DEV_RD_SECRET,
+        sessionName: process.env.DEV_RD_SESSION_NAME,
+        host: process.env.DEV_RD_HOST,
+        port: process.env.DEV_RD_PORT,
+        password: process.env.DEV_RD_PASSWORD
     },
     production: {
-        secret: 'markatnett',
-        sessionName: 'invoicenet',
-        host: 'localhost',
-        port: 5470,
-        password: ''
+        secret: process.env.RD_SECRET,
+        sessionName: process.env.RD_SESSION_NAME,
+        host: process.env.RD_HOST,
+        port: process.env.RD_PORT,
+        password: process.env.RD_PASSWORD
     }
 }

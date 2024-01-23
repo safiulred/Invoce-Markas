@@ -1,16 +1,16 @@
 module.exports = {
     development: {
-        "host": "128.199.174.159",
-        "port": 37027,
-        "password": "",
-        "username": "",
-        "db": "invoice-markas"
+        port: process.env.DEV_MG_PORT,
+        host: process.env.DEV_MG_HOST,
+        db: process.env.DEV_MG_DATABASE,
+        username: process.env.DEV_MG_USERNAME,
+        password: process.env.DEV_MG_PASSWORD
     },
     production: {
-        "host": "localhost",
-        "port": 31015,
-        "password": "",
-        "username": "",
-        "db": "invoice-markas"
+        port: process.env.MG_PORT,
+        host: process.env.MG_HOST,
+        db: process.env.MG_DATABASE,
+        username: process.env.MG_USERNAME,
+        password: process.env.MG_PASSWORD
     }
 }

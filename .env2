@@ -1,0 +1,33 @@
+NODE_ENV=production
+
+# development
+
+# MONGODB
+DEV_MG_PORT=37027
+DEV_MG_HOST=128.199.174.159
+DEV_MG_DATABASE=invoice-markas
+DEV_MG_USERNAME=
+DEV_MG_PASSWORD=
+
+# REDIS
+DEV_RD_SECRET=markatnett
+DEV_RD_SESSION_NAME=invoicenet
+DEV_RD_HOST=localhost
+DEV_RD_PORT=12311
+DEV_RD_PASSWORD=
+
+# production
+
+# MONGODB
+MG_PORT=31015
+MG_HOST=localhost
+MG_DATABASE=invoice-markas
+MG_USERNAME=
+MG_PASSWORD=
+
+# REDIS
+RD_SECRET=markatnett
+RD_SESSION_NAME=invoicenet
+RD_HOST=localhost
+RD_PORT=5470
+RD_PASSWORD=
